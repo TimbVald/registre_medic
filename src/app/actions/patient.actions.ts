@@ -5,6 +5,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { patients } from "@/db/schema";
 import { patientSchema } from "@/lib/schemas/patient.schema";
+import { eq, ilike, or, desc } from "drizzle-orm";
 
 export async function createPatient(data: z.infer<typeof patientSchema>) {
   try {
@@ -40,5 +41,61 @@ export async function createPatient(data: z.infer<typeof patientSchema>) {
       return { success: false, error: "Erreur de validation des données", details: error.errors };
     }
     return { success: false, error: "Erreur interne lors de l'enregistrement du patient" };
+  }
+}
+
+/**
+ * Supprime un patient de la base de données
+ */
+export async function deletePatient(id: string) {
+  try {
+    await db.delete(patients).where(eq(patients.id, id));
+    revalidatePath("/dashboard/patients");
+    return { success: true, message: "Patient supprimé avec succès" };
+  } catch (error) {
+    console.error("Erreur lors de la suppression du patient :", error);
+    return { success: false, error: "Impossible de supprimer le patient" };
+  }
+}
+
+/**
+ * Récupère tous les patients avec recherche
+ */
+export async function getPatients(search?: string) {
+  try {
+    if (!search) {
+      return await db.query.patients.findMany({
+        orderBy: [desc(patients.createdAt)],
+      });
+    }
+
+    const tSearch = `%${search}%`;
+
+    return await db.query.patients.findMany({
+      where: or(
+        ilike(patients.noms, tSearch),
+        ilike(patients.prenoms, tSearch),
+        ilike(patients.numeroFiche, tSearch),
+        ilike(patients.telephone, tSearch)
+      ),
+      orderBy: [desc(patients.createdAt)],
+    });
+  } catch (error) {
+    console.error("Erreur lors de la récupération des patients :", error);
+    return [];
+  }
+}
+
+/**
+ * Récupère un patient par son ID
+ */
+export async function getPatientById(id: string) {
+  try {
+    return await db.query.patients.findFirst({
+      where: eq(patients.id, id),
+    });
+  } catch (error) {
+    console.error("Erreur l'ors de la récupération du patient :", error);
+    return null;
   }
 }

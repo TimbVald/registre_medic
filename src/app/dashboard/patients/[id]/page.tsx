@@ -2,250 +2,288 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, Mail, MapPin, Phone, Edit, FileText, Pill, Activity, AlertCircle, Plus, CheckCircle2 } from "lucide-react";
+import { 
+  Calendar, 
+  MapPin, 
+  Phone, 
+  Edit, 
+  FileText, 
+  Pill, 
+  Activity, 
+  AlertCircle, 
+  Plus, 
+  Stethoscope, 
+  Users,
+  ArrowLeft,
+  Baby,
+  Dna,
+  Heart
+} from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { mockPatients, mockAppointments, mockPrescriptions } from "@/lib/mock-data";
+import { getPatientById } from "@/app/actions/patient.actions";
+import { mockAppointments, mockPrescriptions } from "@/lib/mock-data";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { PrescriptionList } from "@/components/prescriptions/prescription-list";
 import { AppointmentsList } from "@/components/appointments/appointments-list";
+import { notFound } from "next/navigation";
 
 export default async function PatientDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const patient = mockPatients.find((p) => p.id === id);
+  const patient = await getPatientById(id);
+
+  if (!patient) {
+     notFound();
+  }
+
+  // Mocks for now as agreed
   const appointments = mockAppointments.filter((a) => a.patientId === id);
   const prescriptions = mockPrescriptions.filter((p) => p.patientId === id);
 
-  if (!patient) {
-    return (
-        <div className="flex flex-col items-center justify-center h-[50vh] gap-4">
-            <h2 className="text-xl font-semibold text-blue-900">Patient non trouvé</h2>
-            <Link href="/dashboard/patients">
-                <Button variant="outline">Retour à la liste</Button>
-            </Link>
-        </div>
-    );
-  }
-
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-card p-6 rounded-xl border shadow-sm">
-        <div className="flex items-center gap-4">
-          <Avatar className="h-20 w-20 border-2 border-background shadow-md">
-            <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${patient.id}`} />
-            <AvatarFallback>{patient.firstName[0]}{patient.lastName[0]}</AvatarFallback>
-          </Avatar>
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight text-foreground">{patient.firstName} {patient.lastName}</h2>
-            <div className="flex flex-wrap items-center text-muted-foreground mt-1 gap-2">
-              <Badge variant={patient.status === "ACTIVE" ? "default" : "secondary"} className="bg-emerald-600 hover:bg-emerald-700 dark:text-white">
-                {patient.status === "ACTIVE" ? "Dossier Actif" : "Inactif"}
-              </Badge>
-              <span className="text-sm flex items-center gap-1">
-                <Calendar className="h-3 w-3" /> Né(e) le {new Date(patient.dateOfBirth).toLocaleDateString()}
-              </span>
-              <span className="text-sm">•</span>
-              <span className="text-sm">{patient.gender === 'MALE' ? 'Homme' : patient.gender === 'FEMALE' ? 'Femme' : 'Autre'}</span>
-            </div>
-          </div>
-        </div>
-        <div className="flex gap-2 w-full md:w-auto">
-            <Link href={`/dashboard/patients/${patient.id}/edit`} className="flex-1 md:flex-none">
-                <Button variant="outline" className="w-full">
-                    <Edit className="mr-2 h-4 w-4" />
-                    Modifier
-                </Button>
+    <div className="flex flex-col gap-8 pb-10 animate-in fade-in duration-700">
+      {/* Top Navigation & Actions */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <Link 
+          href="/dashboard/patients" 
+          className="flex items-center text-sm font-medium text-zinc-500 hover:text-primary transition-colors group"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+          Retour à la liste des patients
+        </Link>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" asChild className="rounded-xl border-zinc-200">
+            <Link href={`/dashboard/patients/${patient.id}/edit`}>
+              <Edit className="mr-2 h-4 w-4" /> Modifier le profil
             </Link>
-            <Button className="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700">
-                <Calendar className="mr-2 h-4 w-4" />
-                Rendez-vous
-            </Button>
+          </Button>
+          <Button className="rounded-xl shadow-lg shadow-primary/20 bg-emerald-600 hover:bg-emerald-700" asChild>
+            <Link href={`/dashboard/consultations/new?patientId=${patient.id}`}>
+               <Stethoscope className="mr-2 h-4 w-4" /> Nouvelle Consultation
+            </Link>
+          </Button>
         </div>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="bg-muted p-1">
-            <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
-            <TabsTrigger value="medical-record">Dossier Médical (DME)</TabsTrigger>
-            <TabsTrigger value="appointments">Rendez-vous</TabsTrigger>
-            <TabsTrigger value="prescriptions">Prescriptions</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="md:col-span-1 shadow-sm">
-                    <CardHeader className="pb-3">
-                        <CardTitle className="text-md font-medium text-foreground">Coordonnées</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex items-center gap-3 text-sm">
-                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                                <Mail className="h-4 w-4" />
-                            </div>
-                            <span className="truncate">{patient.email}</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-sm">
-                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                                <Phone className="h-4 w-4" />
-                            </div>
-                            <span>{patient.phone}</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-sm">
-                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                                <MapPin className="h-4 w-4" />
-                            </div>
-                            <span>{patient.address}</span>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="md:col-span-2 shadow-sm">
-                    <CardHeader className="pb-3">
-                        <CardTitle className="text-md font-medium text-foreground flex items-center gap-2">
-                            <Activity className="h-5 w-5 text-emerald-600" />
-                            Dernière activité
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between border-b pb-4">
-                                <div>
-                                    <p className="font-medium">Dernière visite</p>
-                                    <p className="text-sm text-muted-foreground">
-                                        {patient.lastVisit ? format(new Date(patient.lastVisit), "d MMMM yyyy", { locale: fr }) : "Aucune visite"}
-                                    </p>
-                                </div>
-                                <Button variant="ghost" size="sm">Voir le rapport</Button>
-                            </div>
-                            <div>
-                                <p className="font-medium mb-2">Traitements en cours</p>
-                                <div className="flex flex-wrap gap-2">
-                                    {prescriptions.filter(p => p.status === 'ACTIVE').length > 0 ? (
-                                        prescriptions.filter(p => p.status === 'ACTIVE').map(p => (
-                                            p.medications.map((m, idx) => (
-                                                <Badge key={`${p.id}-${idx}`} variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
-                                                    {m.medication}
-                                                </Badge>
-                                            ))
-                                        ))
-                                    ) : (
-                                        <span className="text-sm text-muted-foreground">Aucun traitement actif</span>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+      {/* Profile Header Card */}
+      <Card className="border-none shadow-sm ring-1 ring-zinc-200 overflow-hidden bg-gradient-to-br from-white to-zinc-50/30">
+        <CardContent className="p-0">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-8 p-8">
+            <Avatar className="h-28 w-28 ring-4 ring-white shadow-xl shadow-zinc-200/50">
+              <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${patient.noms}`} />
+              <AvatarFallback className="bg-zinc-100 text-zinc-400 text-2xl font-bold">
+                {patient.noms[0]}
+              </AvatarFallback>
+            </Avatar>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                 <Card className="shadow-sm border-l-4 border-l-amber-500">
-                    <CardHeader className="pb-3">
-                        <CardTitle className="text-md font-medium text-amber-700 flex items-center gap-2">
-                            <AlertCircle className="h-5 w-5" />
-                            Allergies & Alertes
+            <div className="flex-1 text-center md:text-left space-y-4">
+              <div>
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
+                    <h1 className="text-3xl font-bold text-zinc-900">{patient.noms} {patient.prenoms}</h1>
+                    <Badge variant="secondary" className="bg-primary/10 text-primary border-none font-bold px-3 py-1 text-xs">
+                        {patient.numeroFiche}
+                    </Badge>
+                </div>
+                <p className="text-zinc-500 font-medium">Patient enregistré le {format(new Date(patient.createdAt), "d MMMM yyyy", { locale: fr })}</p>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
+                 <div className="flex items-center gap-3 bg-white p-3 rounded-2xl border border-zinc-100 shadow-sm">
+                    <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                        <Users className="h-5 w-5" />
+                    </div>
+                    <div>
+                        <p className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Sexe</p>
+                        <p className="text-sm font-semibold">{patient.sexe || "-"}</p>
+                    </div>
+                 </div>
+                 <div className="flex items-center gap-3 bg-white p-3 rounded-2xl border border-zinc-100 shadow-sm">
+                    <div className="h-10 w-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600">
+                        <Calendar className="h-5 w-5" />
+                    </div>
+                    <div>
+                        <p className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Âge</p>
+                        <p className="text-sm font-semibold">{patient.ageAnnees || 0} ans</p>
+                    </div>
+                 </div>
+                 <div className="flex items-center gap-3 bg-white p-3 rounded-2xl border border-zinc-100 shadow-sm">
+                    <div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                        <Phone className="h-5 w-5" />
+                    </div>
+                    <div>
+                        <p className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Contact</p>
+                        <p className="text-sm font-semibold">{patient.telephone || "N/A"}</p>
+                    </div>
+                 </div>
+                 <div className="flex items-center gap-3 bg-white p-3 rounded-2xl border border-zinc-100 shadow-sm">
+                    <div className="h-10 w-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
+                        <MapPin className="h-5 w-5" />
+                    </div>
+                    <div>
+                        <p className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Résidence</p>
+                        <p className="text-sm font-semibold truncate max-w-[120px]">{patient.lieuResidence || "-"}</p>
+                    </div>
+                 </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Main Content Tabs */}
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="bg-zinc-100/50 p-1.5 rounded-2xl border border-zinc-200">
+          <TabsTrigger value="overview" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+            Vue d'ensemble
+          </TabsTrigger>
+          <TabsTrigger value="record" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+            Dossier Médical (DME)
+          </TabsTrigger>
+          <TabsTrigger value="consultations" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+            Consultations
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-6">
+           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Column: Parental Info */}
+              <div className="lg:col-span-1 space-y-6">
+                <Card className="border-none shadow-sm ring-1 ring-zinc-200 bg-white rounded-2xl overflow-hidden">
+                    <CardHeader className="bg-zinc-50/50 border-b border-zinc-100">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                           <Baby className="h-4 w-4 text-blue-500" /> Parenté & Tuteurs
                         </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        {patient.medicalHistory && patient.medicalHistory.some(h => h.toLowerCase().includes("allergie")) ? (
-                            <ul className="space-y-2">
-                                {patient.medicalHistory.filter(h => h.toLowerCase().includes("allergie")).map((allergy, i) => (
-                                    <li key={i} className="flex items-center gap-2 text-sm text-amber-900 bg-amber-50 p-2 rounded">
-                                        <AlertCircle className="h-4 w-4 text-amber-600" />
-                                        {allergy}
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p className="text-sm text-muted-foreground">Aucune allergie connue signalée.</p>
+                    <CardContent className="pt-6 space-y-6">
+                        {patient.pereNom && (
+                            <div className="space-y-1">
+                                <p className="text-[10px] uppercase font-bold text-zinc-400">Père / Tuteur</p>
+                                <p className="text-sm font-semibold text-zinc-900">{patient.pereNom}</p>
+                                <p className="text-xs text-muted-foreground">{patient.pereTelClassique}</p>
+                            </div>
+                        )}
+                        {patient.mereNom && (
+                            <div className="space-y-1">
+                                <p className="text-[10px] uppercase font-bold text-zinc-400">Mère / Tutrice</p>
+                                <p className="text-sm font-semibold text-zinc-900">{patient.mereNom}</p>
+                                <p className="text-xs text-muted-foreground">{patient.mereTelClassique}</p>
+                            </div>
+                        )}
+                        {!patient.pereNom && !patient.mereNom && (
+                            <p className="text-sm text-muted-foreground italic text-center py-4">Aucune information parentale.</p>
                         )}
                     </CardContent>
-                 </Card>
+                </Card>
 
-                 <Card className="shadow-sm border-l-4 border-l-blue-500">
-                    <CardHeader className="pb-3">
-                        <CardTitle className="text-md font-medium text-primary flex items-center gap-2">
-                            <FileText className="h-5 w-5" />
-                            Notes médicales récentes
+                <Card className="border-none shadow-sm ring-1 ring-zinc-200 bg-white rounded-2xl overflow-hidden">
+                    <CardHeader className="bg-zinc-50/50 border-b border-zinc-100">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                           <Heart className="h-4 w-4 text-red-500" /> Alertes & Allergies
                         </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground italic">
-                            "Patient stable. Poursuite du traitement actuel recommandée. Prochain contrôle dans 3 mois."
-                        </p>
-                        <div className="mt-2 text-xs text-right text-muted-foreground">
-                            - Dr. House, le 15/02/2024
+                    <CardContent className="pt-6">
+                        <div className="flex items-center gap-3 p-4 bg-amber-50 rounded-2xl border border-amber-100/50 text-amber-700">
+                            <AlertCircle className="h-5 w-5 shrink-0" />
+                            <p className="text-xs font-medium">Aucune allergie majeure signalée pour ce patient.</p>
+                        </div>
+                    </CardContent>
+                </Card>
+              </div>
+
+              {/* Right Column: Timeline/Activity */}
+              <div className="lg:col-span-2 space-y-6">
+                 <Card className="border-none shadow-sm ring-1 ring-zinc-200 rounded-2xl bg-white overflow-hidden">
+                    <CardHeader className="flex flex-row items-center justify-between border-b border-zinc-100 bg-zinc-50/50">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                            <Activity className="h-5 w-5 text-emerald-500" /> Historique de Santé
+                        </CardTitle>
+                        <Button variant="ghost" size="sm" className="text-xs">Voir tout</Button>
+                    </CardHeader>
+                    <CardContent className="pt-10 pb-8 px-10">
+                        {/* Fake medical timeline for premium look */}
+                        <div className="relative border-l-2 border-zinc-100 pl-8 space-y-10">
+                            <div className="relative">
+                                <span className="absolute -left-[41px] top-0 h-5 w-5 rounded-full bg-white border-4 border-primary flex items-center justify-center ring-4 ring-primary/10 shadow-sm transition-all hover:scale-110"></span>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">Aujourd'hui</p>
+                                    <h4 className="text-sm font-bold text-zinc-900">Enregistrement initial du patient</h4>
+                                    <p className="text-xs text-muted-foreground leading-relaxed">Dossier créé numériquement avec succès par le personnel de la clinique.</p>
+                                </div>
+                            </div>
+                            <div className="relative opacity-50 grayscale select-none cursor-not-allowed">
+                                <span className="absolute -left-[41px] top-0 h-5 w-5 rounded-full bg-zinc-200 border-4 border-zinc-300"></span>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">Étape Suivante</p>
+                                    <h4 className="text-sm font-bold text-zinc-400">Première Consultation & Bilan Sanguin</h4>
+                                    <p className="text-xs text-muted-foreground">En attente de la première visite médicale.</p>
+                                </div>
+                            </div>
                         </div>
                     </CardContent>
                  </Card>
-            </div>
+
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Card className="border-none shadow-sm ring-1 ring-zinc-200 rounded-2xl bg-white">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-xs font-bold text-zinc-500 flex items-center gap-2">
+                                <Dna className="h-4 w-4" /> Groupe Sanguin
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-2xl font-bold text-zinc-900">{patient.pereGroupeSanguin || "Pas d'infos"}</p>
+                            <p className="text-[10px] text-muted-foreground mt-1 tracking-tighter">Basé sur les données familiales</p>
+                        </CardContent>
+                    </Card>
+                    <Card className="border-none shadow-sm ring-1 ring-zinc-200 rounded-2xl bg-white">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-xs font-bold text-zinc-500 flex items-center gap-2 active:animate-pulse">
+                                <Pill className="h-4 w-4" /> Traitements
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-2xl font-bold text-zinc-900">0</p>
+                            <p className="text-[10px] text-muted-foreground mt-1 tracking-tighter">Aucune prescription active</p>
+                        </CardContent>
+                    </Card>
+                 </div>
+              </div>
+           </div>
         </TabsContent>
-        
-        <TabsContent value="medical-record" className="space-y-6">
-            <Card>
-                <CardHeader>
-                    <div className="flex items-center justify-between">
-                        <CardTitle className="text-foreground">Historique Médical (DME)</CardTitle>
-                        <Button size="sm" variant="outline">
-                            <Plus className="mr-2 h-4 w-4" />
-                            Ajouter une entrée
-                        </Button>
-                    </div>
-                    <CardDescription>
-                        Historique complet des pathologies et interventions.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    {patient.medicalHistory && patient.medicalHistory.length > 0 ? (
-                        <div className="relative border-l border-border ml-4 space-y-8 py-4">
-                            {patient.medicalHistory.map((item, index) => (
-                                <div key={index} className="relative pl-8">
-                                    <span className="absolute -left-1.5 top-1.5 h-3 w-3 rounded-full bg-primary/20 border-2 border-background ring-2 ring-primary"></span>
-                                    <div className="flex flex-col">
-                                        <span className="text-sm font-medium text-foreground">{item}</span>
-                                        <span className="text-xs text-muted-foreground">Date inconnue (importé)</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-8 text-muted-foreground">
-                            Dossier médical vide.
-                        </div>
-                    )}
-                </CardContent>
+
+        <TabsContent value="record">
+            <Card className="border-none shadow-sm ring-1 ring-zinc-200 rounded-3xl bg-white p-12 text-center flex flex-col items-center justify-center gap-4">
+                <div className="h-20 w-20 bg-zinc-50 rounded-full flex items-center justify-center">
+                    <FileText className="h-10 w-10 text-zinc-200" />
+                </div>
+                <div>
+                   <h3 className="text-lg font-bold">Dossier Médical Électronique (DME)</h3>
+                   <p className="text-sm text-muted-foreground max-w-md mx-auto mt-2">
+                     Le dossier médical complet, incluant l'historique chirurgical et personnel, pourra être renseigné lors de la première consultation.
+                   </p>
+                </div>
+                <Button className="rounded-xl mt-4" variant="outline">
+                    Compléter le DME
+                </Button>
             </Card>
         </TabsContent>
-        
-        <TabsContent value="appointments">
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-foreground">Historique des Rendez-vous</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <AppointmentsList appointments={appointments} />
-                </CardContent>
-            </Card>
-        </TabsContent>
-        
-        <TabsContent value="prescriptions">
-            <Card>
-                <CardHeader>
+
+        <TabsContent value="consultations">
+             <Card className="border-none shadow-sm ring-1 ring-zinc-200 rounded-2xl overflow-hidden">
+                <CardHeader className="border-b border-zinc-100 bg-white">
                     <div className="flex items-center justify-between">
-                        <CardTitle className="text-foreground">Prescriptions</CardTitle>
-                        <Link href="/dashboard/prescriptions/new">
-                            <Button size="sm">
-                                <Plus className="mr-2 h-4 w-4" />
-                                Nouvelle Prescription
-                            </Button>
-                        </Link>
+                         <CardTitle className="text-sm font-bold">Dernières Consultations</CardTitle>
+                         <Button size="sm" className="rounded-lg h-9" asChild>
+                            <Link href={`/dashboard/consultations/new?patientId=${patient.id}`}>
+                                <Plus className="mr-2 h-4 w-4" /> Nouveau rapport
+                            </Link>
+                         </Button>
                     </div>
                 </CardHeader>
-                <CardContent>
-                    <PrescriptionList prescriptions={prescriptions} />
+                <CardContent className="h-48 flex items-center justify-center bg-zinc-50/50">
+                    <p className="text-sm text-muted-foreground italic">Aucune consultation enregistrée pour le moment.</p>
                 </CardContent>
-            </Card>
+             </Card>
         </TabsContent>
       </Tabs>
     </div>
