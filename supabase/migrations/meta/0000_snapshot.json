@@ -1,0 +1,407 @@
+{
+  "id": "2b09d251-2646-4d92-ae76-52ed904d95e9",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.patients": {
+      "name": "patients",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "numero_fiche": {
+          "name": "numero_fiche",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "noms": {
+          "name": "noms",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prenoms": {
+          "name": "prenoms",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_naissance": {
+          "name": "date_naissance",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lieu_naissance": {
+          "name": "lieu_naissance",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "age_mois": {
+          "name": "age_mois",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "age_annees": {
+          "name": "age_annees",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sexe": {
+          "name": "sexe",
+          "type": "sexe",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type_residence": {
+          "name": "type_residence",
+          "type": "type_residence",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lieu_residence": {
+          "name": "lieu_residence",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scolarise": {
+          "name": "scolarise",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "personnes_vivants_avec": {
+          "name": "personnes_vivants_avec",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_nom": {
+          "name": "pere_nom",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_etat": {
+          "name": "pere_etat",
+          "type": "parent_etat",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_tel_classique": {
+          "name": "pere_tel_classique",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_tel_whatsapp": {
+          "name": "pere_tel_whatsapp",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_age": {
+          "name": "pere_age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_niveau_scolaire": {
+          "name": "pere_niveau_scolaire",
+          "type": "parent_niveau_scolaire",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_profession": {
+          "name": "pere_profession",
+          "type": "parent_profession",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_revenus": {
+          "name": "pere_revenus",
+          "type": "parent_revenus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_situation_matrimoniale": {
+          "name": "pere_situation_matrimoniale",
+          "type": "parent_situation_matrimoniale",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_religion": {
+          "name": "pere_religion",
+          "type": "parent_religion",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_groupe_sanguin": {
+          "name": "pere_groupe_sanguin",
+          "type": "groupe_sanguin",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_electrophorese": {
+          "name": "pere_electrophorese",
+          "type": "electrophorese",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_nom": {
+          "name": "mere_nom",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_etat": {
+          "name": "mere_etat",
+          "type": "parent_etat",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_tel_classique": {
+          "name": "mere_tel_classique",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_tel_whatsapp": {
+          "name": "mere_tel_whatsapp",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_age": {
+          "name": "mere_age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_niveau_scolaire": {
+          "name": "mere_niveau_scolaire",
+          "type": "parent_niveau_scolaire",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_profession": {
+          "name": "mere_profession",
+          "type": "parent_profession",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_revenus": {
+          "name": "mere_revenus",
+          "type": "parent_revenus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_situation_matrimoniale": {
+          "name": "mere_situation_matrimoniale",
+          "type": "parent_situation_matrimoniale",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_religion": {
+          "name": "mere_religion",
+          "type": "parent_religion",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_groupe_sanguin": {
+          "name": "mere_groupe_sanguin",
+          "type": "groupe_sanguin",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_electrophorese": {
+          "name": "mere_electrophorese",
+          "type": "electrophorese",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "patients_numero_fiche_unique": {
+          "name": "patients_numero_fiche_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "numero_fiche"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.electrophorese": {
+      "name": "electrophorese",
+      "schema": "public",
+      "values": [
+        "AA",
+        "AS",
+        "SS"
+      ]
+    },
+    "public.groupe_sanguin": {
+      "name": "groupe_sanguin",
+      "schema": "public",
+      "values": [
+        "A+",
+        "B+",
+        "AB+",
+        "A-",
+        "B-",
+        "AB-",
+        "O+",
+        "O-"
+      ]
+    },
+    "public.parent_etat": {
+      "name": "parent_etat",
+      "schema": "public",
+      "values": [
+        "Vivant",
+        "Décédé",
+        "Invalide",
+        "Abandon"
+      ]
+    },
+    "public.parent_niveau_scolaire": {
+      "name": "parent_niveau_scolaire",
+      "schema": "public",
+      "values": [
+        "Non scolarisé",
+        "Primaire",
+        "Secondaire",
+        "Universitaire",
+        "Post-universitaire"
+      ]
+    },
+    "public.parent_profession": {
+      "name": "parent_profession",
+      "schema": "public",
+      "values": [
+        "Secteur public",
+        "Secteur privé formel",
+        "Indépendant formel",
+        "Secteur informel",
+        "Travail précaire",
+        "Sans emploi"
+      ]
+    },
+    "public.parent_religion": {
+      "name": "parent_religion",
+      "schema": "public",
+      "values": [
+        "Christianisme",
+        "Islam",
+        "Animisme",
+        "Témoin de Jehova",
+        "Inconnue"
+      ]
+    },
+    "public.parent_revenus": {
+      "name": "parent_revenus",
+      "schema": "public",
+      "values": [
+        "<1x SMIC (<36.000)",
+        "1-2x SMIC (36.000-72.000)",
+        "2-5x SMIC (72.000-180.000)",
+        "5-10x SMIC (180.000-360.000)",
+        "10-15xSMIC (360.000-540.000)",
+        "15-20xSMIC (540.000-720.000)",
+        "20-25xSMIC (720.000-900.000)",
+        ">25xSMIC"
+      ]
+    },
+    "public.parent_situation_matrimoniale": {
+      "name": "parent_situation_matrimoniale",
+      "schema": "public",
+      "values": [
+        "Célibataire",
+        "Marié Monogame",
+        "Marié Polyandre",
+        "Marié Polygame",
+        "Veuf",
+        "Divorcé",
+        "Séparation de corps"
+      ]
+    },
+    "public.sexe": {
+      "name": "sexe",
+      "schema": "public",
+      "values": [
+        "Masculin",
+        "Féminin"
+      ]
+    },
+    "public.type_residence": {
+      "name": "type_residence",
+      "schema": "public",
+      "values": [
+        "Urbain",
+        "Péri-urbain",
+        "Rural"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
