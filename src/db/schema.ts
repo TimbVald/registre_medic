@@ -65,6 +65,7 @@ export const patients = pgTable("patients", {
   noms: varchar("noms", { length: 255 }).notNull(),
   prenoms: varchar("prenoms", { length: 255 }),
   dateNaissance: date("date_naissance"),
+  telephone: varchar("telephone", { length: 50 }),
   lieuNaissance: varchar("lieu_naissance", { length: 255 }), // from "Lieu"
   ageMois: integer("age_mois"),
   ageAnnees: integer("age_annees"),
@@ -102,6 +103,19 @@ export const patients = pgTable("patients", {
   mereGroupeSanguin: groupeSanguinEnum("mere_groupe_sanguin"),
   mereElectrophorese: electrophoreseEnum("mere_electrophorese"),
 
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Table Medecin
+export const medecins = pgTable("medecins", {
+  numeroSerie: varchar("numero_serie", { length: 100 }).primaryKey(),
+  nom: varchar("nom", { length: 255 }).notNull(),
+  prenom: varchar("prenom", { length: 255 }),
+  email: varchar("email", { length: 255 }).unique(),
+  telephone: varchar("telephone", { length: 50 }),
+  specialite: varchar("specialite", { length: 255 }),
+  motDePasse: varchar("mot_de_passe", { length: 255 }).notNull(), // Hashed password
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

@@ -4,13 +4,20 @@ import { MobileSidebar } from "@/components/dashboard/sidebar";
 import { UserButton } from "@/components/dashboard/user-button";
 import { ModeToggle } from "@/components/mode-toggle";
 
-export function Header() {
+interface HeaderProps {
+  user?: {
+    name: string;
+    email?: string;
+  };
+}
+
+export function Header({ user }: HeaderProps) {
   return (
-    <div className="flex items-center p-4 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <div className="flex items-center p-4 border-b bg-white/80 backdrop-blur-md sticky top-0 z-30 transition-all">
       <MobileSidebar />
       <div className="flex w-full justify-end items-center gap-4">
         <ModeToggle />
-        <UserButton />
+        <UserButton user={user} />
       </div>
     </div>
   );

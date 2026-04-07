@@ -1,19 +1,27 @@
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Header } from "@/components/dashboard/header";
+import { getSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
   return (
-    <div className="h-full relative">
-      <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 z-80 bg-sidebar border-r border-sidebar-border">
+    <div className="h-full relative font-sans text-zinc-900">
+      <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 z-[80] bg-zinc-50 border-r border-zinc-200">
         <Sidebar />
       </div>
-      <main className="md:pl-72">
-        <Header />
-        <div className="p-4 md:p-8">
+      <main className="md:pl-72 flex flex-col min-h-screen">
+        <Header user={session.user} />
+        <div className="flex-1 p-4 md:p-8 bg-zinc-50/50">
           {children}
         </div>
       </main>
