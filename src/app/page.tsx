@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Shield, Activity, Users, Calendar, Heart, Sun, Sparkles, Anchor, LifeBuoy, Phone, MapPin } from "lucide-react";
+import { ArrowRight, CheckCircle2, Shield, Activity, Users, Calendar, Heart, Sun, Sparkles, Anchor, LifeBuoy, Phone, MapPin, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LandingHeader } from "@/components/landing-header";
 import { DynamicHope } from "@/components/landing/dynamic-hope";
@@ -38,8 +38,14 @@ export default function LandingPage() {
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
-                  <Link href="#hope">
+                  <Link href="/doc/guide_drepanocytose.pdf" target="_blank">
                     <Button variant="outline" size="lg" className="h-14 px-8 rounded-2xl border-slate-200 text-lg hover:bg-slate-50 transition-all hover:border-secondary hover:text-secondary">
+                      <FileText className="mr-2 h-5 w-5" />
+                      Guide Clinique (PDF)
+                    </Button>
+                  </Link>
+                  <Link href="#hope">
+                    <Button variant="ghost" size="lg" className="h-14 px-8 rounded-2xl text-slate-600 hover:text-primary transition-all">
                       Messages d'espoir
                     </Button>
                   </Link>
