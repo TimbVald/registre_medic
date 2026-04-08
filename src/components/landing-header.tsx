@@ -13,31 +13,30 @@ export function LandingHeader() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="px-4 lg:px-6 h-16 flex items-center border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 sticky top-0 z-50">
-      <Link className="flex items-center justify-center gap-2 font-bold text-xl" href="#">
-        <div className="h-8 w-8 rounded-lg bg-zinc-50 flex items-center justify-center p-1 border">
-           <Image src="/logo/logo.jpeg" alt="Logo" width={32} height={32} className="object-contain" />
+    <header className="px-4 lg:px-6 h-20 flex items-center border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+      <Link className="flex items-center justify-center gap-3 font-bold text-2xl group" href="/">
+        <div className="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform duration-300">
+           <Activity className="h-6 w-6 text-white" />
         </div>
-        <span>MediCare</span>
+        <span className="tracking-tight text-slate-900">MediCare</span>
       </Link>
-      <nav className="ml-auto hidden md:flex gap-4 sm:gap-6">
-        <Link className="text-sm font-medium hover:underline underline-offset-4 flex items-center" href="#features">
-          Fonctionnalités
+      <nav className="ml-auto hidden md:flex gap-8">
+        <Link className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors" href="#hope">
+          Espoir
         </Link>
-        <Link className="text-sm font-medium hover:underline underline-offset-4 flex items-center" href="#testimonials">
-          Témoignages
+        <Link className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors" href="#features">
+          Services
         </Link>
-        <Link className="text-sm font-medium hover:underline underline-offset-4 flex items-center" href="#pricing">
-          Tarifs
+        <Link className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors" href="#contact">
+          Contact
         </Link>
       </nav>
-      <div className="ml-4 hidden md:flex gap-2 items-center">
-        <ModeToggle />
+      <div className="ml-8 hidden md:flex gap-3 items-center">
         <Link href="/login">
-          <Button variant="ghost" size="sm">Se connecter</Button>
+          <Button variant="ghost" className="font-semibold text-slate-600 hover:text-blue-600 rounded-xl">Connexion</Button>
         </Link>
         <Link href="/register">
-          <Button size="sm">S&rsquo;inscrire</Button>
+          <Button className="bg-slate-900 hover:bg-slate-800 text-white px-6 rounded-xl font-semibold shadow-lg shadow-slate-200 transition-all hover:scale-105 active:scale-95">S'inscrire</Button>
         </Link>
       </div>
       <div className="ml-auto md:hidden flex items-center gap-2">

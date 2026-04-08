@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Users, Calendar, Euro, Activity, PlusCircle, UserPlus, FileText, ArrowUpRight } from "lucide-react";
 import { db } from "@/db";
 import { patients } from "@/db/schema";
