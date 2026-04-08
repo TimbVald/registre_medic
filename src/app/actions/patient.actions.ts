@@ -63,13 +63,13 @@ export async function createPatient(data: z.infer<typeof patientSchema>) {
     const numeroFiche = `P-${annee}-${numeroAleatoire}`;
 
     // Insertion dans la base de données via Drizzle
-    await db.insert(patients).values({
+    const [newPatient] = await db.insert(patients).values({
       ...validatedData,
       numeroFiche,
       dateNaissance: validatedData.dateNaissance.toISOString().split('T')[0],
       pereReligion: validatedData.pereReligion as any,
       mereReligion: validatedData.mereReligion as any
-    } as any);
+    } as any).returning();
 
     // Revalider le cache pour mettre à jour la liste des patients
     revalidatePath("/dashboard/patients");
@@ -77,10 +77,11 @@ export async function createPatient(data: z.infer<typeof patientSchema>) {
     return { 
       success: true, 
       message: "Patient enregistré avec succès",
-      numeroFiche 
+      numeroFiche,
+      patientId: newPatient.id
     };
   } catch (error) {
-    console.error("Erreur l'ors de l'enregistrement du patient :", error);
+    console.error("Erreur lors de l'enregistrement du patient :", error);
     if (error instanceof z.ZodError) {
       return { success: false, error: "Erreur de validation des données", details: error.errors };
     }
@@ -135,8 +136,31 @@ export async function getPatients(search?: string) {
  */
 export async function getPatientById(id: string) {
   try {
+    if (!id) return null;
+
+    // Vérifier si l'ID est un UUID valide avant de requêter la DB
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    let patient = null;
+
+    if (isUUID) {
+      // Tentative de récupération par ID (UUID)
+      patient = await db.query.patients.findFirst({
+        where: eq(patients.id, id),
+        with: {
+          consultationsExternes: true,
+          antecedents: true,
+          examensParacliniques: true,
+        }
+      });
+    }
+
+    if (patient) return patient;
+
+    // Fallback : Si l'ID n'est pas trouvé ou n'est pas un UUID, 
+    // on tente de chercher par numeroFiche 
+    // au cas où l'ID passé dans l'URL serait le numéro de fiche
     return await db.query.patients.findFirst({
-      where: eq(patients.id, id),
+      where: eq(patients.numeroFiche, id),
       with: {
         consultationsExternes: true,
         antecedents: true,
@@ -144,7 +168,7 @@ export async function getPatientById(id: string) {
       }
     });
   } catch (error) {
-    console.error("Erreur l'ors de la récupération du patient :", error);
+    console.error("Erreur lors de la récupération du patient :", error);
     return null;
   }
 }
