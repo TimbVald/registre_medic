@@ -100,10 +100,10 @@ export default function PatientForm({ initialData }: { initialData?: any }) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <Tabs defaultValue="identification" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-6">
-              <TabsTrigger value="identification">Identification Patient</TabsTrigger>
-              <TabsTrigger value="pere">Info Père/Tuteur</TabsTrigger>
-              <TabsTrigger value="mere">Info Mère/Tutrice</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3 mb-6 h-auto p-1 bg-zinc-100/50 rounded-xl">
+              <TabsTrigger value="identification" className="py-2.5 rounded-lg data-[state=active]:shadow-sm text-xs sm:text-sm">Patient</TabsTrigger>
+              <TabsTrigger value="pere" className="py-2.5 rounded-lg data-[state=active]:shadow-sm text-xs sm:text-sm">Père/Tuteur</TabsTrigger>
+              <TabsTrigger value="mere" className="py-2.5 rounded-lg data-[state=active]:shadow-sm text-xs sm:text-sm">Mère/Tutrice</TabsTrigger>
             </TabsList>
 
             <TabsContent value="identification" className="space-y-6">
