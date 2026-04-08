@@ -139,32 +139,27 @@ export async function getPatientById(id: string) {
     if (!id) return null;
     
     // Nettoyer l'ID
-    const cleanId = id.trim();
+    const cleanId = decodeURIComponent(id).trim();
 
-    // Vérifier si l'ID est un UUID valide avant de requêter la DB
-    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanId);
-    let patient = null;
-
-    if (isUUID) {
-      // Tentative de récupération par ID (UUID)
-      // On récupère d'abord le patient seul pour vérifier s'il existe
-      patient = await db.query.patients.findFirst({
-        where: eq(patients.id, cleanId),
-        with: {
-          consultationsExternes: true,
-          antecedents: true,
-          examensParacliniques: true,
+    // 1. Recherche directe (ID, Numéro de Fiche ou Nom complet)
+    const patient = await db.query.patients.findFirst({
+      where: (patients, { eq, or, ilike }) => {
+        const conditions = [];
+        
+        // Si c'est un UUID valide
+        if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanId)) {
+          conditions.push(eq(patients.id, cleanId));
         }
-      });
-    }
-
-    if (patient) return patient;
-
-    // Fallback : Si l'ID n'est pas trouvé ou n'est pas un UUID, 
-    // on tente de chercher par numeroFiche (insensible à la casse)
-    // On utilise ilike pour être plus robuste
-    patient = await db.query.patients.findFirst({
-      where: ilike(patients.numeroFiche, cleanId),
+        
+        // Toujours chercher par numéro de fiche
+        conditions.push(ilike(patients.numeroFiche, cleanId));
+        
+        // Fallback par nom/prénom au cas où
+        conditions.push(ilike(patients.noms, cleanId));
+        conditions.push(ilike(patients.prenoms, cleanId));
+        
+        return or(...conditions);
+      },
       with: {
         consultationsExternes: true,
         antecedents: true,
@@ -174,25 +169,41 @@ export async function getPatientById(id: string) {
 
     if (patient) return patient;
 
-    // Dernier recours : Recherche par nom si l'ID ressemble à un nom
-    // Utile si l'utilisateur essaie de naviguer manuellement par nom
-    if (cleanId.length > 3 && !isUUID && !cleanId.startsWith('P-')) {
-       patient = await db.query.patients.findFirst({
-         where: or(
-           ilike(patients.noms, `%${cleanId}%`),
-           ilike(patients.prenoms, `%${cleanId}%`)
-         ),
-         with: {
-           consultationsExternes: true,
-           antecedents: true,
-           examensParacliniques: true,
-         }
-       });
-    }
+    // 2. Recherche par correspondance partielle (nom)
+    return await db.query.patients.findFirst({
+      where: or(
+        ilike(patients.noms, `%${cleanId}%`),
+        ilike(patients.prenoms, `%${cleanId}%`)
+      ),
+      with: {
+        consultationsExternes: true,
+        antecedents: true,
+        examensParacliniques: true,
+      }
+    });
 
-    return patient;
   } catch (error) {
-    console.error("Erreur lors de la récupération du patient :", error);
+    console.error("Erreur critique getPatientById:", error);
+    // En cas d'erreur de relation ou autre, on tente une requête minimale
+    try {
+      const cleanId = decodeURIComponent(id).trim();
+      const basic = await db.select().from(patients).where(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanId)
+        ? eq(patients.id, cleanId as any)
+        : eq(patients.numeroFiche, cleanId)
+      ).limit(1);
+      
+      if (basic[0]) {
+        return {
+          ...basic[0],
+          consultationsExternes: [],
+          antecedents: [],
+          examensParacliniques: []
+        };
+      }
+    } catch (e) {
+      return null;
+    }
     return null;
   }
 }

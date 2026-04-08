@@ -36,8 +36,15 @@ import { AppointmentsList } from "@/components/appointments/appointments-list";
 import { notFound } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-export default async function PatientDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function PatientDetailsPage({ params }: { params: any }) {
+  // Gestion robuste des params (Promise ou non)
+  const resolvedParams = params instanceof Promise ? await params : await Promise.resolve(params);
+  const { id } = resolvedParams;
+  
+  if (!id) {
+    notFound();
+  }
+
   const patient = await getPatientById(id);
 
   if (!patient) {
