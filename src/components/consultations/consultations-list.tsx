@@ -35,13 +35,21 @@ export function ConsultationsList({ consultations }: ConsultationsListProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const filteredConsultations = consultations.filter((consultation) =>
-    consultation.patient?.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    consultation.patient?.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    consultation.doctor?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    consultation.diagnosis.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    consultation.symptoms.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredConsultations = consultations.filter((consultation: any) => {
+    const patientNoms = consultation.patient?.noms || consultation.patient?.lastName || "";
+    const patientPrenoms = consultation.patient?.prenoms || consultation.patient?.firstName || "";
+    const symptoms = consultation.symptoms || (consultation.plaintesDetails && Array.isArray(consultation.plaintesDetails) ? consultation.plaintesDetails.join(", ") : "");
+    const diagnosis = consultation.diagnosis || consultation.etatGeneral || "";
+    const doctorName = consultation.doctor?.name || "";
+
+    return (
+      patientNoms.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patientPrenoms.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doctorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      diagnosis.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      symptoms.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   const totalPages = Math.ceil(filteredConsultations.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -93,67 +101,77 @@ export function ConsultationsList({ consultations }: ConsultationsListProps) {
                 </TableCell>
               </TableRow>
             ) : (
-              currentConsultations.map((consultation) => (
-                <TableRow key={consultation.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${consultation.patient?.id}`} />
-                        <AvatarFallback>{getInitials(`${consultation.patient?.firstName} ${consultation.patient?.lastName}`)}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex flex-col">
-                        <span className="font-medium">{consultation.patient?.firstName} {consultation.patient?.lastName}</span>
-                        <span className="text-xs text-muted-foreground">{consultation.patient?.phone}</span>
+              currentConsultations.map((consultation: any) => {
+                const patientFirstName = consultation.patient?.prenoms || consultation.patient?.firstName || "";
+                const patientLastName = consultation.patient?.noms || consultation.patient?.lastName || "";
+                const patientPhone = consultation.patient?.telephone || consultation.patient?.phone || "";
+                const date = consultation.dateConsultation || consultation.date;
+                const symptoms = consultation.symptoms || (consultation.plaintesDetails && Array.isArray(consultation.plaintesDetails) ? consultation.plaintesDetails.join(", ") : "");
+                const diagnosis = consultation.diagnosis || consultation.etatGeneral || "Consultation";
+                const doctorName = consultation.doctor?.name || "Médecin";
+
+                return (
+                  <TableRow key={consultation.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${consultation.patientId || consultation.patient?.id}`} />
+                          <AvatarFallback>{getInitials(`${patientFirstName} ${patientLastName}`)}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{patientFirstName} {patientLastName}</span>
+                          <span className="text-xs text-muted-foreground">{patientPhone}</span>
+                        </div>
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-muted-foreground" />
-                      <span>{consultation.doctor?.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <span>
-                        {format(new Date(consultation.date), "d MMMM yyyy", { locale: fr })}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="max-w-[200px] truncate" title={consultation.symptoms}>
-                    {consultation.symptoms}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className="font-normal">
-                      <Stethoscope className="mr-1 h-3 w-3" />
-                      {consultation.diagnosis}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Ouvrir menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                          <Eye className="mr-2 h-4 w-4" />
-                          Voir détails
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <FileText className="mr-2 h-4 w-4" />
-                          Imprimer ordonnance
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                        <span>{doctorName}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <span>
+                          {format(new Date(date), "d MMMM yyyy", { locale: fr })}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="max-w-[200px] truncate" title={symptoms}>
+                      {symptoms}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="font-normal">
+                        <Stethoscope className="mr-1 h-3 w-3" />
+                        {diagnosis}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Ouvrir menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem>
+                            <Eye className="mr-2 h-4 w-4" />
+                            Voir détails
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <FileText className="mr-2 h-4 w-4" />
+                            Imprimer ordonnance
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>

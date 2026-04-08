@@ -1,44 +1,34 @@
-"use client";
-
 import Link from "next/link";
-import { Plus, Search, Filter, MoreHorizontal, FileText, Eye } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Consultation } from "@/types";
-
-import { mockConsultations } from "@/lib/mock-data";
 import { ConsultationsList } from "@/components/consultations/consultations-list";
+import { getConsultations } from "@/app/actions/patient.actions";
 
-export default function ConsultationsPage() {
+export default async function ConsultationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ query?: string }>;
+}) {
+  const { query } = await searchParams;
+  const consultations = await getConsultations(query);
+
+  // Mappe les données réelles vers le type attendu par ConsultationsList si nécessaire
+  // Le type Consultation attendu par ConsultationsList est différent du schéma DB.
+  // On va adapter ConsultationsList pour supporter les deux ou créer une version pour les données réelles.
+  
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <h2 className="text-3xl font-bold tracking-tight">Consultations</h2>
+        <h2 className="text-3xl font-bold tracking-tight text-zinc-900">Consultations</h2>
         <Link href="/dashboard/patients">
-          <Button>
+          <Button className="rounded-xl shadow-lg shadow-primary/20 bg-emerald-600 hover:bg-emerald-700">
             <Plus className="mr-2 h-4 w-4" />
             Nouvelle Consultation
           </Button>
         </Link>
       </div>
 
-      <ConsultationsList consultations={mockConsultations} />
+      <ConsultationsList consultations={consultations as any} />
     </div>
   );
 }

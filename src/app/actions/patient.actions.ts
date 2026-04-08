@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
-import { patients } from "@/db/schema";
+import { patients, consultationsExternes } from "@/db/schema";
 import { patientSchema } from "@/lib/schemas/patient.schema";
-import { eq, ilike, or, desc } from "drizzle-orm";
+import { eq, ilike, or, desc, sql } from "drizzle-orm";
 
 export async function createPatient(data: z.infer<typeof patientSchema>) {
   try {
@@ -97,5 +97,55 @@ export async function getPatientById(id: string) {
   } catch (error) {
     console.error("Erreur l'ors de la récupération du patient :", error);
     return null;
+  }
+}
+
+/**
+  * Récupère les dossiers médicaux (patients avec leurs consultations)
+  */
+export async function getMedicalRecords(search?: string) {
+  try {
+    const tSearch = search ? `%${search}%` : undefined;
+    
+    return await db.query.patients.findMany({
+      where: tSearch ? or(
+        ilike(patients.noms, tSearch),
+        ilike(patients.prenoms, tSearch),
+        ilike(patients.numeroFiche, tSearch)
+      ) : undefined,
+      with: {
+        consultationsExternes: true,
+      },
+      orderBy: [desc(patients.createdAt)],
+    });
+  } catch (error) {
+    console.error("Erreur lors de la récupération des dossiers médicaux :", error);
+    return [];
+  }
+}
+
+/**
+ * Récupère toutes les consultations avec les infos patients
+ */
+export async function getConsultations(search?: string) {
+  try {
+    const tSearch = search ? `%${search}%` : undefined;
+
+    return await db.query.consultationsExternes.findMany({
+      with: {
+        patient: true,
+      },
+      where: tSearch ? or(
+        // Recherche sur les champs du patient via la relation ?
+        // Drizzle supporte ilike sur les tables jointes ? 
+        // En findMany with, c'est plus compliqué.
+        // On va rester simple pour le moment et chercher sur les plaintes ou diagnostic si existait
+        ilike(consultationsExternes.plaintesAutre, tSearch),
+      ) : undefined,
+      orderBy: [desc(consultationsExternes.dateConsultation)],
+    });
+  } catch (error) {
+    console.error("Erreur lors de la récupération des consultations :", error);
+    return [];
   }
 }
