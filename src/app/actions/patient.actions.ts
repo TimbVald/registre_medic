@@ -137,15 +137,19 @@ export async function getPatients(search?: string) {
 export async function getPatientById(id: string) {
   try {
     if (!id) return null;
+    
+    // Nettoyer l'ID
+    const cleanId = id.trim();
 
     // Vérifier si l'ID est un UUID valide avant de requêter la DB
-    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanId);
     let patient = null;
 
     if (isUUID) {
       // Tentative de récupération par ID (UUID)
+      // On récupère d'abord le patient seul pour vérifier s'il existe
       patient = await db.query.patients.findFirst({
-        where: eq(patients.id, id),
+        where: eq(patients.id, cleanId),
         with: {
           consultationsExternes: true,
           antecedents: true,
@@ -157,16 +161,36 @@ export async function getPatientById(id: string) {
     if (patient) return patient;
 
     // Fallback : Si l'ID n'est pas trouvé ou n'est pas un UUID, 
-    // on tente de chercher par numeroFiche 
-    // au cas où l'ID passé dans l'URL serait le numéro de fiche
-    return await db.query.patients.findFirst({
-      where: eq(patients.numeroFiche, id),
+    // on tente de chercher par numeroFiche (insensible à la casse)
+    // On utilise ilike pour être plus robuste
+    patient = await db.query.patients.findFirst({
+      where: ilike(patients.numeroFiche, cleanId),
       with: {
         consultationsExternes: true,
         antecedents: true,
         examensParacliniques: true,
       }
     });
+
+    if (patient) return patient;
+
+    // Dernier recours : Recherche par nom si l'ID ressemble à un nom
+    // Utile si l'utilisateur essaie de naviguer manuellement par nom
+    if (cleanId.length > 3 && !isUUID && !cleanId.startsWith('P-')) {
+       patient = await db.query.patients.findFirst({
+         where: or(
+           ilike(patients.noms, `%${cleanId}%`),
+           ilike(patients.prenoms, `%${cleanId}%`)
+         ),
+         with: {
+           consultationsExternes: true,
+           antecedents: true,
+           examensParacliniques: true,
+         }
+       });
+    }
+
+    return patient;
   } catch (error) {
     console.error("Erreur lors de la récupération du patient :", error);
     return null;
