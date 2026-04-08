@@ -7,13 +7,17 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 import { ModeToggle } from "@/components/mode-toggle";
 
+import Image from "next/image";
+
 export function LandingHeader() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <header className="px-4 lg:px-6 h-16 flex items-center border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 sticky top-0 z-50">
       <Link className="flex items-center justify-center gap-2 font-bold text-xl" href="#">
-        <Activity className="h-6 w-6 text-primary" />
+        <div className="h-8 w-8 rounded-lg bg-zinc-50 flex items-center justify-center p-1 border">
+           <Image src="/logo/logo.jpeg" alt="Logo" width={32} height={32} className="object-contain" />
+        </div>
         <span>MediCare</span>
       </Link>
       <nav className="ml-auto hidden md:flex gap-4 sm:gap-6">

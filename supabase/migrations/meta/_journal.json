@@ -8,6 +8,20 @@
       "when": 1775545987149,
       "tag": "0000_next_satana",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1775575443907,
+      "tag": "0001_silly_red_wolf",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775576015640,
+      "tag": "0002_flashy_enchantress",
+      "breakpoints": true
     }
   ]
 }

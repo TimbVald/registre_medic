@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -26,49 +27,49 @@ const routes = [
     label: "Tableau de bord",
     icon: LayoutDashboard,
     href: "/dashboard",
-    color: "text-blue-600",
+    color: "text-zinc-600",
   },
   {
     label: "Patients",
     icon: Users,
     href: "/dashboard/patients",
-    color: "text-indigo-600",
+    color: "text-primary",
   },
   {
     label: "Dossiers Médicaux",
     icon: FileText,
     href: "/dashboard/records",
-    color: "text-emerald-600",
+    color: "text-secondary",
   },
   {
     label: "Rendez-vous",
     icon: Calendar,
     href: "/dashboard/appointments",
-    color: "text-orange-600",
+    color: "text-primary",
   },
   {
     label: "Consultations",
     icon: Stethoscope,
     href: "/dashboard/consultations",
-    color: "text-rose-600",
+    color: "text-primary",
   },
   {
     label: "Prescriptions",
     icon: Pill,
     href: "/dashboard/prescriptions",
-    color: "text-purple-600",
+    color: "text-secondary",
   },
   {
     label: "Traitements",
     icon: Activity,
     href: "/dashboard/treatments",
-    color: "text-cyan-600",
+    color: "text-secondary",
   },
   {
     label: "Facturation",
     icon: CreditCard,
     href: "/dashboard/billing",
-    color: "text-amber-600",
+    color: "text-zinc-600",
   },
   {
     label: "Paramètres",
@@ -77,7 +78,6 @@ const routes = [
     color: "text-zinc-500",
   },
 ];
-
 export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
@@ -85,15 +85,15 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
     <div className="flex flex-col h-full bg-white/50 backdrop-blur-xl border-r border-zinc-200/50 shadow-sm overflow-y-auto no-scrollbar">
       <div className="px-6 py-8 flex-1">
         <Link href="/dashboard" className="flex items-center mb-10 group" onClick={onNavigate}>
-          <div className="relative w-10 h-10 mr-3 transition-transform group-hover:scale-110">
-             <div className="absolute inset-0 bg-primary/20 rounded-xl blur-lg animate-pulse" />
-             <div className="relative bg-primary rounded-xl w-full h-full flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/30">
-               M
+          <div className="relative w-11 h-11 mr-3 transition-transform group-hover:rotate-3">
+             <div className="absolute inset-0 bg-primary/20 rounded-xl blur-md" />
+             <div className="relative bg-white border border-zinc-100 rounded-xl w-full h-full flex items-center justify-center overflow-hidden shadow-md">
+                <Image src="/logo/logo.jpeg" alt="Logo" width={44} height={44} className="object-contain p-1" />
              </div>
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-zinc-900">MediCare</h1>
-            <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">Clinique Digitale</p>
+            <h1 className="text-xl font-bold tracking-tight text-zinc-900 leading-tight">MediCare</h1>
+            <p className="text-[10px] uppercase tracking-widest text-primary font-bold">Fondation Chantal Biya</p>
           </div>
         </Link>
         <div className="space-y-1.5">

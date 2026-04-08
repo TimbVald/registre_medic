@@ -1,4 +1,5 @@
-import { pgTable, text, varchar, date, integer, boolean, pgEnum, uuid, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, date, integer, boolean, pgEnum, uuid, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
 // Enums pour le Patient
 export const sexeEnum = pgEnum("sexe", ["Masculin", "Féminin"]);
@@ -66,6 +67,7 @@ export const patients = pgTable("patients", {
   prenoms: varchar("prenoms", { length: 255 }),
   dateNaissance: date("date_naissance"),
   telephone: varchar("telephone", { length: 50 }),
+  email: varchar("email", { length: 255 }),
   lieuNaissance: varchar("lieu_naissance", { length: 255 }), // from "Lieu"
   ageMois: integer("age_mois"),
   ageAnnees: integer("age_annees"),
@@ -119,3 +121,168 @@ export const medecins = pgTable("medecins", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+// --- Nouveaux Enums pour les Antécédents ---
+export const depistageTypeEnum = pgEnum("depistage_type", ["Anténatal", "Néonatal", "Post-natal"]);
+export const familleLienEnum = pgEnum("famille_lien", ["Fratrie", "Famille paternelle", "Famille maternelle"]);
+export const nbCasEnum = pgEnum("nb_cas", ["01", "02", "03", "04", "Plus"]);
+
+// --- Table Antécédents ---
+export const antecedents = pgTable("antecedents", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  patientId: uuid("patient_id").references(() => patients.id, { onDelete: "cascade" }).notNull(),
+  
+  // Âge de découverte
+  ageDecouverteAnnees: integer("age_decouverte_annees"),
+  ageDecouverteMois: integer("age_decouverte_mois"),
+  
+  // Circonstances de découverte
+  circonstancesDecouverte: text("circonstances_decouverte").array(), // Multi-select
+  typeDepistage: depistageTypeEnum("type_depistage"),
+  
+  // Histoire Familiale
+  notionFamilleDrepanocytose: boolean("notion_famille_drepanocytose").default(false),
+  liensFamille: familleLienEnum("liens_famille").array(), // Multi-select
+  nbFreresSoeursDrepanocytaires: nbCasEnum("nb_freres_soeurs_drepanocytaires"),
+  decesFamilleDrepanocytose: boolean("deces_famille_drepanocytose").default(false),
+  nbDecesFamille: nbCasEnum("nb_deces_famille"),
+  
+  // Complications
+  complicationsAigues: text("complications_aigues").array(), // Multi-select (Anémie, Crise, etc.)
+  complicationsChroniques: text("complications_chroniques").array(), // Multi-select
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// --- Enums pour les Examens Paracliniques ---
+export const causeNonRealisationEnum = pgEnum("cause_non_realisation", [
+  "Manque d'argent",
+  "Distance/Transport difficile",
+  "Manque de compréhension de l'utilité",
+  "Manque de temps/Travail",
+  "Charge familiale",
+  "Manque de rappel",
+  "Autre"
+]);
+
+export const interpretationHemoEnum = pgEnum("interpretation_hemo", ["Normal", "Diminué (Anémie)", "Augmenté (Polyglobulie)"]);
+export const interpretationReticEnum = pgEnum("interpretation_retic", ["Normal", "Diminué (Production médullaire insuffisante)", "Augmenté (Réponse médullaire accrue)"]);
+export const interpretationGBEnum = pgEnum("interpretation_gb", ["Normal", "Diminué (Leucopénie)", "Augmenté (Leucocytose)"]);
+export const interpretationPlaqEnum = pgEnum("interpretation_plaq", ["Normal", "Diminué (Thrombopénie)", "Augmenté (Thrombocytose)"]);
+export const interpretationAsatAlatEnum = pgEnum("interpretation_asat_alat", ["Normal", "Augmenté (Cytolyse hépatite)"]);
+
+// --- Table Examens Paracliniques ---
+export const examensParacliniques = pgTable("examens_paracliniques", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  patientId: uuid("patient_id").references(() => patients.id, { onDelete: "cascade" }).notNull(),
+  
+  // Hémoglobine
+  hemoRealise: boolean("hemo_realise").default(false),
+  hemoCause: causeNonRealisationEnum("hemo_cause"),
+  hemoTauxBase: varchar("hemo_taux_base", { length: 100 }),
+  hemoTauxRecent: varchar("hemo_taux_recent", { length: 100 }),
+  hemoInterpretation: interpretationHemoEnum("hemo_interpretation"),
+  
+  // Réticulocytes
+  reticRealise: boolean("retic_realise").default(false),
+  reticCause: causeNonRealisationEnum("retic_cause"),
+  reticTauxBase: varchar("retic_taux_base", { length: 100 }),
+  reticTauxRecent: varchar("retic_taux_recent", { length: 100 }),
+  reticInterpretation: interpretationReticEnum("retic_interpretation"),
+
+  // Globules Blancs
+  gbRealise: boolean("gb_realise").default(false),
+  gbCause: causeNonRealisationEnum("gb_cause"),
+  gbTauxBase: varchar("gb_taux_base", { length: 100 }),
+  gbTauxRecent: varchar("gb_taux_recent", { length: 100 }),
+  gbInterpretation: interpretationGBEnum("gb_interpretation"),
+
+  // Plaquettes
+  plaqRealise: boolean("plaq_realise").default(false),
+  plaqCause: causeNonRealisationEnum("plaq_cause"),
+  plaqTauxBase: varchar("plaq_taux_base", { length: 100 }),
+  plaqTauxRecent: varchar("plaq_taux_recent", { length: 100 }),
+  plaqInterpretation: interpretationPlaqEnum("plaq_interpretation"),
+
+  // ASAT/ALAT
+  asatAlatRealise: boolean("asat_alat_realise").default(false),
+  asatAlatCause: causeNonRealisationEnum("asat_alat_cause"),
+  asatAlatTauxBase: varchar("asat_alat_taux_base", { length: 100 }),
+  asatAlatInterpretation: interpretationAsatAlatEnum("asat_alat_interpretation"),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// --- Enums pour les Consultations ---
+export const etatGeneralEnum = pgEnum("etat_general", ["Satisfaisant", "Non satisfaisant"]);
+export const rdvHonoreEnum = pgEnum("rdv_honore", ["Oui", "Non"]);
+export const frequenceRappelEnum = pgEnum("frequence_rappel", ["01 fois/sem.", "02 fois/sem.", "03 fois/sem."]);
+export const modeRappelEnum = pgEnum("mode_rappel", ["SMS classique", "Appel classique", "WhatsApp (SMS)"]);
+export const conclusionTraitementEnum = pgEnum("conclusion_traitement", ["Adhérence", "Compliance", "Observance"]);
+export const regulariteTraitementEnum = pgEnum("regularite_traitement", ["Régulier", "Irrégulier"]);
+
+// --- Table Consultations Externes ---
+export const consultationsExternes = pgTable("consultations_externes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  patientId: uuid("patient_id").references(() => patients.id, { onDelete: "cascade" }).notNull(),
+  dateConsultation: date("date_consultation").defaultNow().notNull(),
+  
+  // Paramètres
+  etatGeneral: etatGeneralEnum("etat_general"),
+  temperature: varchar("temperature", { length: 10 }),
+  fc: varchar("fc", { length: 10 }),
+  fr: varchar("fr", { length: 10 }),
+  pa: varchar("pa", { length: 20 }),
+  sao2: varchar("sao2", { length: 10 }),
+  
+  // Plaintes
+  plaintesExist: boolean("plaintes_exist").default(false),
+  plaintesDetails: text("plaintes_details").array(), // Multi-select symptoms
+  plaintesAutre: text("plaintes_autre"),
+  
+  // Données RDV
+  dateRdvPrevue: date("date_rdv_prevue"),
+  rdvHonore: rdvHonoreEnum("rdv_honore"),
+  rappelFrequence: frequenceRappelEnum("rappel_frequence"),
+  rappelReception: boolean("rappel_reception").default(false),
+  rappelRetour: boolean("rappel_retour").default(false),
+  rappelMode: modeRappelEnum("rappel_mode"),
+  causeNonHonore: text("cause_non_honore"),
+  
+  // Traitement (Stockés en JSON pour la flexibilité des posologies/causes)
+  traitementAcideFolique: jsonb("traitement_acide_folique"),
+  traitementHydroxyuree: jsonb("traitement_hydroxyuree"),
+  traitementAntibioProphylaxie: jsonb("traitement_antibio_prophylaxie"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// --- Relations ---
+export const patientsRelations = relations(patients, ({ many }) => ({
+  antecedents: many(antecedents),
+  examensParacliniques: many(examensParacliniques),
+  consultationsExternes: many(consultationsExternes),
+}));
+
+export const antecedentsRelations = relations(antecedents, ({ one }) => ({
+  patient: one(patients, {
+    fields: [antecedents.patientId],
+    references: [patients.id],
+  }),
+}));
+
+export const examensParacliniquesRelations = relations(examensParacliniques, ({ one }) => ({
+  patient: one(patients, {
+    fields: [examensParacliniques.patientId],
+    references: [patients.id],
+  }),
+}));
+
+export const consultationsExternesRelations = relations(consultationsExternes, ({ one }) => ({
+  patient: one(patients, {
+    fields: [consultationsExternes.patientId],
+    references: [patients.id],
+  }),
+}));

@@ -57,6 +57,8 @@ export const patientSchema = z.object({
   dateNaissance: z.date({
     required_error: "La date de naissance est requise.",
   }),
+  email: z.string().email("L'email doit être valide.").optional().or(z.literal("")),
+  telephone: z.string().optional().or(z.literal("")),
   lieuNaissance: z.string().optional(),
   ageMois: z.number().optional(),
   ageAnnees: z.number().optional(),

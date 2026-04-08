@@ -17,7 +17,9 @@ import {
   ArrowLeft,
   Baby,
   Dna,
-  Heart
+  Heart,
+  History,
+  FlaskConical
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -58,8 +60,18 @@ export default async function PatientDetailsPage({ params }: { params: Promise<{
               <Edit className="mr-2 h-4 w-4" /> Modifier le profil
             </Link>
           </Button>
+          <Button variant="outline" asChild className="rounded-xl border-zinc-200">
+            <Link href={`/dashboard/patients/${patient.id}/antecedents/new`}>
+              <History className="mr-2 h-4 w-4" /> Antécédents
+            </Link>
+          </Button>
+          <Button variant="outline" asChild className="rounded-xl border-zinc-200">
+            <Link href={`/dashboard/patients/${patient.id}/examens`}>
+              <FlaskConical className="mr-2 h-4 w-4" /> Bilan Paraclinique
+            </Link>
+          </Button>
           <Button className="rounded-xl shadow-lg shadow-primary/20 bg-emerald-600 hover:bg-emerald-700" asChild>
-            <Link href={`/dashboard/consultations/new?patientId=${patient.id}`}>
+            <Link href={`/dashboard/patients/${patient.id}/consultations/new`}>
                <Stethoscope className="mr-2 h-4 w-4" /> Nouvelle Consultation
             </Link>
           </Button>
@@ -274,7 +286,7 @@ export default async function PatientDetailsPage({ params }: { params: Promise<{
                     <div className="flex items-center justify-between">
                          <CardTitle className="text-sm font-bold">Dernières Consultations</CardTitle>
                          <Button size="sm" className="rounded-lg h-9" asChild>
-                            <Link href={`/dashboard/consultations/new?patientId=${patient.id}`}>
+                            <Link href={`/dashboard/patients/${patient.id}/consultations/new`}>
                                 <Plus className="mr-2 h-4 w-4" /> Nouveau rapport
                             </Link>
                          </Button>

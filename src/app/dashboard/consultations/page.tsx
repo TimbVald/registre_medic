@@ -30,7 +30,7 @@ export default function ConsultationsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <h2 className="text-3xl font-bold tracking-tight">Consultations</h2>
-        <Link href="/dashboard/consultations/new">
+        <Link href="/dashboard/patients">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
             Nouvelle Consultation

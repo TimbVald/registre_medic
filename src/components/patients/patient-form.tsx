@@ -53,6 +53,8 @@ export default function PatientForm({ initialData }: { initialData?: any }) {
       lieuResidence: initialData.lieuResidence || "",
       scolarise: initialData.scolarise || false,
       personnesVivantsAvec: initialData.personnesVivantsAvec || "",
+      email: initialData.email || "",
+      telephone: initialData.telephone || "",
       pereNom: initialData.pereNom || "",
       mereNom: initialData.mereNom || "",
       // Add more fields if necessary...
@@ -128,6 +130,34 @@ export default function PatientForm({ initialData }: { initialData?: any }) {
                       <FormLabel>Prénoms</FormLabel>
                       <FormControl>
                         <Input placeholder="Prénoms" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="telephone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Téléphone</FormLabel>
+                      <FormControl>
+                        <Input placeholder="+237..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="exemple@mail.com" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

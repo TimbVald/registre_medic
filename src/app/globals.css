@@ -55,31 +55,31 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.48 0.16 250); /* Medical Blue */
+  --primary: oklch(0.6 0.2 340); /* Rose FCB - Vibrant Pink */
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.94 0.04 160); /* Soothing Mint */
-  --secondary-foreground: oklch(0.35 0.15 160);
+  --secondary: oklch(0.7 0.15 160); /* Vert Santé - Medical Green */
+  --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.94 0.04 250); /* Light Blue Tint */
-  --accent-foreground: oklch(0.35 0.15 250);
+  --accent: oklch(0.94 0.04 340); /* Very Light Rose */
+  --accent-foreground: oklch(0.35 0.15 340);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.48 0.16 250);
-  --chart-1: oklch(0.48 0.16 250); /* Blue */
-  --chart-2: oklch(0.65 0.18 150); /* Green */
+  --ring: oklch(0.6 0.2 340);
+  --chart-1: oklch(0.6 0.2 340);
+  --chart-2: oklch(0.7 0.15 160);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.48 0.16 250);
+  --sidebar-primary: oklch(0.6 0.2 340);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.96 0.02 250);
-  --sidebar-accent-foreground: oklch(0.48 0.16 250);
+  --sidebar-accent: oklch(0.96 0.02 340);
+  --sidebar-accent-foreground: oklch(0.6 0.2 340);
   --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.48 0.16 250);
+  --sidebar-ring: oklch(0.6 0.2 340);
 }
 
 .dark {
