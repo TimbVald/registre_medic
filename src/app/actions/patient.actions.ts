@@ -5,7 +5,51 @@ import { z } from "zod";
 import { db } from "@/db";
 import { patients, consultationsExternes } from "@/db/schema";
 import { patientSchema } from "@/lib/schemas/patient.schema";
-import { eq, ilike, or, desc, sql } from "drizzle-orm";
+import { eq, ilike, or, desc, sql, and } from "drizzle-orm";
+
+/**
+ * Récupère une consultation systématique pour un patient
+ */
+export async function getSystematicConsultation(patientId: string) {
+  try {
+    return await db.query.consultationsExternes.findFirst({
+      where: and(
+        eq(consultationsExternes.patientId, patientId),
+        eq(consultationsExternes.typeConsultation, "Systématique")
+      ),
+    });
+  } catch (error) {
+    console.error("Erreur lors de la récupération de la consultation systématique :", error);
+    return null;
+  }
+}
+
+/**
+ * Crée ou met à jour une consultation
+ */
+export async function saveConsultation(data: any) {
+  try {
+    const { id, ...rest } = data;
+
+    if (id) {
+      await db.update(consultationsExternes)
+        .set({ ...rest, updatedAt: new Date() })
+        .where(eq(consultationsExternes.id, id));
+    } else {
+      await db.insert(consultationsExternes)
+        .values({ ...rest });
+    }
+
+    revalidatePath(`/dashboard/patients/${data.patientId}`);
+    revalidatePath("/dashboard/consultations");
+    revalidatePath("/dashboard/records");
+
+    return { success: true, message: "Consultation enregistrée avec succès" };
+  } catch (error) {
+    console.error("Erreur lors de l'enregistrement de la consultation :", error);
+    return { success: false, error: "Erreur lors de l'enregistrement" };
+  }
+}
 
 export async function createPatient(data: z.infer<typeof patientSchema>) {
   try {

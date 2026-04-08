@@ -264,19 +264,37 @@ export default async function PatientDetailsPage({ params }: { params: Promise<{
         </TabsContent>
 
         <TabsContent value="record">
-            <Card className="border-none shadow-sm ring-1 ring-zinc-200 rounded-3xl bg-white p-12 text-center flex flex-col items-center justify-center gap-4">
+            <Card className="border-none shadow-sm ring-1 ring-zinc-200 rounded-3xl bg-white p-12 text-center flex flex-col items-center justify-center gap-6">
                 <div className="h-20 w-20 bg-zinc-50 rounded-full flex items-center justify-center">
-                    <FileText className="h-10 w-10 text-zinc-200" />
+                    <FileText className="h-10 w-10 text-primary/40" />
                 </div>
                 <div>
-                   <h3 className="text-lg font-bold">Dossier Médical Électronique (DME)</h3>
+                   <h3 className="text-xl font-bold text-zinc-900">Dossier Externe</h3>
                    <p className="text-sm text-muted-foreground max-w-md mx-auto mt-2">
-                     Le dossier médical complet, incluant l'historique chirurgical et personnel, pourra être renseigné lors de la première consultation.
+                     Gérez les différentes consultations externes pour ce patient. 
+                     Sélectionnez le type de consultation approprié.
                    </p>
                 </div>
-                <Button className="rounded-xl mt-4" variant="outline">
-                    Compléter le DME
-                </Button>
+                <div className="flex flex-wrap items-center justify-center gap-4 mt-2">
+                    <Button className="rounded-xl px-6 py-6 h-auto flex flex-col items-center gap-2 shadow-md shadow-primary/10 transition-all hover:scale-105 active:scale-95" asChild>
+                        <Link href={`/dashboard/patients/${patient.id}/consultations/new?type=Systématique`}>
+                            <Stethoscope className="h-5 w-5" />
+                            <span>Consultation Systématique</span>
+                        </Link>
+                    </Button>
+                    <Button variant="outline" className="rounded-xl px-6 py-6 h-auto flex flex-col items-center gap-2 border-zinc-200 shadow-sm transition-all hover:bg-zinc-50 hover:scale-105 active:scale-95" asChild>
+                        <Link href={`/dashboard/patients/${patient.id}/consultations/new?type=À la demande`}>
+                            <Activity className="h-5 w-5 text-amber-500" />
+                            <span>Consultation à la demande</span>
+                        </Link>
+                    </Button>
+                    <Button variant="outline" className="rounded-xl px-6 py-6 h-auto flex flex-col items-center gap-2 border-zinc-200 shadow-sm transition-all hover:bg-zinc-50 hover:scale-105 active:scale-95" asChild>
+                        <Link href={`/dashboard/patients/${patient.id}/consultations/new?type=Sur RDV`}>
+                            <Calendar className="h-5 w-5 text-blue-500" />
+                            <span>Consultation sur RDV</span>
+                        </Link>
+                    </Button>
+                </div>
             </Card>
         </TabsContent>
 

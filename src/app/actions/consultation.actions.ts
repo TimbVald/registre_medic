@@ -18,6 +18,7 @@ export async function createConsultation(patientId: string, data: ConsultationFo
     await db.insert(consultationsExternes).values({
       patientId,
       dateConsultation: validatedData.dateConsultation.toISOString().split('T')[0],
+      typeConsultation: "Systématique", // Par défaut pour cette action existante
       
       // Paramètres
       etatGeneral: validatedData.etatGeneral as any,

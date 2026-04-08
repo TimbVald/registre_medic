@@ -221,12 +221,14 @@ export const frequenceRappelEnum = pgEnum("frequence_rappel", ["01 fois/sem.", "
 export const modeRappelEnum = pgEnum("mode_rappel", ["SMS classique", "Appel classique", "WhatsApp (SMS)"]);
 export const conclusionTraitementEnum = pgEnum("conclusion_traitement", ["Adhérence", "Compliance", "Observance"]);
 export const regulariteTraitementEnum = pgEnum("regularite_traitement", ["Régulier", "Irrégulier"]);
+export const typeConsultationEnum = pgEnum("type_consultation", ["Systématique", "À la demande", "Sur RDV"]);
 
 // --- Table Consultations Externes ---
 export const consultationsExternes = pgTable("consultations_externes", {
   id: uuid("id").primaryKey().defaultRandom(),
   patientId: uuid("patient_id").references(() => patients.id, { onDelete: "cascade" }).notNull(),
   dateConsultation: date("date_consultation").defaultNow().notNull(),
+  typeConsultation: typeConsultationEnum("type_consultation").notNull(),
   
   // Paramètres
   etatGeneral: etatGeneralEnum("etat_general"),

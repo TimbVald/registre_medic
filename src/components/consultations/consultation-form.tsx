@@ -36,8 +36,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useTransition } from "react";
-import { createConsultation } from "@/app/actions/consultation.actions";
+import { useTransition, useEffect } from "react";
+import { saveConsultation } from "@/app/actions/patient.actions";
 import { 
   Stethoscope, 
   Activity, 
@@ -56,9 +56,11 @@ import { Textarea } from "@/components/ui/textarea";
 
 interface Props {
   patientId: string;
+  initialData?: any;
+  type?: "Systématique" | "À la demande" | "Sur RDV";
 }
 
-export function ConsultationForm({ patientId }: Props) {
+export function ConsultationForm({ patientId, initialData, type = "Systématique" }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -77,15 +79,35 @@ export function ConsultationForm({ patientId }: Props) {
     },
   });
 
+  // Pré-remplir le formulaire si des données initiales sont fournies
+  useEffect(() => {
+    if (initialData) {
+      // Conversion des dates de string à Date object si nécessaire
+      const formattedData = {
+        ...initialData,
+        dateConsultation: initialData.dateConsultation ? new Date(initialData.dateConsultation) : new Date(),
+        dateRdvPrevue: initialData.dateRdvPrevue ? new Date(initialData.dateRdvPrevue) : null,
+      };
+      form.reset(formattedData);
+    }
+  }, [initialData, form]);
+
   async function onSubmit(values: ConsultationFormValues) {
     startTransition(async () => {
-      const result = await createConsultation(patientId, values);
+      const result = await saveConsultation({
+        ...values,
+        id: initialData?.id, // Inclure l'ID pour la mise à jour
+        patientId,
+        typeConsultation: type,
+      });
+      
       if (result.success) {
         toast.success(result.message);
         router.refresh();
+        // Rediriger vers la page du patient
         router.push(`/dashboard/patients/${patientId}`);
       } else {
-        toast.error(result.message);
+        toast.error(result.error || "Une erreur est survenue");
       }
     });
   }
