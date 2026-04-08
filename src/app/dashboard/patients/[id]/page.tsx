@@ -19,7 +19,11 @@ import {
   Dna,
   Heart,
   History,
-  FlaskConical
+  FlaskConical,
+  Bell,
+  CheckCircle2,
+  XCircle,
+  Clock3
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +34,7 @@ import { fr } from "date-fns/locale";
 import { PrescriptionList } from "@/components/prescriptions/prescription-list";
 import { AppointmentsList } from "@/components/appointments/appointments-list";
 import { notFound } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export default async function PatientDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -150,10 +155,10 @@ export default async function PatientDetailsPage({ params }: { params: Promise<{
             Vue d'ensemble
           </TabsTrigger>
           <TabsTrigger value="record" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-            Dossier Médical (DME)
+            Dossier Externe
           </TabsTrigger>
           <TabsTrigger value="consultations" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-            Consultations
+            Historique des RDV
           </TabsTrigger>
         </TabsList>
 
@@ -299,19 +304,87 @@ export default async function PatientDetailsPage({ params }: { params: Promise<{
         </TabsContent>
 
         <TabsContent value="consultations">
-             <Card className="border-none shadow-sm ring-1 ring-zinc-200 rounded-2xl overflow-hidden">
-                <CardHeader className="border-b border-zinc-100 bg-white">
+             <Card className="border-none shadow-sm ring-1 ring-zinc-200 rounded-2xl overflow-hidden bg-white">
+                <CardHeader className="border-b border-zinc-100 bg-zinc-50/30">
                     <div className="flex items-center justify-between">
-                         <CardTitle className="text-sm font-bold">Dernières Consultations</CardTitle>
-                         <Button size="sm" className="rounded-lg h-9" asChild>
-                            <Link href={`/dashboard/patients/${patient.id}/consultations/new`}>
-                                <Plus className="mr-2 h-4 w-4" /> Nouveau rapport
-                            </Link>
-                         </Button>
+                         <div>
+                            <CardTitle className="text-sm font-bold">Historique des Rendez-vous</CardTitle>
+                            <CardDescription className="text-[10px]">Suivi des rendez-vous passés et futurs pour ce patient.</CardDescription>
+                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className="h-48 flex items-center justify-center bg-zinc-50/50">
-                    <p className="text-sm text-muted-foreground italic">Aucune consultation enregistrée pour le moment.</p>
+                <CardContent className="p-0">
+                    {patient.consultationsExternes && patient.consultationsExternes.length > 0 ? (
+                        <div className="divide-y divide-zinc-100">
+                            {patient.consultationsExternes
+                                .filter(c => c.dateRdvPrevue) // Uniquement ceux avec un RDV prévu
+                                .sort((a, b) => new Date(b.dateRdvPrevue!).getTime() - new Date(a.dateRdvPrevue!).getTime())
+                                .map((consultation) => (
+                                <div key={consultation.id} className="p-6 hover:bg-zinc-50/50 transition-colors">
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                        <div className="flex items-start gap-4">
+                                            <div className={cn(
+                                                "h-12 w-12 rounded-2xl flex items-center justify-center shadow-sm",
+                                                consultation.rdvHonore === "Oui" ? "bg-emerald-50 text-emerald-600" : "bg-zinc-50 text-zinc-400"
+                                            )}>
+                                                {consultation.rdvHonore === "Oui" ? <CheckCircle2 className="h-6 w-6" /> : <Clock3 className="h-6 w-6" />}
+                                            </div>
+                                            <div className="space-y-1">
+                                                <div className="flex items-center gap-2">
+                                                    <h4 className="text-sm font-bold text-zinc-900">
+                                                        {format(new Date(consultation.dateRdvPrevue!), "d MMMM yyyy", { locale: fr })}
+                                                    </h4>
+                                                    <Badge variant="outline" className={cn(
+                                                        "text-[10px] font-bold uppercase tracking-widest px-2 py-0",
+                                                        consultation.rdvHonore === "Oui" ? "text-emerald-600 border-emerald-100 bg-emerald-50" : "text-amber-600 border-amber-100 bg-amber-50"
+                                                    )}>
+                                                        {consultation.rdvHonore === "Oui" ? "Honoré" : "En attente / Non honoré"}
+                                                    </Badge>
+                                                </div>
+                                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                                                    <div className="flex items-center gap-1.5 text-xs text-zinc-500">
+                                                        <Bell className="h-3.5 w-3.5" />
+                                                        <span>Rappel: {consultation.rappelMode || "Non défini"} ({consultation.rappelFrequence || "N/A"})</span>
+                                                    </div>
+                                                    {consultation.rappelReception && (
+                                                        <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
+                                                            <CheckCircle2 className="h-3.5 w-3.5" />
+                                                            <span>Rappel reçu</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        {consultation.causeNonHonore && (
+                                            <div className="md:max-w-xs p-3 rounded-xl bg-red-50/50 border border-red-100 text-[11px] text-red-700">
+                                                <div className="flex items-center gap-2 mb-1 font-bold uppercase tracking-wider">
+                                                    <XCircle className="h-3.5 w-3.5" />
+                                                    Cause du manquement
+                                                </div>
+                                                {consultation.causeNonHonore}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                            {patient.consultationsExternes.filter(c => c.dateRdvPrevue).length === 0 && (
+                                <div className="py-20 text-center space-y-3">
+                                    <div className="h-16 w-16 bg-zinc-50 rounded-full flex items-center justify-center mx-auto">
+                                        <Calendar className="h-8 w-8 text-zinc-200" />
+                                    </div>
+                                    <p className="text-sm text-muted-foreground italic">Aucun rendez-vous prévu pour ce patient.</p>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="py-20 text-center space-y-3">
+                            <div className="h-16 w-16 bg-zinc-50 rounded-full flex items-center justify-center mx-auto">
+                                <Calendar className="h-8 w-8 text-zinc-200" />
+                            </div>
+                            <p className="text-sm text-muted-foreground italic">Aucune consultation ni rendez-vous enregistré.</p>
+                        </div>
+                    )}
                 </CardContent>
              </Card>
         </TabsContent>

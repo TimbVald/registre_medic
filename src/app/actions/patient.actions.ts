@@ -131,12 +131,17 @@ export async function getPatients(search?: string) {
 }
 
 /**
- * Récupère un patient par son ID
+ * Récupère un patient par son ID avec ses relations
  */
 export async function getPatientById(id: string) {
   try {
     return await db.query.patients.findFirst({
       where: eq(patients.id, id),
+      with: {
+        consultationsExternes: true,
+        antecedents: true,
+        examensParacliniques: true,
+      }
     });
   } catch (error) {
     console.error("Erreur l'ors de la récupération du patient :", error);
