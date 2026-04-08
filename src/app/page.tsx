@@ -65,7 +65,7 @@ export default function LandingPage() {
                    <Image
                     alt="Soin et attention"
                     className="aspect-[4/3] object-cover object-center w-full transition-transform duration-700 group-hover:scale-105"
-                    src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+                    src="/images/hero.png"
                     width={800}
                     height={600}
                     priority
@@ -172,7 +172,7 @@ export default function LandingPage() {
                 <div className="absolute inset-0 bg-primary/5 rounded-[3rem] blur-3xl -z-10 translate-y-10" />
                 <div className="space-y-6 mt-12">
                   <div className="aspect-square rounded-[2.5rem] bg-white p-3 shadow-xl border border-slate-100 group overflow-hidden">
-                    <Image src="https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Médical" width={400} height={400} className="w-full h-full object-cover rounded-[2rem] group-hover:scale-110 transition-transform duration-700" />
+                    <Image src="/images/dashboard.png" alt="Médical" width={400} height={400} className="w-full h-full object-cover rounded-[2rem] group-hover:scale-110 transition-transform duration-700" />
                   </div>
                   <div className="aspect-[4/5] rounded-[2.5rem] bg-secondary p-8 flex flex-col justify-end text-white shadow-xl shadow-secondary/20 group hover:-translate-y-2 transition-transform">
                     <LifeBuoy className="h-12 w-12 mb-6 opacity-80 group-hover:rotate-12 transition-transform" />
@@ -187,7 +187,7 @@ export default function LandingPage() {
                     <p className="text-rose-50/80 text-sm mt-2">Des outils adaptés aux réalités du terrain médical.</p>
                   </div>
                   <div className="aspect-square rounded-[2.5rem] bg-white p-3 shadow-xl border border-slate-100 group overflow-hidden">
-                    <Image src="https://images.unsplash.com/photo-1551076805-e1869033e561?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Clinique" width={400} height={400} className="w-full h-full object-cover rounded-[2rem] group-hover:scale-110 transition-transform duration-700" />
+                    <Image src="/images/empathy.png" alt="Clinique" width={400} height={400} className="w-full h-full object-cover rounded-[2rem] group-hover:scale-110 transition-transform duration-700" />
                   </div>
                 </div>
               </div>
