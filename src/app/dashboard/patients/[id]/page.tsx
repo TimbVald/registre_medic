@@ -58,31 +58,31 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
   return (
     <div className="flex flex-col gap-8 pb-10 animate-in fade-in duration-700">
       {/* Top Navigation & Actions */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col gap-6">
         <Link 
           href="/dashboard/patients" 
-          className="flex items-center text-sm font-medium text-zinc-500 hover:text-primary transition-colors group"
+          className="flex items-center text-sm font-medium text-zinc-500 hover:text-primary transition-colors group w-fit"
         >
           <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
           Retour à la liste des patients
         </Link>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" asChild className="rounded-xl border-zinc-200">
+        <div className="flex flex-wrap items-center gap-3">
+          <Button variant="outline" asChild className="rounded-xl border-zinc-200 flex-1 sm:flex-none">
             <Link href={`/dashboard/patients/${patient.id}/edit`}>
-              <Edit className="mr-2 h-4 w-4" /> Modifier le profil
+              <Edit className="mr-2 h-4 w-4" /> Modifier
             </Link>
           </Button>
-          <Button variant="outline" asChild className="rounded-xl border-zinc-200">
+          <Button variant="outline" asChild className="rounded-xl border-zinc-200 flex-1 sm:flex-none">
             <Link href={`/dashboard/patients/${patient.id}/antecedents/new`}>
               <History className="mr-2 h-4 w-4" /> Antécédents
             </Link>
           </Button>
-          <Button variant="outline" asChild className="rounded-xl border-zinc-200">
+          <Button variant="outline" asChild className="rounded-xl border-zinc-200 flex-1 sm:flex-none">
             <Link href={`/dashboard/patients/${patient.id}/examens`}>
-              <FlaskConical className="mr-2 h-4 w-4" /> Bilan Paraclinique
+              <FlaskConical className="mr-2 h-4 w-4" /> Bilan
             </Link>
           </Button>
-          <Button className="rounded-xl shadow-lg shadow-primary/20 bg-emerald-600 hover:bg-emerald-700" asChild>
+          <Button className="rounded-xl shadow-lg shadow-primary/20 bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto" asChild>
             <Link href={`/dashboard/patients/${patient.id}/consultations/new`}>
                <Stethoscope className="mr-2 h-4 w-4" /> Nouvelle Consultation
             </Link>
@@ -146,7 +146,7 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
                     </div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Résidence</p>
-                        <p className="text-sm font-semibold truncate max-w-[120px]">{patient.lieuResidence || "-"}</p>
+                        <p className="text-sm font-semibold truncate max-w-[80px] sm:max-w-[120px]">{patient.lieuResidence || "-"}</p>
                     </div>
                  </div>
               </div>
@@ -157,17 +157,19 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="bg-zinc-100/50 p-1.5 rounded-2xl border border-zinc-200">
-          <TabsTrigger value="overview" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-            Vue d'ensemble
-          </TabsTrigger>
-          <TabsTrigger value="record" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-            Dossier Externe
-          </TabsTrigger>
-          <TabsTrigger value="consultations" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-            Historique des RDV
-          </TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto pb-1 no-scrollbar">
+          <TabsList className="bg-zinc-100/50 p-1.5 rounded-2xl border border-zinc-200 w-fit min-w-full sm:min-w-0">
+            <TabsTrigger value="overview" className="rounded-xl px-4 sm:px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              Vue d'ensemble
+            </TabsTrigger>
+            <TabsTrigger value="record" className="rounded-xl px-4 sm:px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              Dossier Externe
+            </TabsTrigger>
+            <TabsTrigger value="consultations" className="rounded-xl px-4 sm:px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              Historique des RDV
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="overview" className="space-y-6">
            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

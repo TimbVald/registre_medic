@@ -13,7 +13,7 @@ export function LandingHeader() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="px-4 lg:px-6 h-20 flex items-center border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+    <header className="px-4 md:px-6 lg:px-8 h-20 flex items-center border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
       <Link className="flex items-center justify-center gap-3 font-bold text-2xl group" href="/">
         <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform duration-300">
            <Activity className="h-6 w-6 text-white" />
@@ -48,35 +48,41 @@ export function LandingHeader() {
               <span className="sr-only">Menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="right">
-            <div className="flex flex-col gap-4 mt-8">
-              <Link 
-                className="text-lg font-medium hover:text-primary transition-colors" 
-                href="#features"
-                onClick={() => setIsOpen(false)}
-              >
-                Fonctionnalités
-              </Link>
-              <Link 
-                className="text-lg font-medium hover:text-primary transition-colors" 
-                href="#testimonials"
-                onClick={() => setIsOpen(false)}
-              >
-                Témoignages
-              </Link>
-              <Link 
-                className="text-lg font-medium hover:text-primary transition-colors" 
-                href="#pricing"
-                onClick={() => setIsOpen(false)}
-              >
-                Tarifs
-              </Link>
-              <div className="flex flex-col gap-2 mt-4">
+          <SheetContent side="right" className="w-[300px] sm:w-[400px] border-l-0 bg-white p-0">
+            <div className="flex flex-col gap-8 p-8 mt-12">
+              <div className="flex flex-col gap-4">
+                <Link 
+                  className="text-lg font-bold text-slate-900 hover:text-primary transition-colors flex items-center gap-3" 
+                  href="#hope"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <div className="h-2 w-2 rounded-full bg-primary" />
+                  Espoir
+                </Link>
+                <Link 
+                  className="text-lg font-bold text-slate-900 hover:text-secondary transition-colors flex items-center gap-3" 
+                  href="#features"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <div className="h-2 w-2 rounded-full bg-secondary" />
+                  Services
+                </Link>
+                <Link 
+                  className="text-lg font-bold text-slate-900 hover:text-primary transition-colors flex items-center gap-3" 
+                  href="#contact"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <div className="h-2 w-2 rounded-full bg-primary" />
+                  Contact
+                </Link>
+              </div>
+              <div className="h-px bg-slate-100" />
+              <div className="flex flex-col gap-3">
                 <Link href="/login" onClick={() => setIsOpen(false)}>
-                  <Button variant="outline" className="w-full">Se connecter</Button>
+                  <Button variant="outline" className="w-full h-12 rounded-xl font-bold">Se connecter</Button>
                 </Link>
                 <Link href="/register" onClick={() => setIsOpen(false)}>
-                  <Button className="w-full">S&rsquo;inscrire</Button>
+                  <Button className="w-full h-12 rounded-xl font-bold bg-slate-900 text-white shadow-lg">S&rsquo;inscrire</Button>
                 </Link>
               </div>
             </div>

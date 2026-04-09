@@ -54,8 +54,8 @@ export default function AuthLayout({
           </blockquote>
         </div>
       </div>
-      <div className="lg:p-8 relative bg-white min-h-screen flex items-center justify-center">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px]">
+      <div className="p-4 md:p-8 relative bg-white min-h-screen flex items-center justify-center">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px] py-10">
           {children}
         </div>
       </div>

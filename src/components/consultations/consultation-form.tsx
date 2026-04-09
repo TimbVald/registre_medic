@@ -117,20 +117,22 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-12">
         
         <Tabs defaultValue="vitals" className="w-full space-y-6">
-          <TabsList className="bg-zinc-100/80 p-1.5 rounded-2xl h-auto flex flex-wrap gap-2">
-            <TabsTrigger value="vitals" className="rounded-xl px-5 py-2.5 data-[state=active]:shadow-md">
-              <Activity className="h-4 w-4 mr-2" /> Paramètres Vitaux
-            </TabsTrigger>
-            <TabsTrigger value="complaints" className="rounded-xl px-5 py-2.5 data-[state=active]:shadow-md">
-              <ClipboardList className="h-4 w-4 mr-2" /> Plaintes
-            </TabsTrigger>
-            <TabsTrigger value="rdv" className="rounded-xl px-5 py-2.5 data-[state=active]:shadow-md">
-              <Calendar className="h-4 w-4 mr-2" /> Données RDV
-            </TabsTrigger>
-            <TabsTrigger value="treatments" className="rounded-xl px-5 py-2.5 data-[state=active]:shadow-md">
-              <Pill className="h-4 w-4 mr-2" /> Traitements
-            </TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto pb-1 no-scrollbar">
+            <TabsList className="bg-zinc-100/80 p-1.5 rounded-2xl h-auto flex md:inline-flex min-w-full md:min-w-0 gap-2">
+              <TabsTrigger value="vitals" className="rounded-xl px-5 py-2.5 data-[state=active]:shadow-md shrink-0">
+                <Activity className="h-4 w-4 mr-2" /> Paramètres Vitaux
+              </TabsTrigger>
+              <TabsTrigger value="complaints" className="rounded-xl px-5 py-2.5 data-[state=active]:shadow-md shrink-0">
+                <ClipboardList className="h-4 w-4 mr-2" /> Plaintes
+              </TabsTrigger>
+              <TabsTrigger value="rdv" className="rounded-xl px-5 py-2.5 data-[state=active]:shadow-md shrink-0">
+                <Calendar className="h-4 w-4 mr-2" /> Données RDV
+              </TabsTrigger>
+              <TabsTrigger value="treatments" className="rounded-xl px-5 py-2.5 data-[state=active]:shadow-md shrink-0">
+                <Pill className="h-4 w-4 mr-2" /> Traitements
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* PARAMÈTRES VITAUX */}
           <TabsContent value="vitals">

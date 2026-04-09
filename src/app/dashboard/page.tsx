@@ -179,7 +179,7 @@ export default async function DashboardPage() {
             
             <div className="mt-8 pt-6 border-t">
                  <h4 className="text-sm font-semibold mb-4">Actions Rapides</h4>
-                 <div className="grid grid-cols-2 gap-2">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <Button variant="outline" className="justify-start h-auto py-3 px-4" asChild>
                         <Link href="/dashboard/consultations/new">
                             <PlusCircle className="mr-2 h-4 w-4 text-emerald-500" />
