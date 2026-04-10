@@ -96,7 +96,7 @@ export function Sidebar({ onNavigate, user }: { onNavigate?: () => void; user?: 
   });
 
   return (
-    <div className="flex flex-col h-full bg-sidebar/50 backdrop-blur-xl border-r border-sidebar-border shadow-sm overflow-y-auto no-scrollbar">
+    <div className="flex flex-col h-full bg-white border-r border-zinc-100 shadow-[10px_0_30px_-5px_rgba(0,0,0,0.03)] overflow-y-auto no-scrollbar relative z-50">
       <div className="px-6 py-8 flex-1">
         <Link href="/dashboard" className="flex items-center mb-10 group" onClick={onNavigate}>
           <div className="relative w-11 h-11 mr-3 transition-transform group-hover:rotate-3">
@@ -119,16 +119,19 @@ export function Sidebar({ onNavigate, user }: { onNavigate?: () => void; user?: 
                 href={route.href}
                 onClick={onNavigate}
                 className={cn(
-                  "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer rounded-xl transition-all duration-200 ease-in-out",
+                  "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer rounded-xl transition-all duration-200 ease-in-out relative overflow-hidden",
                   isActive 
-                    ? "bg-primary/10 text-primary shadow-sm shadow-primary/5 translate-x-1" 
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    ? "bg-primary/5 text-primary shadow-sm" 
+                    : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900"
                 )}
               >
+                {isActive && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full" />
+                )}
                 <div className="flex items-center flex-1">
                   <route.icon className={cn(
                     "h-5 w-5 mr-3 transition-colors",
-                    isActive ? route.color : "text-zinc-400 group-hover:text-zinc-600"
+                    isActive ? "text-primary" : "text-zinc-400 group-hover:text-zinc-600"
                   )} />
                   {route.label}
                 </div>

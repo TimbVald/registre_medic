@@ -16,7 +16,7 @@ interface HeaderProps {
 
 export function Header({ user }: HeaderProps) {
   return (
-    <div className="flex items-center p-4 border-b bg-background/80 backdrop-blur-md sticky top-0 z-30 transition-all">
+    <div className="flex items-center p-4 border-b border-zinc-100 bg-white/80 backdrop-blur-md sticky top-0 z-30 shadow-sm transition-all">
       <MobileSidebar user={user} />
       <div className="flex w-full justify-end items-center gap-4">
         <UserButton user={user} />
