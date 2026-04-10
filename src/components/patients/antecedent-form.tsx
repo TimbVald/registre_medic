@@ -79,8 +79,8 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-12">
         
         {/* SECTION 1: DÉCOUVERTE */}
-        <Card className="border-none shadow-sm ring-1 ring-zinc-200 overflow-hidden">
-          <CardHeader className="bg-zinc-50/50 border-b border-zinc-100">
+        <Card className="border-none shadow-sm ring-1 ring-border overflow-hidden">
+          <CardHeader className="bg-muted/30 border-b border-border">
             <CardTitle className="flex items-center gap-2 text-primary">
               <History className="h-5 w-5" />
               Découverte de la drépanocytose
@@ -150,7 +150,7 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
                     name="circonstancesDecouverte"
                     render={({ field }) => {
                       return (
-                        <FormItem key={option} className="flex flex-row items-start space-x-3 space-y-0 p-3 border rounded-xl hover:bg-zinc-50 transition-colors">
+                        <FormItem key={option} className="flex flex-row items-start space-x-3 space-y-0 p-3 border border-border rounded-xl hover:bg-muted/20 transition-colors">
                           <FormControl>
                             <Checkbox
                               checked={field.value?.includes(option)}
@@ -175,8 +175,8 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
         </Card>
 
         {/* SECTION 2: HISTOIRE FAMILIALE */}
-        <Card className="border-none shadow-sm ring-1 ring-zinc-200 overflow-hidden">
-          <CardHeader className="bg-zinc-50/50 border-b border-zinc-100">
+        <Card className="border-none shadow-sm ring-1 ring-border overflow-hidden">
+          <CardHeader className="bg-muted/30 border-b border-border">
             <CardTitle className="flex items-center gap-2 text-primary">
               <Users className="h-5 w-5" />
               Histoire Familiale
@@ -184,12 +184,12 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
             <CardDescription>Antécédents de drépanocytose dans la famille.</CardDescription>
           </CardHeader>
           <CardContent className="pt-6 space-y-8">
-            <div className="flex flex-col space-y-4 rounded-2xl bg-zinc-50 p-4">
+            <div className="flex flex-col space-y-4 rounded-2xl bg-muted/30 p-4">
                 <FormField
                 control={form.control}
                 name="notionFamilleDrepanocytose"
                 render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 bg-white">
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border border-border p-4 bg-card">
                     <div className="space-y-0.5">
                         <FormLabel className="text-base">Notion de drépanocytose dans la famille</FormLabel>
                         <FormDescription>Le patient a-t-il des membres de sa famille atteints ?</FormDescription>
@@ -259,7 +259,7 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
                     control={form.control}
                     name="decesFamilleDrepanocytose"
                     render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 border-zinc-200">
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 border-border">
                             <div className="space-y-0.5">
                                 <FormLabel>Décès de personnes drépanocytaires</FormLabel>
                             </div>
@@ -297,9 +297,9 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
         </Card>
 
         {/* SECTION 3: COMPLICATIONS AIGUËS */}
-        <Card className="border-none shadow-sm ring-1 ring-zinc-200 overflow-hidden">
-          <CardHeader className="bg-rose-50/50 border-b border-rose-100">
-            <CardTitle className="flex items-center gap-2 text-rose-700">
+        <Card className="border-none shadow-sm ring-1 ring-border overflow-hidden">
+          <CardHeader className="bg-rose-500/10 border-b border-rose-500/20">
+            <CardTitle className="flex items-center gap-2 text-rose-500">
               <Activity className="h-5 w-5" />
               Antécédents de Complications Aiguës
             </CardTitle>
@@ -313,7 +313,7 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
                   control={form.control}
                   name="complicationsAigues"
                   render={({ field }) => (
-                    <FormItem key={option} className="flex flex-row items-center space-x-3 space-y-0 p-3 border rounded-xl hover:bg-rose-50/30 transition-colors">
+                    <FormItem key={option} className="flex flex-row items-center space-x-3 space-y-0 p-3 border border-border rounded-xl hover:bg-rose-500/10 transition-colors">
                       <FormControl>
                         <Checkbox
                           checked={field.value?.includes(option)}
@@ -336,9 +336,9 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
         </Card>
 
         {/* SECTION 4: COMPLICATIONS CHRONIQUES */}
-        <Card className="border-none shadow-sm ring-1 ring-zinc-200 overflow-hidden">
-          <CardHeader className="bg-amber-50/50 border-b border-amber-100">
-            <CardTitle className="flex items-center gap-2 text-amber-700">
+        <Card className="border-none shadow-sm ring-1 ring-border overflow-hidden">
+          <CardHeader className="bg-amber-500/10 border-b border-amber-500/20">
+            <CardTitle className="flex items-center gap-2 text-amber-500">
               <Stethoscope className="h-5 w-5" />
               Complications Chroniques
             </CardTitle>
@@ -352,7 +352,7 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
                   control={form.control}
                   name="complicationsChroniques"
                   render={({ field }) => (
-                    <FormItem key={option} className="flex flex-row items-start space-x-3 space-y-0 p-4 border rounded-2xl hover:bg-amber-50/30 transition-colors">
+                    <FormItem key={option} className="flex flex-row items-start space-x-3 space-y-0 p-4 border border-border rounded-2xl hover:bg-amber-500/10 transition-colors">
                       <FormControl>
                         <Checkbox
                           checked={field.value?.includes(option)}
@@ -377,7 +377,7 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
         </Card>
 
         {/* FOOTER: ACTIONS */}
-        <div className="flex items-center justify-end gap-4 p-4 bg-white/80 backdrop-blur-md sticky bottom-4 z-10 border rounded-2xl shadow-lg ring-1 ring-zinc-200">
+        <div className="flex items-center justify-end gap-4 p-4 bg-background/80 backdrop-blur-md sticky bottom-4 z-10 border border-border rounded-2xl shadow-lg ring-1 ring-border">
             <Button variant="ghost" onClick={() => router.back()} disabled={isPending}>Annuler</Button>
             <Button size="lg" className="rounded-xl px-8" type="submit" disabled={isPending}>
                {isPending ? (

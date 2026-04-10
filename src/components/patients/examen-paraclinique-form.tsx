@@ -117,8 +117,8 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-12">
-        <Card className="border-none shadow-sm ring-1 ring-zinc-200 overflow-hidden bg-white">
-          <CardHeader className="bg-zinc-50/50 border-b border-zinc-100">
+        <Card className="border-none shadow-sm ring-1 ring-border overflow-hidden bg-card">
+          <CardHeader className="bg-muted/30 border-b border-border">
             <CardTitle className="flex items-center gap-2 text-primary">
               <FlaskConical className="h-5 w-5" />
               Bilan Paraclinique
@@ -126,9 +126,10 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
             <CardDescription>Saisie des examens biologiques de base et interprétations.</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
+            <div className="overflow-x-auto no-scrollbar">
             <Table>
               <TableHeader>
-                <TableRow className="bg-zinc-50/30 hover:bg-zinc-50/30">
+                <TableRow className="bg-muted/30 hover:bg-muted/30">
                   <TableHead className="w-[200px] font-bold">Examens</TableHead>
                   <TableHead className="w-[150px] font-bold text-center">Statut</TableHead>
                   <TableHead className="font-bold">Si non réalisé : causes</TableHead>
@@ -137,7 +138,7 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
               </TableHeader>
               <TableBody>
                 {exams.map((exam) => (
-                  <TableRow key={exam.id} className="group hover:bg-zinc-50/50 transition-colors">
+                  <TableRow key={exam.id} className="group hover:bg-muted/10 transition-colors">
                     {/* Colonne 1: Label */}
                     <TableCell className="font-medium align-top pt-6">
                       {exam.label}
@@ -181,7 +182,7 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
                             <FormItem>
                               <Select onValueChange={field.onChange} value={field.value || undefined}>
                                 <FormControl>
-                                  <SelectTrigger className="bg-white rounded-xl border-zinc-200">
+                                  <SelectTrigger className="bg-background rounded-xl border-border">
                                     <SelectValue placeholder="Choisir une cause" />
                                   </SelectTrigger>
                                 </FormControl>
@@ -198,7 +199,6 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
                       )}
                     </TableCell>
 
-                    {/* Colonne 4: Taux & Interprétation si réalisé */}
                     <TableCell className="align-top pt-4 space-y-4">
                       {form.watch(`${exam.id}.realise`) === true && (
                         <div className="grid grid-cols-1 gap-4">
@@ -208,7 +208,7 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
                                 name={`${exam.id}.tauxBase`}
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel className="text-[10px] uppercase font-bold text-zinc-400">Taux de base</FormLabel>
+                                    <FormLabel className="text-[10px] uppercase font-bold text-muted-foreground/60">Taux de base</FormLabel>
                                     <FormControl>
                                       <Input {...field} value={field.value || ""} className="h-8 rounded-lg" placeholder="ex: 8.5" />
                                     </FormControl>
@@ -221,7 +221,7 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
                                   name={`${exam.id}.tauxRecent` as any}
                                   render={({ field }) => (
                                     <FormItem>
-                                      <FormLabel className="text-[10px] uppercase font-bold text-zinc-400">Plus récent</FormLabel>
+                                      <FormLabel className="text-[10px] uppercase font-bold text-muted-foreground/60">Plus récent</FormLabel>
                                       <FormControl>
                                         <Input {...field} value={(field.value as any) || ""} className="h-8 rounded-lg" placeholder="ex: 7.2" />
                                       </FormControl>
@@ -236,10 +236,10 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
                               name={`${exam.id}.interpretation`}
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel className="text-[10px] uppercase font-bold text-zinc-400">Interprétation</FormLabel>
+                                  <FormLabel className="text-[10px] uppercase font-bold text-muted-foreground/60">Interprétation</FormLabel>
                                   <Select onValueChange={field.onChange} value={field.value || undefined}>
                                     <FormControl>
-                                      <SelectTrigger className="bg-white rounded-xl border-zinc-200 h-9">
+                                      <SelectTrigger className="bg-background rounded-xl border-border h-9">
                                         <SelectValue placeholder="Choisir l'interprétation" />
                                       </SelectTrigger>
                                     </FormControl>
@@ -259,11 +259,12 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
                 ))}
               </TableBody>
             </Table>
+            </div>
           </CardContent>
         </Card>
 
         {/* Pied de page: Actions */}
-        <div className="flex items-center justify-end gap-4 p-6 bg-white border ring-1 ring-zinc-200 rounded-2xl shadow-lg sticky bottom-4 z-20">
+        <div className="flex items-center justify-end gap-4 p-6 bg-background/80 backdrop-blur-md border border-border ring-1 ring-border rounded-2xl shadow-lg sticky bottom-4 z-20">
             <Button variant="ghost" type="button" onClick={() => router.back()} disabled={isPending}>Annuler</Button>
             <Button size="lg" type="submit" className="rounded-xl px-10 shadow-md shadow-primary/20" disabled={isPending}>
                 {isPending ? (

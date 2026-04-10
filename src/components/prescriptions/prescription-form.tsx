@@ -184,7 +184,7 @@ export function PrescriptionForm() {
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium flex items-center gap-2 text-blue-900">
+            <h3 className="text-lg font-medium flex items-center gap-2 text-primary">
               <Pill className="h-5 w-5" />
               Médicaments
             </h3>
@@ -200,7 +200,7 @@ export function PrescriptionForm() {
           </div>
 
           {fields.map((field, index) => (
-            <div key={field.id} className="p-4 border rounded-lg bg-slate-50 relative animate-in fade-in zoom-in-95 duration-200">
+            <div key={field.id} className="p-4 border border-border rounded-xl bg-muted/30 relative animate-in fade-in zoom-in-95 duration-200">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <FormField
                   control={form.control}
@@ -274,7 +274,7 @@ export function PrescriptionForm() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="mt-6 text-red-500 hover:text-red-700 hover:bg-red-50"
+                    className="mt-6 text-destructive hover:text-destructive hover:bg-destructive/10"
                     onClick={() => remove(index)}
                   >
                     <Trash2 className="h-4 w-4" />
@@ -304,10 +304,10 @@ export function PrescriptionForm() {
         />
 
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => router.back()}>
+          <Button type="button" variant="outline" onClick={() => router.back()} className="rounded-xl">
             Annuler
           </Button>
-          <Button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700 text-white">
+          <Button type="submit" disabled={isLoading} className="rounded-xl px-8 shadow-md shadow-primary/20">
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Créer la prescription
           </Button>

@@ -89,10 +89,10 @@ export default function PatientForm({ initialData }: { initialData?: any }) {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm border border-zinc-200">
-      <div className="mb-8 border-b pb-4">
-        <h2 className="text-2xl font-bold text-zinc-800">Nouveau Patient</h2>
-        <p className="text-sm text-zinc-500">
+    <div className="w-full max-w-4xl mx-auto p-4 md:p-6 bg-card rounded-2xl shadow-sm border border-border">
+      <div className="mb-8 border-b border-border pb-4">
+        <h2 className="text-2xl font-bold text-foreground">Nouveau Patient</h2>
+        <p className="text-sm text-muted-foreground">
           Veuillez remplir les informations pour la création d'une nouvelle fiche. Le numéro sera généré automatiquement.
         </p>
       </div>
@@ -100,11 +100,13 @@ export default function PatientForm({ initialData }: { initialData?: any }) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <Tabs defaultValue="identification" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-6 h-auto p-1 bg-zinc-100/50 rounded-xl">
-              <TabsTrigger value="identification" className="py-2.5 rounded-lg data-[state=active]:shadow-sm text-xs sm:text-sm">Patient</TabsTrigger>
-              <TabsTrigger value="pere" className="py-2.5 rounded-lg data-[state=active]:shadow-sm text-xs sm:text-sm">Père/Tuteur</TabsTrigger>
-              <TabsTrigger value="mere" className="py-2.5 rounded-lg data-[state=active]:shadow-sm text-xs sm:text-sm">Mère/Tutrice</TabsTrigger>
-            </TabsList>
+            <div className="overflow-x-auto pb-1 no-scrollbar">
+              <TabsList className="flex w-full min-w-max mb-6 h-auto p-1.5 bg-muted/50 rounded-xl gap-1">
+                <TabsTrigger value="identification" className="py-2.5 px-6 rounded-lg data-[state=active]:shadow-sm text-xs sm:text-sm">Patient</TabsTrigger>
+                <TabsTrigger value="pere" className="py-2.5 px-6 rounded-lg data-[state=active]:shadow-sm text-xs sm:text-sm">Père/Tuteur</TabsTrigger>
+                <TabsTrigger value="mere" className="py-2.5 px-6 rounded-lg data-[state=active]:shadow-sm text-xs sm:text-sm">Mère/Tutrice</TabsTrigger>
+              </TabsList>
+            </div>
 
             <TabsContent value="identification" className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -324,7 +326,7 @@ export default function PatientForm({ initialData }: { initialData?: any }) {
                     control={form.control}
                     name="scolarise"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border border-border p-4 bg-muted/20">
                         <FormControl>
                           <Checkbox
                             checked={field.value}
@@ -669,7 +671,7 @@ export default function PatientForm({ initialData }: { initialData?: any }) {
             </TabsContent>
           </Tabs>
 
-          <div className="pt-6 border-t flex justify-end">
+          <div className="pt-6 border-t border-border flex justify-end">
             <Button type="submit" size="lg" disabled={isPending} className="w-full md:w-auto">
               {isPending ? (
                 <>

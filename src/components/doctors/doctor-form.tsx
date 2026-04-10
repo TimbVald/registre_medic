@@ -119,7 +119,7 @@ export function DoctorForm({ initialData }: DoctorFormProps) {
           />
         </div>
 
-        <Button type="submit" disabled={isLoading}>
+        <Button type="submit" disabled={isLoading} className="rounded-xl px-8 shadow-md shadow-primary/20">
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {initialData ? "Modifier" : "Ajouter"}
         </Button>

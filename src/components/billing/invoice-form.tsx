@@ -153,8 +153,8 @@ export function InvoiceForm() {
             </Button>
           </div>
           
-          {fields.map((field, index) => (
-            <div key={field.id} className="flex flex-col md:flex-row gap-4 items-start border p-4 rounded-md bg-muted/20">
+          {fields.map((item, index) => (
+            <div key={item.id} className="flex flex-col md:flex-row gap-4 items-start border border-border p-4 rounded-xl bg-muted/30">
               <FormField
                 control={form.control}
                 name={`items.${index}.description`}
@@ -210,15 +210,15 @@ export function InvoiceForm() {
         </div>
 
         <div className="flex justify-end">
-          <div className="bg-muted p-4 rounded-md w-full md:w-1/3">
-            <div className="flex justify-between items-center text-lg font-bold">
+          <div className="bg-muted/50 p-6 rounded-2xl border border-border w-full md:w-1/3">
+            <div className="flex justify-between items-center text-lg font-bold text-foreground">
               <span>Total:</span>
               <span>{totalAmount.toFixed(2)} €</span>
             </div>
           </div>
         </div>
 
-        <Button type="submit" disabled={isLoading} className="w-full md:w-auto">
+        <Button type="submit" disabled={isLoading} className="w-full md:w-auto rounded-xl px-10 shadow-md shadow-primary/20">
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Créer la facture
         </Button>

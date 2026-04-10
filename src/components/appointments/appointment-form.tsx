@@ -250,7 +250,7 @@ export function AppointmentForm() {
           )}
         />
 
-        <Button type="submit" disabled={isLoading}>
+        <Button type="submit" disabled={isLoading} className="rounded-xl px-10 shadow-md shadow-primary/20">
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Créer le rendez-vous
         </Button>
