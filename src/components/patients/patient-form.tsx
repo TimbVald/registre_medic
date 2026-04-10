@@ -1,9 +1,9 @@
 "use client";
 
-import { useTransition } from "react";
+import { useTransition, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
+import { format, differenceInYears, differenceInMonths } from "date-fns";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -72,6 +72,22 @@ export default function PatientForm({ initialData }: { initialData?: any }) {
       mereNom: "",
     },
   });
+
+  const dateNaissance = form.watch("dateNaissance");
+
+  // Calcul automatique de l'âge
+  useEffect(() => {
+    if (dateNaissance) {
+      const today = new Date();
+      const birthDate = new Date(dateNaissance);
+      
+      const years = differenceInYears(today, birthDate);
+      const months = differenceInMonths(today, birthDate) % 12;
+      
+      form.setValue("ageAnnees", years, { shouldValidate: true });
+      form.setValue("ageMois", months, { shouldValidate: true });
+    }
+  }, [dateNaissance, form]);
 
   function onSubmit(data: PatientFormValues) {
     startTransition(async () => {
