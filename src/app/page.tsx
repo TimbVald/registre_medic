@@ -228,14 +228,14 @@ export default function LandingPage() {
                     icon: Sparkles
                   }
                 ].map((item, i) => (
-                  <div key={i} className="group p-10 rounded-[2.5rem] bg-slate-50 border border-slate-100 hover:border-primary/20 hover:bg-white hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
-                    <h4 className="text-xl font-bold text-slate-900 flex items-center gap-4 mb-4">
-                      <div className="h-12 w-12 rounded-2xl bg-white shadow-md flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                        <item.icon className="h-6 w-6" />
+                  <div key={i} className="group p-6 md:p-10 rounded-[2.5rem] bg-slate-50 border border-slate-100 hover:border-primary/20 hover:bg-white hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
+                    <h4 className="text-lg md:text-xl font-bold text-slate-900 flex items-center gap-4 mb-4">
+                      <div className="h-10 w-10 md:h-12 md:w-12 shrink-0 rounded-2xl bg-white shadow-md flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                        <item.icon className="h-5 w-5 md:h-6 md:w-6" />
                       </div>
-                      {item.q}
+                      <span className="flex-1">{item.q}</span>
                     </h4>
-                    <p className="text-slate-600 leading-relaxed pl-16 italic text-lg border-l-2 border-primary/20">
+                    <p className="text-slate-600 leading-relaxed pl-6 md:pl-16 italic text-base md:text-lg border-l-2 border-primary/20">
                       "{item.a}"
                     </p>
                   </div>
@@ -250,38 +250,38 @@ export default function LandingPage() {
           <div className="container px-4 md:px-6">
             <div className="max-w-5xl mx-auto bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100">
               <div className="grid md:grid-cols-2">
-                <div className="p-12 bg-primary text-white space-y-8 flex flex-col justify-center relative overflow-hidden">
+                <div className="p-8 md:p-12 bg-primary text-white space-y-8 flex flex-col justify-center relative overflow-hidden">
                   <div className="absolute -top-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
                   <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-secondary/20 rounded-full blur-3xl" />
                   
                   <div className="space-y-4 relative z-10">
-                    <h2 className="text-4xl font-extrabold leading-tight">Parlons de votre santé</h2>
-                    <p className="text-rose-50 text-lg font-medium opacity-90">
+                    <h2 className="text-3xl md:text-4xl font-extrabold leading-tight">Parlons de votre santé</h2>
+                    <p className="text-rose-50 text-base md:text-lg font-medium opacity-90">
                       Notre équipe est à votre écoute pour toute question. N'attendez pas pour prendre soin de vous.
                     </p>
                   </div>
                   <div className="space-y-6 relative z-10">
                     <div className="flex items-center gap-5 group">
-                      <div className="h-14 w-14 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-primary transition-all duration-300">
-                        <Phone className="h-7 w-7" />
+                      <div className="h-12 w-12 md:h-14 md:w-14 shrink-0 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-primary transition-all duration-300">
+                        <Phone className="h-6 w-6 md:h-7 md:w-7" />
                       </div>
-                      <div>
-                        <p className="text-sm text-rose-100 font-bold uppercase tracking-wider">Téléphone</p>
-                        <p className="text-2xl font-bold">+243 812 345 678</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] md:text-sm text-rose-100 font-bold uppercase tracking-wider">Téléphone</p>
+                        <p className="text-lg md:text-2xl font-bold truncate">+243 812 345 678</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-5 group">
-                      <div className="h-14 w-14 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-primary transition-all duration-300">
-                        <MapPin className="h-7 w-7" />
+                      <div className="h-12 w-12 md:h-14 md:w-14 shrink-0 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-primary transition-all duration-300">
+                        <MapPin className="h-6 w-6 md:h-7 md:w-7" />
                       </div>
-                      <div>
-                        <p className="text-sm text-rose-100 font-bold uppercase tracking-wider">Adresse</p>
-                        <p className="text-xl font-bold leading-snug">123 Avenue de l'Espoir, Kinshasa</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] md:text-sm text-rose-100 font-bold uppercase tracking-wider">Adresse</p>
+                        <p className="text-base md:text-xl font-bold leading-snug">123 Avenue de l'Espoir, Kinshasa</p>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="p-12 space-y-8">
+                <div className="p-8 md:p-12 space-y-8">
                   <div className="grid gap-6">
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-slate-700 tracking-wide">Nom complet</label>

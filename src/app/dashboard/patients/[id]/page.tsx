@@ -91,10 +91,10 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
       </div>
 
       {/* Profile Header Card */}
-      <Card className="border-none shadow-sm ring-1 ring-zinc-200 overflow-hidden bg-gradient-to-br from-white to-zinc-50/30">
+      <Card className="border-none shadow-sm ring-1 ring-zinc-200 overflow-hidden bg-gradient-to-br from-white to-zinc-50/30 rounded-2xl md:rounded-3xl">
         <CardContent className="p-0">
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-8 p-8">
-            <Avatar className="h-28 w-28 ring-4 ring-white shadow-xl shadow-zinc-200/50">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-8 p-6 md:p-10">
+            <Avatar className="h-24 w-24 md:h-28 md:w-28 ring-4 ring-white shadow-xl shadow-zinc-200/50">
               <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${patient.noms}`} />
               <AvatarFallback className="bg-zinc-100 text-zinc-400 text-2xl font-bold">
                 {patient.noms[0]}
@@ -176,12 +176,12 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
               {/* Left Column: Parental Info */}
               <div className="lg:col-span-1 space-y-6">
                 <Card className="border-none shadow-sm ring-1 ring-zinc-200 bg-white rounded-2xl overflow-hidden">
-                    <CardHeader className="bg-zinc-50/50 border-b border-zinc-100">
+                    <CardHeader className="bg-zinc-50/50 border-b border-zinc-100 p-4 md:p-6">
                         <CardTitle className="text-sm font-bold flex items-center gap-2">
                            <Baby className="h-4 w-4 text-blue-500" /> Parenté & Tuteurs
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="pt-6 space-y-6">
+                    <CardContent className="p-4 md:p-6 space-y-6">
                         {patient.pereNom && (
                             <div className="space-y-1">
                                 <p className="text-[10px] uppercase font-bold text-zinc-400">Père / Tuteur</p>
@@ -289,23 +289,23 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
                      Sélectionnez le type de consultation approprié.
                    </p>
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-4 mt-2">
-                    <Button className="rounded-xl px-6 py-6 h-auto flex flex-col items-center gap-2 shadow-md shadow-primary/10 transition-all hover:scale-105 active:scale-95" asChild>
-                        <Link href={`/dashboard/patients/${patient.id}/consultations/new?type=Systématique`}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2 w-full max-w-3xl">
+                    <Button className="rounded-xl px-4 py-6 h-auto flex flex-col items-center gap-2 shadow-md shadow-primary/10 transition-all hover:scale-105 active:scale-95" asChild>
+                        <Link href={`/dashboard/patients/${patient.id}/consultations/new?type=Systématique`} className="text-center">
                             <Stethoscope className="h-5 w-5" />
-                            <span>Consultation Systématique</span>
+                            <span className="text-xs font-bold leading-tight">Systématique</span>
                         </Link>
                     </Button>
-                    <Button variant="outline" className="rounded-xl px-6 py-6 h-auto flex flex-col items-center gap-2 border-zinc-200 shadow-sm transition-all hover:bg-zinc-50 hover:scale-105 active:scale-95" asChild>
-                        <Link href={`/dashboard/patients/${patient.id}/consultations/new?type=À la demande`}>
+                    <Button variant="outline" className="rounded-xl px-4 py-6 h-auto flex flex-col items-center gap-2 border-zinc-200 shadow-sm transition-all hover:bg-zinc-50 hover:scale-105 active:scale-95" asChild>
+                        <Link href={`/dashboard/patients/${patient.id}/consultations/new?type=À la demande`} className="text-center">
                             <Activity className="h-5 w-5 text-amber-500" />
-                            <span>Consultation à la demande</span>
+                            <span className="text-xs font-bold leading-tight">À la demande</span>
                         </Link>
                     </Button>
-                    <Button variant="outline" className="rounded-xl px-6 py-6 h-auto flex flex-col items-center gap-2 border-zinc-200 shadow-sm transition-all hover:bg-zinc-50 hover:scale-105 active:scale-95" asChild>
-                        <Link href={`/dashboard/patients/${patient.id}/consultations/new?type=Sur RDV`}>
+                    <Button variant="outline" className="rounded-xl px-4 py-6 h-auto flex flex-col items-center gap-2 border-zinc-200 shadow-sm transition-all hover:bg-zinc-50 hover:scale-105 active:scale-95" asChild>
+                        <Link href={`/dashboard/patients/${patient.id}/consultations/new?type=Sur RDV`} className="text-center">
                             <Calendar className="h-5 w-5 text-blue-500" />
-                            <span>Consultation sur RDV</span>
+                            <span className="text-xs font-bold leading-tight">Sur RDV</span>
                         </Link>
                     </Button>
                 </div>
