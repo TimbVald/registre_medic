@@ -136,9 +136,9 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
 
           {/* PARAMÈTRES VITAUX */}
           <TabsContent value="vitals">
-            <Card className="border-none shadow-sm ring-1 ring-zinc-200 overflow-hidden">
-              <CardHeader className="bg-zinc-50/50 border-b border-zinc-100">
-                <CardTitle className="text-zinc-900 flex items-center gap-2">
+            <Card className="border-none shadow-sm ring-1 ring-border overflow-hidden">
+              <CardHeader className="bg-muted/30 border-b border-border">
+                <CardTitle className="text-foreground flex items-center gap-2">
                   <Activity className="h-5 w-5 text-emerald-500" /> État Clinique & Paramètres
                 </CardTitle>
               </CardHeader>
@@ -191,8 +191,8 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
 
           {/* PLAINTES */}
           <TabsContent value="complaints">
-            <Card className="border-none shadow-sm ring-1 ring-zinc-200 overflow-hidden">
-              <CardHeader className="bg-zinc-50/50 border-b border-zinc-100">
+            <Card className="border-none shadow-sm ring-1 ring-border overflow-hidden">
+              <CardHeader className="bg-muted/30 border-b border-border">
                 <CardTitle className="flex items-center gap-2">
                   <ClipboardList className="h-5 w-5 text-amber-500" /> Plaintes & Symptômes
                 </CardTitle>
@@ -202,7 +202,7 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
                   control={form.control}
                   name="plaintesExist"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-2xl border p-4 bg-zinc-50/50">
+                    <FormItem className="flex flex-row items-center justify-between rounded-2xl border border-border p-4 bg-muted/30">
                       <FormLabel>Présence de plaintes ?</FormLabel>
                       <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl>
                     </FormItem>
@@ -236,8 +236,8 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
 
           {/* RDV */}
           <TabsContent value="rdv">
-            <Card className="border-none shadow-sm ring-1 ring-zinc-200 overflow-hidden">
-               <CardHeader className="bg-zinc-50/50 border-b border-zinc-100"><CardTitle className="flex items-center gap-2"><Calendar className="h-5 w-5 text-blue-500" /> Données de RDV</CardTitle></CardHeader>
+            <Card className="border-none shadow-sm ring-1 ring-border overflow-hidden">
+               <CardHeader className="bg-muted/30 border-b border-border"><CardTitle className="flex items-center gap-2"><Calendar className="h-5 w-5 text-blue-500" /> Données de RDV</CardTitle></CardHeader>
                <CardContent className="pt-8 space-y-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <FormField control={form.control} name="dateRdvPrevue" render={({ field }) => (
@@ -251,12 +251,12 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
                       <SelectContent>{RDV_HONORE_OPTIONS.map(opt => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}</SelectContent></Select></FormItem>
                     )}/>
                   </div>
-                  <div className="p-6 rounded-2xl bg-zinc-50 border border-zinc-100 flex flex-wrap gap-8 items-center">
+                  <div className="p-6 rounded-2xl bg-muted/30 border border-border flex flex-wrap gap-8 items-center">
                       <FormField control={form.control} name="rappelFrequence" render={({ field }) => (
-                        <FormItem className="flex-1 min-w-[200px]"><FormLabel className="text-xs">Fréquence</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value || undefined}><FormControl><SelectTrigger className="bg-white"><SelectValue placeholder="Sélectionnez" /></SelectTrigger></FormControl><SelectContent>{FREQUENCE_RAPPEL_OPTIONS.map(opt => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}</SelectContent></Select></FormItem>
+                        <FormItem className="flex-1 min-w-[200px]"><FormLabel className="text-xs">Fréquence</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value || undefined}><FormControl><SelectTrigger className="bg-background"><SelectValue placeholder="Sélectionnez" /></SelectTrigger></FormControl><SelectContent>{FREQUENCE_RAPPEL_OPTIONS.map(opt => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}</SelectContent></Select></FormItem>
                       )}/>
                       <FormField control={form.control} name="rappelMode" render={({ field }) => (
-                        <FormItem className="flex-1 min-w-[200px]"><FormLabel className="text-xs">Mode</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value || undefined}><FormControl><SelectTrigger className="bg-white"><SelectValue placeholder="Sélectionnez" /></SelectTrigger></FormControl><SelectContent>{MODE_RAPPEL_OPTIONS.map(opt => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}</SelectContent></Select></FormItem>
+                        <FormItem className="flex-1 min-w-[200px]"><FormLabel className="text-xs">Mode</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value || undefined}><FormControl><SelectTrigger className="bg-background"><SelectValue placeholder="Sélectionnez" /></SelectTrigger></FormControl><SelectContent>{MODE_RAPPEL_OPTIONS.map(opt => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}</SelectContent></Select></FormItem>
                       )}/>
                   </div>
                </CardContent>
@@ -268,8 +268,8 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
              {["Acide Folique", "Hydroxyurée", "Antibioprophylaxie"].map((type, idx) => {
                const fn = idx === 0 ? "traitementAcideFolique" : idx === 1 ? "traitementHydroxyuree" : "traitementAntibioProphylaxie";
                return (
-                 <Card key={type} className="border-none shadow-sm ring-1 ring-zinc-200 overflow-hidden mb-4">
-                    <CardHeader className="bg-indigo-50/20 py-3 border-b"><div className="flex items-center justify-between"><CardTitle className="text-xs font-bold">{type}</CardTitle><FormField control={form.control} name={`${fn}.active` as any} render={({ field }) => <Checkbox checked={field.value} onCheckedChange={field.onChange} />} /></div></CardHeader>
+                 <Card key={type} className="border-none shadow-sm ring-1 ring-border overflow-hidden mb-4 rounded-xl">
+                    <CardHeader className="bg-primary/5 py-3 border-b border-border"><div className="flex items-center justify-between"><CardTitle className="text-xs font-bold">{type}</CardTitle><FormField control={form.control} name={`${fn}.active` as any} render={({ field }) => <Checkbox checked={field.value} onCheckedChange={field.onChange} />} /></div></CardHeader>
                     {form.watch(`${fn}.active` as any) && (
                       <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-3 gap-4 animate-in zoom-in-95">
                          <FormField control={form.control} name={`${fn}.posologie` as any} render={({ field }) => <FormItem><FormLabel className="text-xs">Posologie</FormLabel><FormControl><Input {...field} value={field.value || ""} className="h-8" /></FormControl></FormItem>} />
@@ -283,7 +283,7 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
           </TabsContent>
         </Tabs>
 
-        <div className="flex items-center justify-end gap-4 p-4 sticky bottom-4 z-10 bg-white border rounded-2xl shadow-lg">
+        <div className="flex items-center justify-end gap-4 p-4 sticky bottom-4 z-10 bg-background border border-border rounded-2xl shadow-lg">
             <Button variant="ghost" type="button" onClick={() => router.back()} disabled={isPending}>Annuler</Button>
             <Button size="lg" className="rounded-xl px-10" type="submit" disabled={isPending}>
                {isPending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enregistrement...</> : <><Save className="mr-2 h-4 w-4" /> Enregistrer</>}

@@ -24,7 +24,7 @@ export default async function PatientsPage({ searchParams }: PatientsPageProps) 
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900">Registre des Patients</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Registre des Patients</h1>
           <p className="text-muted-foreground mt-1 text-sm">
             Gérez la base de données des patients de la clinique ({patientsData.length} records).
           </p>
@@ -37,7 +37,7 @@ export default async function PatientsPage({ searchParams }: PatientsPageProps) 
       </div>
 
       {/* Control Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/50 backdrop-blur-sm p-4 rounded-2xl border border-zinc-200">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-card/50 backdrop-blur-sm p-4 rounded-2xl border border-border">
         <Suspense fallback={<Loader2 className="animate-spin text-muted-foreground h-4 w-4" />}>
            <PatientSearch />
         </Suspense>
@@ -46,7 +46,7 @@ export default async function PatientsPage({ searchParams }: PatientsPageProps) 
             <Button variant="outline" className="h-11 rounded-xl text-xs font-semibold px-4 flex-1 sm:flex-none">
                 Filtrer par statut
             </Button>
-            <Button variant="outline" className="h-11 rounded-xl text-xs font-semibold px-4 flex-1 sm:flex-none text-red-500 hover:text-red-600 hover:bg-red-50 border-red-100">
+            <Button variant="outline" className="h-11 rounded-xl text-xs font-semibold px-4 flex-1 sm:flex-none text-red-500 hover:text-red-600 hover:bg-red-500/10 border-red-500/20">
                 Export PDF
             </Button>
         </div>
@@ -54,7 +54,7 @@ export default async function PatientsPage({ searchParams }: PatientsPageProps) 
 
       {/* Main Content Table */}
       <Suspense fallback={
-        <div className="h-[400px] flex items-center justify-center rounded-xl border border-dashed border-zinc-200">
+        <div className="h-[400px] flex items-center justify-center rounded-xl border border-dashed border-border">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       }>
@@ -62,7 +62,7 @@ export default async function PatientsPage({ searchParams }: PatientsPageProps) 
       </Suspense>
 
       {/* Footer Info */}
-      <div className="flex items-center justify-between text-xs text-muted-foreground bg-zinc-50 border border-zinc-200 p-4 rounded-xl">
+      <div className="flex items-center justify-between text-xs text-muted-foreground bg-muted/30 border border-border p-4 rounded-xl">
           <p>Dernière mise à jour : {new Date().toLocaleDateString("fr-FR")} à {new Date().toLocaleTimeString("fr-FR")}</p>
           <p className="font-semibold text-primary"> MediCare v1.0.0</p>
       </div>

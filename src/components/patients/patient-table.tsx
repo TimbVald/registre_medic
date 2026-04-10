@@ -55,10 +55,10 @@ export function PatientTable({ patients }: PatientTableProps) {
   };
 
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
+    <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader className="bg-zinc-50/50">
+          <TableHeader className="bg-muted/30">
             <TableRow>
               <TableHead className="w-[80px]">Patient</TableHead>
               <TableHead>Nom Complet</TableHead>
@@ -78,41 +78,41 @@ export function PatientTable({ patients }: PatientTableProps) {
               </TableRow>
             ) : (
               patients.map((patient) => (
-                <TableRow key={patient.id} className="group hover:bg-zinc-50 transition-colors">
+                <TableRow key={patient.id} className="group hover:bg-muted/10 transition-colors">
                   <TableCell>
-                    <Avatar className="h-10 w-10 ring-2 ring-white shadow-sm">
+                    <Avatar className="h-10 w-10 ring-2 ring-background shadow-sm">
                       <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${patient.noms}`} />
-                      <AvatarFallback className="bg-zinc-100 text-zinc-500">
+                      <AvatarFallback className="bg-muted text-muted-foreground">
                         {patient.noms[0]}
                       </AvatarFallback>
                     </Avatar>
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col">
-                      <span className="font-semibold text-zinc-900 truncate max-w-[120px] sm:max-w-none">
+                      <span className="font-semibold text-foreground truncate max-w-[120px] sm:max-w-none">
                         {patient.noms} {patient.prenoms}
                       </span>
-                      <span className="text-[10px] uppercase text-zinc-400 font-bold tracking-wider sm:hidden">
+                      <span className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider sm:hidden">
                         {patient.numeroFiche}
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell font-medium text-zinc-600">{patient.numeroFiche}</TableCell>
+                  <TableCell className="hidden sm:table-cell font-medium text-muted-foreground">{patient.numeroFiche}</TableCell>
                   <TableCell className="hidden md:table-cell">
-                    <Badge variant="outline" className={patient.sexe === "Masculin" ? "border-blue-200 text-blue-700 bg-blue-50" : "border-rose-200 text-rose-700 bg-rose-50"}>
+                    <Badge variant="outline" className={patient.sexe === "Masculin" ? "border-blue-500/20 text-blue-500 bg-blue-500/10" : "border-rose-500/20 text-rose-500 bg-rose-500/10"}>
                       {patient.sexe}
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell text-zinc-600 font-medium">
+                  <TableCell className="hidden lg:table-cell text-muted-foreground font-medium">
                     {patient.telephone || "-"}
                   </TableCell>
-                  <TableCell className="hidden xl:table-cell text-zinc-500 italic">
+                  <TableCell className="hidden xl:table-cell text-muted-foreground/70 italic">
                     {new Date(patient.createdAt).toLocaleDateString("fr-FR")}
                   </TableCell>
-                  <TableCell className="text-right">
+                    <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-zinc-100">
+                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -125,7 +125,7 @@ export function PatientTable({ patients }: PatientTableProps) {
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild className="cursor-pointer">
                           <Link href={`/dashboard/patients/${patient.id}/edit`}>
-                            <Pencil className="mr-2 h-4 w-4 text-zinc-500" /> Modifier
+                            <Pencil className="mr-2 h-4 w-4 text-muted-foreground" /> Modifier
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />

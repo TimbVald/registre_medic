@@ -21,7 +21,7 @@ export default function AuthLayout({
         href="/register"
         className={cn(
           buttonVariants({ variant: "ghost" }),
-          "absolute right-4 top-4 md:right-8 md:top-8 z-50 text-white lg:text-zinc-900"
+          "absolute right-4 top-4 md:right-8 md:top-8 z-50 text-white lg:text-foreground"
         )}
       >
         S'inscrire
@@ -37,7 +37,7 @@ export default function AuthLayout({
           />
         </div>
         <div className="relative z-20 flex items-center text-lg font-medium">
-          <div className="mr-2 h-8 w-8 rounded-lg bg-white flex items-center justify-center overflow-hidden">
+          <div className="mr-2 h-8 w-8 rounded-lg bg-background flex items-center justify-center overflow-hidden">
              <Image src="/logo/logo.jpeg" alt="Logo" width={32} height={32} />
           </div>
           MediCare Pro
@@ -54,7 +54,7 @@ export default function AuthLayout({
           </blockquote>
         </div>
       </div>
-      <div className="p-4 md:p-8 relative bg-white min-h-screen flex items-center justify-center">
+      <div className="p-4 md:p-8 relative bg-background min-h-screen flex items-center justify-center">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px] py-10">
           {children}
         </div>

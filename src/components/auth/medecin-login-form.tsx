@@ -30,8 +30,8 @@ export default function MedecinLoginForm() {
     <Card className="w-full max-w-md shadow-lg">
       <CardHeader className="space-y-1 pb-4">
         <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 rounded-full bg-emerald-100">
-            <Stethoscope className="h-6 w-6 text-emerald-600" />
+          <div className="p-2 rounded-full bg-emerald-500/10">
+            <Stethoscope className="h-6 w-6 text-emerald-500" />
           </div>
           <div>
             <CardTitle className="text-xl">Espace Médecin</CardTitle>
@@ -51,7 +51,7 @@ export default function MedecinLoginForm() {
           </div>
 
           {error && (
-            <div className="p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm">
+            <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20 text-destructive text-sm">
               {error}
             </div>
           )}

@@ -82,17 +82,17 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-col h-full bg-white/50 backdrop-blur-xl border-r border-zinc-200/50 shadow-sm overflow-y-auto no-scrollbar">
+    <div className="flex flex-col h-full bg-sidebar/50 backdrop-blur-xl border-r border-sidebar-border shadow-sm overflow-y-auto no-scrollbar">
       <div className="px-6 py-8 flex-1">
         <Link href="/dashboard" className="flex items-center mb-10 group" onClick={onNavigate}>
           <div className="relative w-11 h-11 mr-3 transition-transform group-hover:rotate-3">
              <div className="absolute inset-0 bg-primary/20 rounded-xl blur-md" />
-             <div className="relative bg-white border border-zinc-100 rounded-xl w-full h-full flex items-center justify-center overflow-hidden shadow-md">
+             <div className="relative bg-card border border-border rounded-xl w-full h-full flex items-center justify-center overflow-hidden shadow-md">
                 <Image src="/logo/logo.jpeg" alt="Logo" width={44} height={44} className="object-contain p-1" />
              </div>
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-zinc-900 leading-tight">MediCare</h1>
+            <h1 className="text-xl font-bold tracking-tight text-foreground leading-tight">MediCare</h1>
             <p className="text-[10px] uppercase tracking-widest text-primary font-bold">Fondation Chantal Biya</p>
           </div>
         </Link>
@@ -108,7 +108,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
                   "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer rounded-xl transition-all duration-200 ease-in-out",
                   isActive 
                     ? "bg-primary/10 text-primary shadow-sm shadow-primary/5 translate-x-1" 
-                    : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 )}
               >
                 <div className="flex items-center flex-1">
@@ -142,8 +142,8 @@ export function MobileSidebar() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden mr-2 hover:bg-zinc-100 rounded-full transition-colors">
-          <Menu className="h-6 w-6 text-zinc-600" />
+        <Button variant="ghost" size="icon" className="md:hidden mr-2 hover:bg-accent rounded-full transition-colors">
+          <Menu className="h-6 w-6 text-muted-foreground" />
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0 w-72 border-r-0 sm:max-w-none bg-transparent shadow-none">
