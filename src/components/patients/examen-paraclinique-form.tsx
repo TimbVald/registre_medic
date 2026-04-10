@@ -208,7 +208,7 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
                                 name={`${exam.id}.tauxBase`}
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel className="text-[10px] uppercase font-bold text-muted-foreground/60">Taux de base</FormLabel>
+                                    <FormLabel className="text-[10px] uppercase font-bold text-foreground/70">Taux de base</FormLabel>
                                     <FormControl>
                                       <Input {...field} value={field.value || ""} className="h-8 rounded-lg" placeholder="ex: 8.5" />
                                     </FormControl>
@@ -221,7 +221,7 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
                                   name={`${exam.id}.tauxRecent` as any}
                                   render={({ field }) => (
                                     <FormItem>
-                                      <FormLabel className="text-[10px] uppercase font-bold text-muted-foreground/60">Plus récent</FormLabel>
+                                      <FormLabel className="text-[10px] uppercase font-bold text-foreground/70">Plus récent</FormLabel>
                                       <FormControl>
                                         <Input {...field} value={(field.value as any) || ""} className="h-8 rounded-lg" placeholder="ex: 7.2" />
                                       </FormControl>
@@ -236,7 +236,7 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
                               name={`${exam.id}.interpretation`}
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel className="text-[10px] uppercase font-bold text-muted-foreground/60">Interprétation</FormLabel>
+                                  <FormLabel className="text-[10px] uppercase font-bold text-foreground/70">Interprétation</FormLabel>
                                   <Select onValueChange={field.onChange} value={field.value || undefined}>
                                     <FormControl>
                                       <SelectTrigger className="bg-background rounded-xl border-border h-9">

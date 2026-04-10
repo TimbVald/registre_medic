@@ -161,7 +161,7 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
                               }}
                             />
                           </FormControl>
-                          <FormLabel className="text-xs font-medium leading-none cursor-pointer">
+                          <FormLabel className="text-xs font-semibold leading-none cursor-pointer text-foreground/80">
                             {option}
                           </FormLabel>
                         </FormItem>
@@ -324,9 +324,9 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
                           }}
                         />
                       </FormControl>
-                      <FormLabel className="text-xs font-semibold leading-none cursor-pointer">
-                        {option}
-                      </FormLabel>
+                        <FormLabel className="text-xs font-bold leading-none cursor-pointer text-foreground/80">
+                          {option}
+                        </FormLabel>
                     </FormItem>
                   )}
                 />
@@ -364,7 +364,7 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
                         />
                       </FormControl>
                       <div className="space-y-1">
-                        <FormLabel className="text-sm font-bold leading-none cursor-pointer">
+                        <FormLabel className="text-sm font-bold leading-none cursor-pointer text-foreground">
                             {option}
                         </FormLabel>
                       </div>
@@ -378,8 +378,8 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
 
         {/* FOOTER: ACTIONS */}
         <div className="flex items-center justify-end gap-4 p-4 bg-background/80 backdrop-blur-md sticky bottom-4 z-10 border border-border rounded-2xl shadow-lg ring-1 ring-border">
-            <Button variant="ghost" onClick={() => router.back()} disabled={isPending}>Annuler</Button>
-            <Button size="lg" className="rounded-xl px-8" type="submit" disabled={isPending}>
+            <Button variant="ghost" onClick={() => router.back()} disabled={isPending} className="rounded-xl">Annuler</Button>
+            <Button size="lg" className="rounded-xl px-10 shadow-md shadow-primary/20" type="submit" disabled={isPending}>
                {isPending ? (
                  <>
                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enregistrement...

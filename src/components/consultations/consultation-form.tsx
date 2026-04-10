@@ -118,7 +118,7 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
         
         <Tabs defaultValue="vitals" className="w-full space-y-6">
           <div className="overflow-x-auto pb-1 no-scrollbar">
-            <TabsList className="bg-zinc-100/80 p-1.5 rounded-2xl h-auto flex md:inline-flex min-w-full md:min-w-0 gap-2">
+            <TabsList className="bg-muted/50 p-1.5 rounded-2xl h-auto flex md:inline-flex min-w-full md:min-w-0 gap-2">
               <TabsTrigger value="vitals" className="rounded-xl px-5 py-2.5 data-[state=active]:shadow-md shrink-0">
                 <Activity className="h-4 w-4 mr-2" /> Paramètres Vitaux
               </TabsTrigger>
@@ -178,7 +178,7 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
                       name={field}
                       render={({ field: f }) => (
                         <FormItem>
-                          <FormLabel className="uppercase">{field}</FormLabel>
+                          <FormLabel className="uppercase text-foreground/70">{field}</FormLabel>
                           <FormControl><Input placeholder="..." {...f} value={f.value || ""} className="rounded-xl" /></FormControl>
                         </FormItem>
                       )}
@@ -218,7 +218,7 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
                         render={({ field }) => (
                           <FormItem className="flex items-center space-x-3 space-y-0 p-3 border rounded-xl">
                             <FormControl><Checkbox checked={field.value?.includes(plainte)} onCheckedChange={(c) => c ? field.onChange([...field.value, plainte]) : field.onChange(field.value?.filter((v) => v !== plainte))} /></FormControl>
-                            <FormLabel className="text-xs font-semibold cursor-pointer">{plainte}</FormLabel>
+                            <FormLabel className="text-xs font-semibold cursor-pointer text-foreground/80">{plainte}</FormLabel>
                           </FormItem>
                         )}
                       />
@@ -283,9 +283,9 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
           </TabsContent>
         </Tabs>
 
-        <div className="flex items-center justify-end gap-4 p-4 sticky bottom-4 z-10 bg-background border border-border rounded-2xl shadow-lg">
-            <Button variant="ghost" type="button" onClick={() => router.back()} disabled={isPending}>Annuler</Button>
-            <Button size="lg" className="rounded-xl px-10" type="submit" disabled={isPending}>
+        <div className="flex items-center justify-end gap-4 p-4 sticky bottom-4 z-10 bg-background/80 backdrop-blur-md border border-border rounded-2xl shadow-lg">
+            <Button variant="ghost" type="button" onClick={() => router.back()} disabled={isPending} className="rounded-xl">Annuler</Button>
+            <Button size="lg" className="rounded-xl px-10 shadow-md shadow-primary/20" type="submit" disabled={isPending}>
                {isPending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enregistrement...</> : <><Save className="mr-2 h-4 w-4" /> Enregistrer</>}
             </Button>
         </div>

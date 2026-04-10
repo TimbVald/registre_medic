@@ -322,7 +322,7 @@ export default function PatientForm({ initialData }: { initialData?: any }) {
                   )}
                 />
 
-                <FormField
+                  <FormField
                     control={form.control}
                     name="scolarise"
                     render={({ field }) => (
@@ -334,7 +334,7 @@ export default function PatientForm({ initialData }: { initialData?: any }) {
                           />
                         </FormControl>
                         <div className="space-y-1 leading-none">
-                          <FormLabel>Scolarisé(e)</FormLabel>
+                          <FormLabel className="text-foreground font-semibold">Scolarisé(e)</FormLabel>
                         </div>
                       </FormItem>
                     )}
@@ -671,8 +671,9 @@ export default function PatientForm({ initialData }: { initialData?: any }) {
             </TabsContent>
           </Tabs>
 
-          <div className="pt-6 border-t border-border flex justify-end">
-            <Button type="submit" size="lg" disabled={isPending} className="w-full md:w-auto">
+          <div className="pt-6 border-t border-border flex justify-end items-center gap-4 sticky bottom-4 z-10 bg-background/80 backdrop-blur-md p-4 rounded-2xl shadow-lg ring-1 ring-border mt-8">
+            <Button variant="ghost" type="button" onClick={() => router.back()} disabled={isPending} className="rounded-xl">Annuler</Button>
+            <Button type="submit" size="lg" disabled={isPending} className="rounded-xl px-10 shadow-md shadow-primary/20">
               {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
