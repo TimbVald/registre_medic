@@ -23,7 +23,8 @@ import {
   Bell,
   CheckCircle2,
   XCircle,
-  Clock3
+  Clock3,
+  Printer
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -100,6 +101,12 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
               </Button>
             </>
           )}
+
+          <Button variant="secondary" asChild className="rounded-xl shadow-sm border-zinc-200 bg-white hover:bg-zinc-50 flex-1 sm:flex-none">
+            <Link href={`/dashboard/patients/${patient.id}/dossier`} target="_blank">
+               <Printer className="mr-2 h-4 w-4" /> Rapport Médical
+            </Link>
+          </Button>
         </div>
       </div>
 

@@ -135,3 +135,12 @@
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.48 0.16 250);
 }
+
+@media print {
+  .print\:hidden {
+    display: none !important;
+  }
+  header, nav, aside, footer {
+    display: none !important;
+  }
+}
