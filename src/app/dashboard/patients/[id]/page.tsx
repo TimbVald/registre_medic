@@ -33,8 +33,9 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { PrescriptionList } from "@/components/prescriptions/prescription-list";
 import { AppointmentsList } from "@/components/appointments/appointments-list";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { getSession } from "@/lib/auth";
 
 export default async function PatientDetailsPage({ params }: { params: any }) {
   // Gestion robuste des params (Promise ou non)
@@ -45,10 +46,18 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
     notFound();
   }
 
+  const session = await getSession();
   const patient = await getPatientById(id);
 
   if (!patient) {
      notFound();
+  }
+
+  const isPatient = session?.user?.role === "PATIENT";
+
+  // Sécurité supplémentaire : un patient ne peut voir que son PROPRE dossier
+  if (isPatient && session?.user?.id !== id) {
+    redirect(`/dashboard/patients/${session.user.id}`);
   }
 
   // Mocks for now as agreed
@@ -67,26 +76,30 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
           Retour à la liste des patients
         </Link>
         <div className="flex flex-wrap items-center gap-3">
-          <Button variant="outline" asChild className="rounded-xl border-border flex-1 sm:flex-none">
-            <Link href={`/dashboard/patients/${patient.id}/edit`}>
-              <Edit className="mr-2 h-4 w-4" /> Modifier
-            </Link>
-          </Button>
-          <Button variant="outline" asChild className="rounded-xl border-border flex-1 sm:flex-none">
-            <Link href={`/dashboard/patients/${patient.id}/antecedents/new`}>
-              <History className="mr-2 h-4 w-4" /> Antécédents
-            </Link>
-          </Button>
-          <Button variant="outline" asChild className="rounded-xl border-border flex-1 sm:flex-none">
-            <Link href={`/dashboard/patients/${patient.id}/examens`}>
-              <FlaskConical className="mr-2 h-4 w-4" /> Bilan
-            </Link>
-          </Button>
-          <Button className="rounded-xl shadow-lg shadow-primary/20 bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto" asChild>
-            <Link href={`/dashboard/patients/${patient.id}/consultations/new`}>
-               <Stethoscope className="mr-2 h-4 w-4" /> Nouvelle Consultation
-            </Link>
-          </Button>
+          {!isPatient && (
+            <>
+              <Button variant="outline" asChild className="rounded-xl border-border flex-1 sm:flex-none">
+                <Link href={`/dashboard/patients/${patient.id}/edit`}>
+                  <Edit className="mr-2 h-4 w-4" /> Modifier
+                </Link>
+              </Button>
+              <Button variant="outline" asChild className="rounded-xl border-border flex-1 sm:flex-none">
+                <Link href={`/dashboard/patients/${patient.id}/antecedents/new`}>
+                  <History className="mr-2 h-4 w-4" /> Antécédents
+                </Link>
+              </Button>
+              <Button variant="outline" asChild className="rounded-xl border-border flex-1 sm:flex-none">
+                <Link href={`/dashboard/patients/${patient.id}/examens`}>
+                  <FlaskConical className="mr-2 h-4 w-4" /> Bilan
+                </Link>
+              </Button>
+              <Button className="rounded-xl shadow-lg shadow-primary/20 bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto" asChild>
+                <Link href={`/dashboard/patients/${patient.id}/consultations/new`}>
+                   <Stethoscope className="mr-2 h-4 w-4" /> Nouvelle Consultation
+                </Link>
+              </Button>
+            </>
+          )}
         </div>
       </div>
 

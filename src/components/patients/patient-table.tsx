@@ -38,10 +38,13 @@ import {
 
 interface PatientTableProps {
   patients: any[];
+  role?: "PATIENT" | "MEDECIN";
 }
 
-export function PatientTable({ patients }: PatientTableProps) {
+export function PatientTable({ patients, role }: PatientTableProps) {
   const [isPending, startTransition] = useTransition();
+
+  const isPatient = role === "PATIENT";
 
   const handleDelete = (id: string, name: string) => {
     startTransition(async () => {
@@ -123,37 +126,41 @@ export function PatientTable({ patients }: PatientTableProps) {
                             <Eye className="mr-2 h-4 w-4 text-blue-500" /> Voir dossier
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild className="cursor-pointer">
-                          <Link href={`/dashboard/patients/${patient.id}/edit`}>
-                            <Pencil className="mr-2 h-4 w-4 text-muted-foreground" /> Modifier
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-600 cursor-pointer focus:bg-red-50 focus:text-red-700 font-semibold">
-                              <Trash2 className="mr-2 h-4 w-4" /> Supprimer
+                        {!isPatient && (
+                          <>
+                            <DropdownMenuItem asChild className="cursor-pointer">
+                              <Link href={`/dashboard/patients/${patient.id}/edit`}>
+                                <Pencil className="mr-2 h-4 w-4 text-muted-foreground" /> Modifier
+                              </Link>
                             </DropdownMenuItem>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Confirmation de suppression</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Êtes-vous sûr de vouloir supprimer le dossier de <strong>{patient.noms} {patient.prenoms}</strong> ? Cette action est irréversible.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Annuler</AlertDialogCancel>
-                              <AlertDialogAction 
-                                onClick={() => handleDelete(patient.id, `${patient.noms} ${patient.prenoms}`)}
-                                className="bg-red-600 hover:bg-red-700"
-                              >
-                                Supprimer
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                            <DropdownMenuSeparator />
+                            
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-600 cursor-pointer focus:bg-red-50 focus:text-red-700 font-semibold">
+                                  <Trash2 className="mr-2 h-4 w-4" /> Supprimer
+                                </DropdownMenuItem>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Confirmation de suppression</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Êtes-vous sûr de vouloir supprimer le dossier de <strong>{patient.noms} {patient.prenoms}</strong> ? Cette action est irréversible.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                  <AlertDialogAction 
+                                    onClick={() => handleDelete(patient.id, `${patient.noms} ${patient.prenoms}`)}
+                                    className="bg-red-600 hover:bg-red-700"
+                                  >
+                                    Supprimer
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

@@ -41,14 +41,13 @@ export async function loginPatient(formData: FormData) {
       name: `${patientFound.noms} ${patientFound.prenoms}`,
     });
 
-    // Rediriger vers le dossier patient (à créer)
-    // redirect(`/patient/dossier/${patientFound.id}`);
+    // Rediriger vers le dossier patient
+    redirect(`/dashboard/patients/${patientFound.id}`);
   } catch (error) {
     console.error("Erreur login patient:", error);
+    if (error instanceof Error && error.message === "NEXT_REDIRECT") throw error;
     return { error: "Une erreur est survenue lors de l'authentification." };
   }
-
-  redirect("/dashboard"); // Vers le tableau de bord ou dossier
 }
 
 /**

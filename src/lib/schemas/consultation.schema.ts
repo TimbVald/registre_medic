@@ -5,7 +5,7 @@ import { z } from "zod";
 export const ETAT_GENERAL_OPTIONS = ["Satisfaisant", "Non satisfaisant"] as const;
 export const RDV_HONORE_OPTIONS = ["Oui", "Non"] as const;
 export const FREQUENCE_RAPPEL_OPTIONS = ["01 fois/sem.", "02 fois/sem.", "03 fois/sem."] as const;
-export const MODE_RAPPEL_OPTIONS = ["SMS classique", "Appel classique", "WhatsApp (SMS)"] as const;
+export const MODE_RAPPEL_OPTIONS = ["SMS classique", "Appel classique", "WhatsApp (SMS)", "Email"] as const;
 export const REGULARITE_TRAITEMENT_OPTIONS = ["Régulier", "Irrégulier"] as const;
 export const CONCLUSION_TRAITEMENT_OPTIONS = ["Adhérence", "Compliance", "Observance"] as const;
 

@@ -78,8 +78,22 @@ const routes = [
     color: "text-zinc-500",
   },
 ];
-export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
+interface User {
+  id: string;
+  role: "PATIENT" | "MEDECIN";
+  name: string;
+}
+
+export function Sidebar({ onNavigate, user }: { onNavigate?: () => void; user?: User }) {
   const pathname = usePathname();
+
+  const filteredRoutes = routes.filter((route) => {
+    if (user?.role === "PATIENT") {
+      // Les patients ne voient pas la liste globale des patients ni la facturation
+      return !["/dashboard/patients", "/dashboard/billing"].includes(route.href);
+    }
+    return true;
+  });
 
   return (
     <div className="flex flex-col h-full bg-sidebar/50 backdrop-blur-xl border-r border-sidebar-border shadow-sm overflow-y-auto no-scrollbar">
@@ -97,7 +111,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           </div>
         </Link>
         <div className="space-y-1.5">
-          {routes.map((route) => {
+          {filteredRoutes.map((route) => {
             const isActive = pathname === route.href;
             return (
               <Link
@@ -136,7 +150,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-export function MobileSidebar() {
+export function MobileSidebar({ user }: { user?: User }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -150,7 +164,7 @@ export function MobileSidebar() {
         <div className="sr-only">
           <SheetTitle>Menu de navigation</SheetTitle>
         </div>
-        <Sidebar onNavigate={() => setOpen(false)} />
+        <Sidebar onNavigate={() => setOpen(false)} user={user} />
       </SheetContent>
     </Sheet>
   );

@@ -7,6 +7,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
 
+import { getSession } from "@/lib/auth";
+
 export const dynamic = "force-dynamic";
 
 interface PatientsPageProps {
@@ -17,7 +19,10 @@ interface PatientsPageProps {
 
 export default async function PatientsPage({ searchParams }: PatientsPageProps) {
   const { search } = await searchParams;
+  const session = await getSession();
   const patientsData = await getPatients(search);
+
+  const isPatient = session?.user?.role === "PATIENT";
 
   return (
     <div className="flex flex-col gap-8 pb-8 transition-all">
@@ -29,11 +34,13 @@ export default async function PatientsPage({ searchParams }: PatientsPageProps) 
             Gérez la base de données des patients de la clinique ({patientsData.length} records).
           </p>
         </div>
-        <Button asChild className="shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]">
-          <Link href="/dashboard/patients/new">
-            <UserPlus className="mr-2 h-4 w-4" /> Enregistrer un Patient
-          </Link>
-        </Button>
+        {!isPatient && (
+          <Button asChild className="shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]">
+            <Link href="/dashboard/patients/new">
+              <UserPlus className="mr-2 h-4 w-4" /> Enregistrer un Patient
+            </Link>
+          </Button>
+        )}
       </div>
 
       {/* Control Bar */}
@@ -58,7 +65,7 @@ export default async function PatientsPage({ searchParams }: PatientsPageProps) 
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       }>
-        <PatientTable patients={patientsData} />
+        <PatientTable patients={patientsData} role={session?.user?.role} />
       </Suspense>
 
       {/* Footer Info */}

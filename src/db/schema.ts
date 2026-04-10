@@ -218,7 +218,7 @@ export const examensParacliniques = pgTable("examens_paracliniques", {
 export const etatGeneralEnum = pgEnum("etat_general", ["Satisfaisant", "Non satisfaisant"]);
 export const rdvHonoreEnum = pgEnum("rdv_honore", ["Oui", "Non"]);
 export const frequenceRappelEnum = pgEnum("frequence_rappel", ["01 fois/sem.", "02 fois/sem.", "03 fois/sem."]);
-export const modeRappelEnum = pgEnum("mode_rappel", ["SMS classique", "Appel classique", "WhatsApp (SMS)"]);
+export const modeRappelEnum = pgEnum("mode_rappel", ["SMS classique", "Appel classique", "WhatsApp (SMS)", "Email"]);
 export const conclusionTraitementEnum = pgEnum("conclusion_traitement", ["Adhérence", "Compliance", "Observance"]);
 export const regulariteTraitementEnum = pgEnum("regularite_traitement", ["Régulier", "Irrégulier"]);
 export const typeConsultationEnum = pgEnum("type_consultation", ["Systématique", "À la demande", "Sur RDV"]);
@@ -261,6 +261,19 @@ export const consultationsExternes = pgTable("consultations_externes", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// --- Table Historique des Notifications ---
+export const notificationsLogs = pgTable("notifications_logs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  patientId: uuid("patient_id").references(() => patients.id, { onDelete: "cascade" }),
+  consultationId: uuid("consultation_id").references(() => consultationsExternes.id, { onDelete: "set null" }),
+  type: varchar("type", { length: 50 }).notNull(), // "Email", "SMS", "WhatsApp"
+  destinataire: varchar("destinataire", { length: 255 }).notNull(),
+  statut: varchar("statut", { length: 50 }).notNull(), // "Success", "Error"
+  messageId: varchar("message_id", { length: 255 }), // ID fourni par Resend
+  erreur: text("erreur"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // --- Relations ---
 export const patientsRelations = relations(patients, ({ many }) => ({
   antecedents: many(antecedents),
@@ -286,5 +299,16 @@ export const consultationsExternesRelations = relations(consultationsExternes, (
   patient: one(patients, {
     fields: [consultationsExternes.patientId],
     references: [patients.id],
+  }),
+}));
+
+export const notificationsLogsRelations = relations(notificationsLogs, ({ one }) => ({
+  patient: one(patients, {
+    fields: [notificationsLogs.patientId],
+    references: [patients.id],
+  }),
+  consultation: one(consultationsExternes, {
+    fields: [notificationsLogs.consultationId],
+    references: [consultationsExternes.id],
   }),
 }));
