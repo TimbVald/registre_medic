@@ -9,7 +9,9 @@
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
-    "db:seed": "tsx scripts/seed-medecins.ts"
+    "db:seed": "tsx scripts/seed-medecins.ts",
+    "db:apply-migration": "tsx scripts/apply-migration.ts",
+    "db:add-patient-divine": "tsx scripts/add-patient.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

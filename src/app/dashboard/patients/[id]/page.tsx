@@ -39,6 +39,9 @@ import { notFound, redirect } from "next/navigation";
 import { HospitalisationList } from "@/components/hospitalisations/hospitalisation-list";
 import { cn } from "@/lib/utils";
 import { getSession } from "@/lib/auth";
+import { AntecedentHistory } from "@/components/patients/antecedent-history";
+import { ExamenParacliniqueView } from "@/components/patients/examen-paraclinique-view";
+import { NotebookTabs, FlaskConical as FlaskIcon } from "lucide-react";
 
 export default async function PatientDetailsPage({ params }: { params: any }) {
   // Gestion robuste des params (Promise ou non)
@@ -80,6 +83,13 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
         </Link>
 
         <div className="flex flex-wrap items-center gap-3">
+          {!isPatient && (
+            <Button variant="outline" asChild className="rounded-xl border-border flex-1 sm:flex-none">
+              <Link href={`/dashboard/patients/${patient.id}/edit`}>
+                <Edit className="mr-2 h-4 w-4" /> Modifier le profil
+              </Link>
+            </Button>
+          )}
           <Button variant="outline" asChild className="rounded-xl shadow-sm border-zinc-200 bg-white hover:bg-zinc-50 flex-1 sm:flex-none">
             <Link href={`/dashboard/patients/${patient.id}/dossier`} target="_blank">
                <Printer className="mr-2 h-4 w-4" /> Rapport Médical
@@ -162,6 +172,12 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
             </TabsTrigger>
             <TabsTrigger value="record" className="rounded-xl px-4 sm:px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm">
               Dossier Externe
+            </TabsTrigger>
+            <TabsTrigger value="antecedents" className="rounded-xl px-4 sm:px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm flex items-center gap-2">
+              <History className="h-4 w-4" /> Antécédents
+            </TabsTrigger>
+            <TabsTrigger value="exams" className="rounded-xl px-4 sm:px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm flex items-center gap-2">
+              <FlaskIcon className="h-4 w-4 text-indigo-500" /> Bilan
             </TabsTrigger>
             <TabsTrigger value="consultations" className="rounded-xl px-4 sm:px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm">
               Historique des RDV
@@ -306,6 +322,36 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
                         </Link>
                     </Button>
                 </Card>
+
+                <Card className="border-none shadow-sm ring-1 ring-border rounded-3xl bg-card p-8 text-center flex flex-col items-center justify-center gap-6 group hover:ring-amber-500/30 transition-all">
+                    <div className="h-16 w-16 bg-amber-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <History className="h-8 w-8 text-amber-500" />
+                    </div>
+                    <div>
+                       <h3 className="text-lg font-bold text-foreground">Antécédents</h3>
+                       <p className="text-xs text-muted-foreground mt-2">Historique médical et familial.</p>
+                    </div>
+                    <Button variant="outline" className="rounded-xl w-full border-amber-200 text-amber-700 hover:bg-amber-50" asChild>
+                        <Link href={`/dashboard/patients/${patient.id}/antecedents/new`}>
+                            <Plus className="h-4 w-4 mr-2" /> Mettre à jour
+                        </Link>
+                    </Button>
+                </Card>
+
+                <Card className="border-none shadow-sm ring-1 ring-border rounded-3xl bg-card p-8 text-center flex flex-col items-center justify-center gap-6 group hover:ring-indigo-500/30 transition-all">
+                    <div className="h-16 w-16 bg-indigo-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <FlaskConical className="h-8 w-8 text-indigo-500" />
+                    </div>
+                    <div>
+                       <h3 className="text-lg font-bold text-foreground">Bilan (Examens)</h3>
+                       <p className="text-xs text-muted-foreground mt-2">Examens paracliniques et résultats.</p>
+                    </div>
+                    <Button variant="outline" className="rounded-xl w-full border-indigo-200 text-indigo-700 hover:bg-indigo-50" asChild>
+                        <Link href={`/dashboard/patients/${patient.id}/examens`}>
+                            <FlaskConical className="h-4 w-4 mr-2" /> Voir le bilan
+                        </Link>
+                    </Button>
+                </Card>
             </div>
 
             <Card className="border-none shadow-sm ring-1 ring-border rounded-2xl overflow-hidden bg-card">
@@ -321,6 +367,20 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
                     />
                 </CardContent>
             </Card>
+        </TabsContent>
+
+        <TabsContent value="antecedents" className="space-y-6">
+            <AntecedentHistory 
+              patientId={patient.id} 
+              antecedents={patient.antecedents?.[0] || null} 
+            />
+        </TabsContent>
+
+        <TabsContent value="exams" className="space-y-6">
+            <ExamenParacliniqueView 
+              patientId={patient.id} 
+              examens={patient.examensParacliniques?.[0] || null} 
+            />
         </TabsContent>
 
         <TabsContent value="consultations">
