@@ -57,7 +57,7 @@ import { Textarea } from "@/components/ui/textarea";
 interface Props {
   patientId: string;
   initialData?: any;
-  type?: "Systématique" | "À la demande" | "Sur RDV";
+  type?: "Systématique";
 }
 
 export function ConsultationForm({ patientId, initialData, type = "Systématique" }: Props) {

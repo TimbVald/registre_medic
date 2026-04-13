@@ -109,7 +109,7 @@ export default function PatientForm({ initialData }: { initialData?: any }) {
       <div className="mb-8 border-b border-border pb-4">
         <h2 className="text-2xl font-bold text-foreground">Nouveau Patient</h2>
         <p className="text-sm text-muted-foreground">
-          Veuillez remplir les informations pour la création d'une nouvelle fiche. Le numéro sera généré automatiquement.
+        Veuillez remplir les informations pour la création d'une nouvelle fiche. Le numéro sera généré automatiquement.
         </p>
       </div>
 

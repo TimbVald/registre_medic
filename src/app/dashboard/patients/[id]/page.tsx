@@ -24,7 +24,8 @@ import {
   CheckCircle2,
   XCircle,
   Clock3,
-  Printer
+  Printer,
+  BedDouble
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +36,7 @@ import { fr } from "date-fns/locale";
 import { PrescriptionList } from "@/components/prescriptions/prescription-list";
 import { AppointmentsList } from "@/components/appointments/appointments-list";
 import { notFound, redirect } from "next/navigation";
+import { HospitalisationList } from "@/components/hospitalisations/hospitalisation-list";
 import { cn } from "@/lib/utils";
 import { getSession } from "@/lib/auth";
 
@@ -76,32 +78,8 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
           <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
           Retour à la liste des patients
         </Link>
-        <div className="flex flex-wrap items-center gap-3">
-          {!isPatient && (
-            <>
-              <Button variant="outline" asChild className="rounded-xl border-border flex-1 sm:flex-none">
-                <Link href={`/dashboard/patients/${patient.id}/edit`}>
-                  <Edit className="mr-2 h-4 w-4" /> Modifier
-                </Link>
-              </Button>
-              <Button variant="outline" asChild className="rounded-xl border-border flex-1 sm:flex-none">
-                <Link href={`/dashboard/patients/${patient.id}/antecedents/new`}>
-                  <History className="mr-2 h-4 w-4" /> Antécédents
-                </Link>
-              </Button>
-              <Button variant="outline" asChild className="rounded-xl border-border flex-1 sm:flex-none">
-                <Link href={`/dashboard/patients/${patient.id}/examens`}>
-                  <FlaskConical className="mr-2 h-4 w-4" /> Bilan
-                </Link>
-              </Button>
-              <Button className="rounded-xl shadow-lg shadow-primary/20 bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto" asChild>
-                <Link href={`/dashboard/patients/${patient.id}/consultations/new`}>
-                   <Stethoscope className="mr-2 h-4 w-4" /> Nouvelle Consultation
-                </Link>
-              </Button>
-            </>
-          )}
 
+        <div className="flex flex-wrap items-center gap-3">
           <Button variant="outline" asChild className="rounded-xl shadow-sm border-zinc-200 bg-white hover:bg-zinc-50 flex-1 sm:flex-none">
             <Link href={`/dashboard/patients/${patient.id}/dossier`} target="_blank">
                <Printer className="mr-2 h-4 w-4" /> Rapport Médical
@@ -297,38 +275,51 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
            </div>
         </TabsContent>
 
-        <TabsContent value="record">
-            <Card className="border-none shadow-sm ring-1 ring-border rounded-3xl bg-card p-12 text-center flex flex-col items-center justify-center gap-6">
-                <div className="h-20 w-20 bg-muted/50 rounded-full flex items-center justify-center">
-                    <FileText className="h-10 w-10 text-primary/40" />
-                </div>
-                <div>
-                   <h3 className="text-xl font-bold text-foreground">Dossier Externe</h3>
-                   <p className="text-sm text-muted-foreground max-w-md mx-auto mt-2">
-                     Gérez les différentes consultations externes pour ce patient. 
-                     Sélectionnez le type de consultation approprié.
-                   </p>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2 w-full max-w-3xl">
-                    <Button className="rounded-xl px-4 py-6 h-auto flex flex-col items-center gap-2 shadow-md shadow-primary/10 transition-all hover:scale-105 active:scale-95" asChild>
-                        <Link href={`/dashboard/patients/${patient.id}/consultations/new?type=Systématique`} className="text-center">
-                            <Stethoscope className="h-5 w-5" />
-                            <span className="text-xs font-bold leading-tight">Systématique</span>
+        <TabsContent value="record" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="border-none shadow-sm ring-1 ring-border rounded-3xl bg-card p-8 text-center flex flex-col items-center justify-center gap-6 group hover:ring-emerald-500/30 transition-all">
+                    <div className="h-16 w-16 bg-emerald-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <Stethoscope className="h-8 w-8 text-emerald-500" />
+                    </div>
+                    <div>
+                       <h3 className="text-lg font-bold text-foreground">Consultation Systématique</h3>
+                       <p className="text-xs text-muted-foreground mt-2">Suivi médical périodique de l'enfant.</p>
+                    </div>
+                    <Button className="rounded-xl w-full shadow-lg shadow-emerald-500/10 bg-emerald-600 hover:bg-emerald-700" asChild>
+                        <Link href={`/dashboard/patients/${patient.id}/consultations/new?type=Systématique`}>
+                            <Plus className="h-4 w-4 mr-2" /> Nouveau Dossier
                         </Link>
                     </Button>
-                    <Button variant="outline" className="rounded-xl px-4 py-6 h-auto flex flex-col items-center gap-2 border-border shadow-sm transition-all hover:bg-muted hover:scale-105 active:scale-95" asChild>
-                        <Link href={`/dashboard/patients/${patient.id}/consultations/new?type=À la demande`} className="text-center">
-                            <Activity className="h-5 w-5 text-amber-500" />
-                            <span className="text-xs font-bold leading-tight">À la demande</span>
+                </Card>
+
+                <Card className="border-none shadow-sm ring-1 ring-border rounded-3xl bg-card p-8 text-center flex flex-col items-center justify-center gap-6 group hover:ring-blue-500/30 transition-all">
+                    <div className="h-16 w-16 bg-blue-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <BedDouble className="h-8 w-8 text-blue-500" />
+                    </div>
+                    <div>
+                       <h3 className="text-lg font-bold text-foreground">Hospitalisation</h3>
+                       <p className="text-xs text-muted-foreground mt-2">Saisie des paramètres et soins hospitaliers.</p>
+                    </div>
+                    <Button className="rounded-xl w-full shadow-lg shadow-blue-500/10 bg-blue-600 hover:bg-blue-700" asChild>
+                        <Link href={`/dashboard/patients/${patient.id}/hospitalisations/new`}>
+                            <Plus className="h-4 w-4 mr-2" /> Nouveau Dossier
                         </Link>
                     </Button>
-                    <Button variant="outline" className="rounded-xl px-4 py-6 h-auto flex flex-col items-center gap-2 border-border shadow-sm transition-all hover:bg-muted hover:scale-105 active:scale-95" asChild>
-                        <Link href={`/dashboard/patients/${patient.id}/consultations/new?type=Sur RDV`} className="text-center">
-                            <Calendar className="h-5 w-5 text-blue-500" />
-                            <span className="text-xs font-bold leading-tight">Sur RDV</span>
-                        </Link>
-                    </Button>
-                </div>
+                </Card>
+            </div>
+
+            <Card className="border-none shadow-sm ring-1 ring-border rounded-2xl overflow-hidden bg-card">
+                <CardHeader className="border-b border-border bg-muted/30">
+                    <CardTitle className="text-sm font-bold flex items-center gap-2">
+                        <History className="h-5 w-5 text-muted-foreground" /> Historique des Hospitalisations
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                    <HospitalisationList 
+                      hospitalisations={(patient as any).hospitalisations || []} 
+                      patientId={patient.id} 
+                    />
+                </CardContent>
             </Card>
         </TabsContent>
 

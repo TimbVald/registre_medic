@@ -1,0 +1,1399 @@
+{
+  "id": "bab59473-8ef1-42e0-aa61-00b4bff86581",
+  "prevId": "24b7a530-3c53-4b53-a896-022f12c8b33e",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.antecedents": {
+      "name": "antecedents",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "patient_id": {
+          "name": "patient_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "age_decouverte_annees": {
+          "name": "age_decouverte_annees",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "age_decouverte_mois": {
+          "name": "age_decouverte_mois",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circonstances_decouverte": {
+          "name": "circonstances_decouverte",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type_depistage": {
+          "name": "type_depistage",
+          "type": "depistage_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notion_famille_drepanocytose": {
+          "name": "notion_famille_drepanocytose",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "liens_famille": {
+          "name": "liens_famille",
+          "type": "famille_lien[]",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nb_freres_soeurs_drepanocytaires": {
+          "name": "nb_freres_soeurs_drepanocytaires",
+          "type": "nb_cas",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deces_famille_drepanocytose": {
+          "name": "deces_famille_drepanocytose",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "nb_deces_famille": {
+          "name": "nb_deces_famille",
+          "type": "nb_cas",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "complications_aigues": {
+          "name": "complications_aigues",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "complications_chroniques": {
+          "name": "complications_chroniques",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "antecedents_patient_id_patients_id_fk": {
+          "name": "antecedents_patient_id_patients_id_fk",
+          "tableFrom": "antecedents",
+          "tableTo": "patients",
+          "columnsFrom": [
+            "patient_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.consultations_externes": {
+      "name": "consultations_externes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "patient_id": {
+          "name": "patient_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_consultation": {
+          "name": "date_consultation",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "type_consultation": {
+          "name": "type_consultation",
+          "type": "type_consultation",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "etat_general": {
+          "name": "etat_general",
+          "type": "etat_general",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "temperature": {
+          "name": "temperature",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fc": {
+          "name": "fc",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fr": {
+          "name": "fr",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pa": {
+          "name": "pa",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sao2": {
+          "name": "sao2",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaintes_exist": {
+          "name": "plaintes_exist",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "plaintes_details": {
+          "name": "plaintes_details",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaintes_autre": {
+          "name": "plaintes_autre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_rdv_prevue": {
+          "name": "date_rdv_prevue",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rdv_honore": {
+          "name": "rdv_honore",
+          "type": "rdv_honore",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rappel_frequence": {
+          "name": "rappel_frequence",
+          "type": "frequence_rappel",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rappel_reception": {
+          "name": "rappel_reception",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "rappel_retour": {
+          "name": "rappel_retour",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "rappel_mode": {
+          "name": "rappel_mode",
+          "type": "mode_rappel",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cause_non_honore": {
+          "name": "cause_non_honore",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "traitement_acide_folique": {
+          "name": "traitement_acide_folique",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "traitement_hydroxyuree": {
+          "name": "traitement_hydroxyuree",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "traitement_antibio_prophylaxie": {
+          "name": "traitement_antibio_prophylaxie",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "consultations_externes_patient_id_patients_id_fk": {
+          "name": "consultations_externes_patient_id_patients_id_fk",
+          "tableFrom": "consultations_externes",
+          "tableTo": "patients",
+          "columnsFrom": [
+            "patient_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.examens_paracliniques": {
+      "name": "examens_paracliniques",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "patient_id": {
+          "name": "patient_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hemo_realise": {
+          "name": "hemo_realise",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "hemo_cause": {
+          "name": "hemo_cause",
+          "type": "cause_non_realisation",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hemo_taux_base": {
+          "name": "hemo_taux_base",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hemo_taux_recent": {
+          "name": "hemo_taux_recent",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hemo_interpretation": {
+          "name": "hemo_interpretation",
+          "type": "interpretation_hemo",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "retic_realise": {
+          "name": "retic_realise",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "retic_cause": {
+          "name": "retic_cause",
+          "type": "cause_non_realisation",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "retic_taux_base": {
+          "name": "retic_taux_base",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "retic_taux_recent": {
+          "name": "retic_taux_recent",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "retic_interpretation": {
+          "name": "retic_interpretation",
+          "type": "interpretation_retic",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gb_realise": {
+          "name": "gb_realise",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "gb_cause": {
+          "name": "gb_cause",
+          "type": "cause_non_realisation",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gb_taux_base": {
+          "name": "gb_taux_base",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gb_taux_recent": {
+          "name": "gb_taux_recent",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gb_interpretation": {
+          "name": "gb_interpretation",
+          "type": "interpretation_gb",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaq_realise": {
+          "name": "plaq_realise",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "plaq_cause": {
+          "name": "plaq_cause",
+          "type": "cause_non_realisation",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaq_taux_base": {
+          "name": "plaq_taux_base",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaq_taux_recent": {
+          "name": "plaq_taux_recent",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaq_interpretation": {
+          "name": "plaq_interpretation",
+          "type": "interpretation_plaq",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "asat_alat_realise": {
+          "name": "asat_alat_realise",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "asat_alat_cause": {
+          "name": "asat_alat_cause",
+          "type": "cause_non_realisation",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "asat_alat_taux_base": {
+          "name": "asat_alat_taux_base",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "asat_alat_interpretation": {
+          "name": "asat_alat_interpretation",
+          "type": "interpretation_asat_alat",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "examens_paracliniques_patient_id_patients_id_fk": {
+          "name": "examens_paracliniques_patient_id_patients_id_fk",
+          "tableFrom": "examens_paracliniques",
+          "tableTo": "patients",
+          "columnsFrom": [
+            "patient_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.hospitalisations": {
+      "name": "hospitalisations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "patient_id": {
+          "name": "patient_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_hospitalisation": {
+          "name": "date_hospitalisation",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "age_patient": {
+          "name": "age_patient",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "temperature": {
+          "name": "temperature",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fc": {
+          "name": "fc",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fr": {
+          "name": "fr",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pa": {
+          "name": "pa",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sao2": {
+          "name": "sao2",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaintes_exist": {
+          "name": "plaintes_exist",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "details_plaintes": {
+          "name": "details_plaintes",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "traitement_acide_folique": {
+          "name": "traitement_acide_folique",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "traitement_hydroxyuree": {
+          "name": "traitement_hydroxyuree",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "traitement_antibio_prophylaxie": {
+          "name": "traitement_antibio_prophylaxie",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "traitement_hydratation": {
+          "name": "traitement_hydratation",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "hospitalisations_patient_id_patients_id_fk": {
+          "name": "hospitalisations_patient_id_patients_id_fk",
+          "tableFrom": "hospitalisations",
+          "tableTo": "patients",
+          "columnsFrom": [
+            "patient_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.medecins": {
+      "name": "medecins",
+      "schema": "",
+      "columns": {
+        "numero_serie": {
+          "name": "numero_serie",
+          "type": "varchar(100)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "nom": {
+          "name": "nom",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prenom": {
+          "name": "prenom",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "telephone": {
+          "name": "telephone",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "specialite": {
+          "name": "specialite",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mot_de_passe": {
+          "name": "mot_de_passe",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "medecins_email_unique": {
+          "name": "medecins_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.notifications_logs": {
+      "name": "notifications_logs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "patient_id": {
+          "name": "patient_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "consultation_id": {
+          "name": "consultation_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "destinataire": {
+          "name": "destinataire",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statut": {
+          "name": "statut",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "message_id": {
+          "name": "message_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "erreur": {
+          "name": "erreur",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "notifications_logs_patient_id_patients_id_fk": {
+          "name": "notifications_logs_patient_id_patients_id_fk",
+          "tableFrom": "notifications_logs",
+          "tableTo": "patients",
+          "columnsFrom": [
+            "patient_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "notifications_logs_consultation_id_consultations_externes_id_fk": {
+          "name": "notifications_logs_consultation_id_consultations_externes_id_fk",
+          "tableFrom": "notifications_logs",
+          "tableTo": "consultations_externes",
+          "columnsFrom": [
+            "consultation_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.patients": {
+      "name": "patients",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "numero_fiche": {
+          "name": "numero_fiche",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "noms": {
+          "name": "noms",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prenoms": {
+          "name": "prenoms",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_naissance": {
+          "name": "date_naissance",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "telephone": {
+          "name": "telephone",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lieu_naissance": {
+          "name": "lieu_naissance",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "age_mois": {
+          "name": "age_mois",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "age_annees": {
+          "name": "age_annees",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sexe": {
+          "name": "sexe",
+          "type": "sexe",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type_residence": {
+          "name": "type_residence",
+          "type": "type_residence",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lieu_residence": {
+          "name": "lieu_residence",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scolarise": {
+          "name": "scolarise",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "personnes_vivants_avec": {
+          "name": "personnes_vivants_avec",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_nom": {
+          "name": "pere_nom",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_etat": {
+          "name": "pere_etat",
+          "type": "parent_etat",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_tel_classique": {
+          "name": "pere_tel_classique",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_tel_whatsapp": {
+          "name": "pere_tel_whatsapp",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_age": {
+          "name": "pere_age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_niveau_scolaire": {
+          "name": "pere_niveau_scolaire",
+          "type": "parent_niveau_scolaire",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_profession": {
+          "name": "pere_profession",
+          "type": "parent_profession",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_revenus": {
+          "name": "pere_revenus",
+          "type": "parent_revenus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_situation_matrimoniale": {
+          "name": "pere_situation_matrimoniale",
+          "type": "parent_situation_matrimoniale",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_religion": {
+          "name": "pere_religion",
+          "type": "parent_religion",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_groupe_sanguin": {
+          "name": "pere_groupe_sanguin",
+          "type": "groupe_sanguin",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pere_electrophorese": {
+          "name": "pere_electrophorese",
+          "type": "electrophorese",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_nom": {
+          "name": "mere_nom",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_etat": {
+          "name": "mere_etat",
+          "type": "parent_etat",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_tel_classique": {
+          "name": "mere_tel_classique",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_tel_whatsapp": {
+          "name": "mere_tel_whatsapp",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_age": {
+          "name": "mere_age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_niveau_scolaire": {
+          "name": "mere_niveau_scolaire",
+          "type": "parent_niveau_scolaire",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_profession": {
+          "name": "mere_profession",
+          "type": "parent_profession",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_revenus": {
+          "name": "mere_revenus",
+          "type": "parent_revenus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_situation_matrimoniale": {
+          "name": "mere_situation_matrimoniale",
+          "type": "parent_situation_matrimoniale",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_religion": {
+          "name": "mere_religion",
+          "type": "parent_religion",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_groupe_sanguin": {
+          "name": "mere_groupe_sanguin",
+          "type": "groupe_sanguin",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mere_electrophorese": {
+          "name": "mere_electrophorese",
+          "type": "electrophorese",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "patients_numero_fiche_unique": {
+          "name": "patients_numero_fiche_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "numero_fiche"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.cause_non_realisation": {
+      "name": "cause_non_realisation",
+      "schema": "public",
+      "values": [
+        "Manque d'argent",
+        "Distance/Transport difficile",
+        "Manque de compréhension de l'utilité",
+        "Manque de temps/Travail",
+        "Charge familiale",
+        "Manque de rappel",
+        "Autre"
+      ]
+    },
+    "public.conclusion_traitement": {
+      "name": "conclusion_traitement",
+      "schema": "public",
+      "values": [
+        "Adhérence",
+        "Compliance",
+        "Observance"
+      ]
+    },
+    "public.depistage_type": {
+      "name": "depistage_type",
+      "schema": "public",
+      "values": [
+        "Anténatal",
+        "Néonatal",
+        "Post-natal"
+      ]
+    },
+    "public.electrophorese": {
+      "name": "electrophorese",
+      "schema": "public",
+      "values": [
+        "AA",
+        "AS",
+        "SS"
+      ]
+    },
+    "public.etat_general": {
+      "name": "etat_general",
+      "schema": "public",
+      "values": [
+        "Satisfaisant",
+        "Non satisfaisant"
+      ]
+    },
+    "public.famille_lien": {
+      "name": "famille_lien",
+      "schema": "public",
+      "values": [
+        "Fratrie",
+        "Famille paternelle",
+        "Famille maternelle"
+      ]
+    },
+    "public.frequence_rappel": {
+      "name": "frequence_rappel",
+      "schema": "public",
+      "values": [
+        "01 fois/sem.",
+        "02 fois/sem.",
+        "03 fois/sem."
+      ]
+    },
+    "public.groupe_sanguin": {
+      "name": "groupe_sanguin",
+      "schema": "public",
+      "values": [
+        "A+",
+        "B+",
+        "AB+",
+        "A-",
+        "B-",
+        "AB-",
+        "O+",
+        "O-"
+      ]
+    },
+    "public.interpretation_asat_alat": {
+      "name": "interpretation_asat_alat",
+      "schema": "public",
+      "values": [
+        "Normal",
+        "Augmenté (Cytolyse hépatite)"
+      ]
+    },
+    "public.interpretation_gb": {
+      "name": "interpretation_gb",
+      "schema": "public",
+      "values": [
+        "Normal",
+        "Diminué (Leucopénie)",
+        "Augmenté (Leucocytose)"
+      ]
+    },
+    "public.interpretation_hemo": {
+      "name": "interpretation_hemo",
+      "schema": "public",
+      "values": [
+        "Normal",
+        "Diminué (Anémie)",
+        "Augmenté (Polyglobulie)"
+      ]
+    },
+    "public.interpretation_plaq": {
+      "name": "interpretation_plaq",
+      "schema": "public",
+      "values": [
+        "Normal",
+        "Diminué (Thrombopénie)",
+        "Augmenté (Thrombocytose)"
+      ]
+    },
+    "public.interpretation_retic": {
+      "name": "interpretation_retic",
+      "schema": "public",
+      "values": [
+        "Normal",
+        "Diminué (Production médullaire insuffisante)",
+        "Augmenté (Réponse médullaire accrue)"
+      ]
+    },
+    "public.mode_rappel": {
+      "name": "mode_rappel",
+      "schema": "public",
+      "values": [
+        "SMS classique",
+        "Appel classique",
+        "WhatsApp (SMS)",
+        "Email"
+      ]
+    },
+    "public.nb_cas": {
+      "name": "nb_cas",
+      "schema": "public",
+      "values": [
+        "01",
+        "02",
+        "03",
+        "04",
+        "Plus"
+      ]
+    },
+    "public.parent_etat": {
+      "name": "parent_etat",
+      "schema": "public",
+      "values": [
+        "Vivant",
+        "Décédé",
+        "Invalide",
+        "Abandon"
+      ]
+    },
+    "public.parent_niveau_scolaire": {
+      "name": "parent_niveau_scolaire",
+      "schema": "public",
+      "values": [
+        "Non scolarisé",
+        "Primaire",
+        "Secondaire",
+        "Universitaire",
+        "Post-universitaire"
+      ]
+    },
+    "public.parent_profession": {
+      "name": "parent_profession",
+      "schema": "public",
+      "values": [
+        "Secteur public",
+        "Secteur privé formel",
+        "Indépendant formel",
+        "Secteur informel",
+        "Travail précaire",
+        "Sans emploi"
+      ]
+    },
+    "public.parent_religion": {
+      "name": "parent_religion",
+      "schema": "public",
+      "values": [
+        "Christianisme",
+        "Islam",
+        "Animisme",
+        "Témoin de Jehova",
+        "Inconnue"
+      ]
+    },
+    "public.parent_revenus": {
+      "name": "parent_revenus",
+      "schema": "public",
+      "values": [
+        "<1x SMIC (<36.000)",
+        "1-2x SMIC (36.000-72.000)",
+        "2-5x SMIC (72.000-180.000)",
+        "5-10x SMIC (180.000-360.000)",
+        "10-15xSMIC (360.000-540.000)",
+        "15-20xSMIC (540.000-720.000)",
+        "20-25xSMIC (720.000-900.000)",
+        ">25xSMIC"
+      ]
+    },
+    "public.parent_situation_matrimoniale": {
+      "name": "parent_situation_matrimoniale",
+      "schema": "public",
+      "values": [
+        "Célibataire",
+        "Marié Monogame",
+        "Marié Polyandre",
+        "Marié Polygame",
+        "Veuf",
+        "Divorcé",
+        "Séparation de corps"
+      ]
+    },
+    "public.rdv_honore": {
+      "name": "rdv_honore",
+      "schema": "public",
+      "values": [
+        "Oui",
+        "Non"
+      ]
+    },
+    "public.regularite_traitement": {
+      "name": "regularite_traitement",
+      "schema": "public",
+      "values": [
+        "Régulier",
+        "Irrégulier"
+      ]
+    },
+    "public.sexe": {
+      "name": "sexe",
+      "schema": "public",
+      "values": [
+        "Masculin",
+        "Féminin"
+      ]
+    },
+    "public.type_consultation": {
+      "name": "type_consultation",
+      "schema": "public",
+      "values": [
+        "Systématique"
+      ]
+    },
+    "public.type_residence": {
+      "name": "type_residence",
+      "schema": "public",
+      "values": [
+        "Urbain",
+        "Péri-urbain",
+        "Rural"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

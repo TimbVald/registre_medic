@@ -221,7 +221,7 @@ export const frequenceRappelEnum = pgEnum("frequence_rappel", ["01 fois/sem.", "
 export const modeRappelEnum = pgEnum("mode_rappel", ["SMS classique", "Appel classique", "WhatsApp (SMS)", "Email"]);
 export const conclusionTraitementEnum = pgEnum("conclusion_traitement", ["Adhérence", "Compliance", "Observance"]);
 export const regulariteTraitementEnum = pgEnum("regularite_traitement", ["Régulier", "Irrégulier"]);
-export const typeConsultationEnum = pgEnum("type_consultation", ["Systématique", "À la demande", "Sur RDV"]);
+export const typeConsultationEnum = pgEnum("type_consultation", ["Systématique"]);
 
 // --- Table Consultations Externes ---
 export const consultationsExternes = pgTable("consultations_externes", {
@@ -261,6 +261,34 @@ export const consultationsExternes = pgTable("consultations_externes", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// --- Table Hospitalisations ---
+export const hospitalisations = pgTable("hospitalisations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  patientId: uuid("patient_id").references(() => patients.id, { onDelete: "cascade" }).notNull(),
+  dateHospitalisation: date("date_hospitalisation").defaultNow().notNull(),
+  agePatient: integer("age_patient"), // Âge au moment de l'hospitalisation
+  
+  // Paramètres
+  temperature: varchar("temperature", { length: 10 }),
+  fc: varchar("fc", { length: 10 }),
+  fr: varchar("fr", { length: 10 }),
+  pa: varchar("pa", { length: 20 }),
+  sao2: varchar("sao2", { length: 10 }),
+  
+  // Plaintes (JSON complexe pour les sous-catégories)
+  plaintesExist: boolean("plaintes_exist").default(false),
+  detailsPlaintes: jsonb("details_plaintes"),
+  
+  // Traitements (JSON pour Posologie, Régularité, Causes, Conclusion)
+  traitementAcideFolique: jsonb("traitement_acide_folique"),
+  traitementHydroxyuree: jsonb("traitement_hydroxyuree"),
+  traitementAntibioProphylaxie: jsonb("traitement_antibio_prophylaxie"),
+  traitementHydratation: jsonb("traitement_hydratation"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // --- Table Historique des Notifications ---
 export const notificationsLogs = pgTable("notifications_logs", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -279,6 +307,7 @@ export const patientsRelations = relations(patients, ({ many }) => ({
   antecedents: many(antecedents),
   examensParacliniques: many(examensParacliniques),
   consultationsExternes: many(consultationsExternes),
+  hospitalisations: many(hospitalisations),
 }));
 
 export const antecedentsRelations = relations(antecedents, ({ one }) => ({
@@ -310,5 +339,12 @@ export const notificationsLogsRelations = relations(notificationsLogs, ({ one })
   consultation: one(consultationsExternes, {
     fields: [notificationsLogs.consultationId],
     references: [consultationsExternes.id],
+  }),
+}));
+
+export const hospitalisationsRelations = relations(hospitalisations, ({ one }) => ({
+  patient: one(patients, {
+    fields: [hospitalisations.patientId],
+    references: [patients.id],
   }),
 }));

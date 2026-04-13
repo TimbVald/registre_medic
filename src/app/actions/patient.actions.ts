@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
-import { patients, consultationsExternes } from "@/db/schema";
+import { patients, consultationsExternes, hospitalisations } from "@/db/schema";
 import { patientSchema } from "@/lib/schemas/patient.schema";
 import { eq, ilike, or, desc, sql, and } from "drizzle-orm";
 
@@ -164,6 +164,7 @@ export async function getPatientById(id: string) {
         consultationsExternes: true,
         antecedents: true,
         examensParacliniques: true,
+        hospitalisations: true,
       }
     });
 
@@ -198,7 +199,8 @@ export async function getPatientById(id: string) {
           ...basic[0],
           consultationsExternes: [],
           antecedents: [],
-          examensParacliniques: []
+          examensParacliniques: [],
+          hospitalisations: []
         };
       }
     } catch (e) {
