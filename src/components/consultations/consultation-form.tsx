@@ -78,6 +78,7 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
       traitementAntibioProphylaxie: { active: false, causesIrregularite: [] },
       traitementHydratation: { active: false, causesIrregularite: [] },
       traitementAutres: { active: false, nom: "", causesIrregularite: [] },
+      dateProchainRdv: null,
     },
   });
 
@@ -89,6 +90,7 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
         ...initialData,
         dateConsultation: initialData.dateConsultation ? new Date(initialData.dateConsultation) : new Date(),
         dateRdvPrevue: initialData.dateRdvPrevue ? new Date(initialData.dateRdvPrevue) : null,
+        dateProchainRdv: initialData.dateProchainRdv ? new Date(initialData.dateProchainRdv) : null,
       };
       form.reset(formattedData);
     }
@@ -243,7 +245,7 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
                <CardContent className="pt-8 space-y-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <FormField control={form.control} name="dateRdvPrevue" render={({ field }) => (
-                      <FormItem className="flex flex-col"><FormLabel>Date prévue</FormLabel>
+                      <FormItem className="flex flex-col"><FormLabel>Date prévue (Ancien RDV)</FormLabel>
                         <Popover><PopoverTrigger asChild><FormControl><Button variant="outline" className={cn("pl-3 text-left font-normal rounded-xl", !field.value && "text-muted-foreground")}>{field.value ? format(field.value, "PPP") : "Sélectionner"}<Calendar className="ml-auto h-4 w-4 opacity-50" /></Button></FormControl></PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start"><CalendarComponent mode="single" selected={field.value || undefined} onSelect={field.onChange} /></PopoverContent></Popover>
                       </FormItem>
@@ -251,6 +253,14 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
                     <FormField control={form.control} name="rdvHonore" render={({ field }) => (
                       <FormItem><FormLabel>RDV Honoré ?</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value || undefined}><FormControl><SelectTrigger className="rounded-xl"><SelectValue placeholder="Oui/Non" /></SelectTrigger></FormControl>
                       <SelectContent>{RDV_HONORE_OPTIONS.map(opt => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}</SelectContent></Select></FormItem>
+                    )}/>
+                  </div>
+                  <div className="grid grid-cols-1 gap-8 border-t border-border pt-8 mt-2">
+                    <FormField control={form.control} name="dateProchainRdv" render={({ field }) => (
+                      <FormItem className="flex flex-col"><FormLabel className="font-bold text-indigo-600">Date du prochain rendez-vous</FormLabel>
+                        <Popover><PopoverTrigger asChild><FormControl><Button variant="outline" className={cn("pl-3 text-left font-normal rounded-xl", !field.value && "text-muted-foreground")}>{field.value ? format(field.value, "PPP") : "Planifier une date"}<Calendar className="ml-auto h-4 w-4 opacity-50 text-indigo-600" /></Button></FormControl></PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start"><CalendarComponent mode="single" selected={field.value || undefined} onSelect={field.onChange} disabled={(date) => date < new Date()} /></PopoverContent></Popover>
+                      </FormItem>
                     )}/>
                   </div>
                   <div className="p-6 rounded-2xl bg-muted/30 border border-border flex flex-wrap gap-8 items-center">

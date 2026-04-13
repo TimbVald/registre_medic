@@ -57,6 +57,13 @@
       "when": 1776092276229,
       "tag": "0007_old_rocket_raccoon",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1776092853086,
+      "tag": "0008_organic_living_lightning",
+      "breakpoints": true
     }
   ]
 }

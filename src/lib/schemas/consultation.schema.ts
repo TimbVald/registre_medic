@@ -73,6 +73,7 @@ export const consultationSchema = z.object({
   rappelRetour: z.boolean().default(false),
   rappelMode: z.enum(MODE_RAPPEL_OPTIONS).optional().nullable(),
   causeNonHonore: z.string().optional().nullable(),
+  dateProchainRdv: z.date().optional().nullable(),
 
   // Traitements Routine
   traitementAcideFolique: treatmentSchema.optional(),

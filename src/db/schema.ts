@@ -252,6 +252,7 @@ export const consultationsExternes = pgTable("consultations_externes", {
   rappelRetour: boolean("rappel_retour").default(false),
   rappelMode: modeRappelEnum("rappel_mode"),
   causeNonHonore: text("cause_non_honore"),
+  dateProchainRdv: date("date_prochain_rdv"),
   
   // Traitement (Stockés en JSON pour la flexibilité des posologies/causes)
   traitementAcideFolique: jsonb("traitement_acide_folique"),
