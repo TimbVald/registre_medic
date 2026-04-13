@@ -25,7 +25,8 @@ import {
   XCircle,
   Clock3,
   Printer,
-  BedDouble
+  BedDouble,
+  Droplets
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -139,6 +140,15 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
                         <p className="text-sm font-semibold">{patient.ageAnnees || 0} ans</p>
                     </div>
                  </div>
+                  <div className="flex items-center gap-3 bg-card p-3 rounded-2xl border border-border shadow-sm">
+                    <div className="h-10 w-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500">
+                        <Droplets className="h-5 w-5" />
+                    </div>
+                    <div>
+                        <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Gr. Sanguin</p>
+                        <p className="text-sm font-semibold">{patient.groupeSanguin || "Inconnu"}</p>
+                    </div>
+                  </div>
                  <div className="flex items-center gap-3 bg-card p-3 rounded-2xl border border-border shadow-sm">
                     <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
                         <Phone className="h-5 w-5" />

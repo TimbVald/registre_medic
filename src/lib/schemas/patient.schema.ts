@@ -67,6 +67,7 @@ export const patientSchema = z.object({
   lieuResidence: z.string().optional(),
   scolarise: z.boolean().default(false).optional(),
   personnesVivantsAvec: z.string().optional(),
+  groupeSanguin: GROUPE_SANGUIN_ENUM.optional(),
 
   // Père ou Tuteur
   pereNom: z.string().optional(),

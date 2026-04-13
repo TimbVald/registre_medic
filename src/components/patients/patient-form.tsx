@@ -35,7 +35,11 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { patientSchema, PatientFormValues } from "@/lib/schemas/patient.schema";
+import {
+  patientSchema,
+  PatientFormValues,
+  GROUPE_SANGUIN_ENUM,
+} from "@/lib/schemas/patient.schema";
 import { createPatient } from "@/app/actions/patient.actions";
 
 export default function PatientForm({ initialData }: { initialData?: any }) {
@@ -224,7 +228,7 @@ export default function PatientForm({ initialData }: { initialData?: any }) {
                   )}
                 />
 
-                 <FormField
+                <FormField
                   control={form.control}
                   name="lieuNaissance"
                   render={({ field }) => (
@@ -294,6 +298,34 @@ export default function PatientForm({ initialData }: { initialData?: any }) {
                         <SelectContent>
                           <SelectItem value="Masculin">Masculin</SelectItem>
                           <SelectItem value="Féminin">Féminin</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="groupeSanguin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Groupe Sanguin</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        defaultValue={field.value || undefined}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="rounded-xl">
+                            <SelectValue placeholder="Choisir le groupe sanguin" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {["A+", "B+", "AB+", "A-", "B-", "AB-", "O+", "O-"].map((option) => (
+                            <SelectItem key={option} value={option}>
+                              {option}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />

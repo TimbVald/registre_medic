@@ -76,6 +76,7 @@ export const patients = pgTable("patients", {
   lieuResidence: varchar("lieu_residence", { length: 255 }),
   scolarise: boolean("scolarise"),
   personnesVivantsAvec: varchar("personnes_vivants_avec", { length: 255 }), // Père, Mère, Tuteur, etc.
+  groupeSanguin: groupeSanguinEnum("groupe_sanguin"),
 
   // INFORMATION DU PERE ET OU TUTEUR
   pereNom: varchar("pere_nom", { length: 255 }),

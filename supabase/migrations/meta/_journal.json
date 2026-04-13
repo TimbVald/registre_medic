@@ -43,6 +43,13 @@
       "when": 1776089171503,
       "tag": "0005_famous_la_nuit",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1776090376433,
+      "tag": "0006_dashing_trish_tilby",
+      "breakpoints": true
     }
   ]
 }
