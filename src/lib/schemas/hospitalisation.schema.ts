@@ -67,6 +67,10 @@ export const hospitalisationSchema = z.object({
   traitementHydroxyuree: treatmentSchema.optional(),
   traitementAntibioProphylaxie: treatmentSchema.optional(),
   traitementHydratation: treatmentSchema.optional(),
+
+  // Résumé et Suivi
+  resume: z.string().optional().nullable(),
+  dateProchainRdv: z.date().optional().nullable(),
 });
 
 export type HospitalisationFormValues = z.infer<typeof hospitalisationSchema>;

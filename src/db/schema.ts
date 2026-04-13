@@ -285,6 +285,10 @@ export const hospitalisations = pgTable("hospitalisations", {
   traitementAntibioProphylaxie: jsonb("traitement_antibio_prophylaxie"),
   traitementHydratation: jsonb("traitement_hydratation"),
   
+  // Résumé et Suivi
+  resume: text("resume"),
+  dateProchainRdv: date("date_prochain_rdv"),
+  
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

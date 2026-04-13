@@ -23,6 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -47,7 +48,8 @@ import {
   Thermometer,
   Heart,
   Wind,
-  Droplets
+  Droplets,
+  FileText
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -85,6 +87,8 @@ export function HospitalisationForm({ patientId, initialData, patientAge }: Prop
       traitementHydroxyuree: { active: false, causesIrregularite: [] },
       traitementAntibioProphylaxie: { active: false, causesIrregularite: [] },
       traitementHydratation: { active: false, causesIrregularite: [] },
+      resume: "",
+      dateProchainRdv: null,
     },
   });
 
@@ -129,6 +133,9 @@ export function HospitalisationForm({ patientId, initialData, patientAge }: Prop
               </TabsTrigger>
               <TabsTrigger value="treatments" className="rounded-xl px-5 py-2.5 data-[state=active]:shadow-md shrink-0">
                 <Pill className="h-4 w-4 mr-2" /> Traitements
+              </TabsTrigger>
+              <TabsTrigger value="summary" className="rounded-xl px-5 py-2.5 data-[state=active]:shadow-md shrink-0">
+                <FileText className="h-4 w-4 mr-2" /> Résumé & Suivi
               </TabsTrigger>
             </TabsList>
           </div>
@@ -322,6 +329,79 @@ export function HospitalisationForm({ patientId, initialData, patientAge }: Prop
                  </Card>
                ))}
              </div>
+          </TabsContent>
+
+          {/* RÉSUMÉ ET PROCHAIN RDV */}
+          <TabsContent value="summary">
+            <Card className="border-none shadow-sm ring-1 ring-border overflow-hidden rounded-2xl">
+              <CardHeader className="bg-muted/30 border-b border-border">
+                <CardTitle className="flex items-center gap-2">
+                   <FileText className="h-5 w-5 text-indigo-500" /> Résumé de séjour & Planification
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-8 space-y-8">
+                <FormField
+                  control={form.control}
+                  name="resume"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Résumé Clinique du Séjour</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Décrivez ici l'évolution clinique, les interventions notables et les recommandations de sortie..." 
+                          className="min-h-[200px] rounded-2xl bg-muted/20 border-border focus:bg-background transition-all"
+                          {...field} 
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                  <FormField
+                    control={form.control}
+                    name="dateProchainRdv"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Date du prochain rendez-vous</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button 
+                                variant="outline" 
+                                className={cn(
+                                  "h-12 pl-3 text-left font-normal rounded-xl border-border hover:bg-muted/30",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value ? format(field.value, "PPP", { locale: require('date-fns/locale').fr }) : "Planifier une date"}
+                                <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <CalendarComponent 
+                              mode="single" 
+                              selected={field.value || undefined} 
+                              onSelect={field.onChange}
+                              disabled={(date) => date < new Date()}
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="flex items-center p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100 text-indigo-700 text-sm">
+                    <Activity className="h-5 w-5 mr-3 shrink-0" />
+                    <p>La planification d'un rendez-vous permet d'envoyer automatiquement un rappel au patient avant la date prévue.</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
 

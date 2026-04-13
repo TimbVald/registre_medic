@@ -12,15 +12,20 @@ async function applyMigration() {
 
   const sql = postgres(connectionString, { ssl: "require", prepare: false });
 
-  // Chemin vers le fichier de migration généré par Drizzle
-  const migrationFile = path.join(process.cwd(), "supabase/migrations/0004_useful_malcolm_colcord.sql");
+  // Trouver le fichier de migration le plus récent
+  const migrationsDir = path.join(process.cwd(), "supabase/migrations");
+  const files = fs.readdirSync(migrationsDir)
+    .filter(f => f.endsWith(".sql"))
+    .sort((a, b) => b.localeCompare(a)); // Plus récent en premier
 
-  if (!fs.existsSync(migrationFile)) {
-    console.error("❌ Fichier de migration introuvable :", migrationFile);
+  if (files.length === 0) {
+    console.error("❌ Aucun fichier de migration trouvé dans", migrationsDir);
     process.exit(1);
   }
 
-  console.log("🚀 Application de la migration SQL...");
+  const migrationFile = path.join(migrationsDir, files[0]);
+
+  console.log(`🚀 Application de la migration SQL : ${files[0]}...`);
   const sqlContent = fs.readFileSync(migrationFile, "utf8");
 
   try {
@@ -31,6 +36,7 @@ async function applyMigration() {
     for (const statement of statements) {
       const cleanStatement = statement.trim();
       if (!cleanStatement) continue;
+      if (cleanStatement.startsWith("--")) continue;
       
       console.log(`⏳ Exécution : ${cleanStatement.substring(0, 50)}...`);
       await sql.unsafe(cleanStatement);
