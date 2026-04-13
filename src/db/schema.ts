@@ -257,6 +257,8 @@ export const consultationsExternes = pgTable("consultations_externes", {
   traitementAcideFolique: jsonb("traitement_acide_folique"),
   traitementHydroxyuree: jsonb("traitement_hydroxyuree"),
   traitementAntibioProphylaxie: jsonb("traitement_antibio_prophylaxie"),
+  traitementHydratation: jsonb("traitement_hydratation"),
+  traitementAutres: jsonb("traitement_autres"),
   
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -304,6 +306,7 @@ export const notificationsLogs = pgTable("notifications_logs", {
   statut: varchar("statut", { length: 50 }).notNull(), // "Success", "Error"
   messageId: varchar("message_id", { length: 255 }), // ID fourni par Resend
   erreur: text("erreur"),
+  
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

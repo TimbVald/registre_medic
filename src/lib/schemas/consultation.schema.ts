@@ -43,6 +43,10 @@ const treatmentSchema = z.object({
   conclusion: z.enum(CONCLUSION_TRAITEMENT_OPTIONS).optional().nullable(),
 });
 
+const autreTreatmentSchema = treatmentSchema.extend({
+  nom: z.string().optional(),
+});
+
 // --- Main Schema ---
 
 export const consultationSchema = z.object({
@@ -74,6 +78,8 @@ export const consultationSchema = z.object({
   traitementAcideFolique: treatmentSchema.optional(),
   traitementHydroxyuree: treatmentSchema.optional(),
   traitementAntibioProphylaxie: treatmentSchema.optional(),
+  traitementHydratation: treatmentSchema.optional(),
+  traitementAutres: autreTreatmentSchema.optional(),
 });
 
 export type ConsultationFormValues = z.infer<typeof consultationSchema>;

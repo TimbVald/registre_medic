@@ -76,6 +76,8 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
       traitementAcideFolique: { active: false, causesIrregularite: [] },
       traitementHydroxyuree: { active: false, causesIrregularite: [] },
       traitementAntibioProphylaxie: { active: false, causesIrregularite: [] },
+      traitementHydratation: { active: false, causesIrregularite: [] },
+      traitementAutres: { active: false, nom: "", causesIrregularite: [] },
     },
   });
 
@@ -265,13 +267,16 @@ export function ConsultationForm({ patientId, initialData, type = "Systématique
 
           {/* TRAITEMENTS */}
           <TabsContent value="treatments">
-             {["Acide Folique", "Hydroxyurée", "Antibioprophylaxie"].map((type, idx) => {
-               const fn = idx === 0 ? "traitementAcideFolique" : idx === 1 ? "traitementHydroxyuree" : "traitementAntibioProphylaxie";
+             {["Acide Folique", "Hydroxyurée", "Antibioprophylaxie", "Hydratation", "Autres"].map((type, idx) => {
+               const fn = idx === 0 ? "traitementAcideFolique" : idx === 1 ? "traitementHydroxyuree" : idx === 2 ? "traitementAntibioProphylaxie" : idx === 3 ? "traitementHydratation" : "traitementAutres";
                return (
                  <Card key={type} className="border-none shadow-sm ring-1 ring-border overflow-hidden mb-4 rounded-xl">
                     <CardHeader className="bg-primary/5 py-3 border-b border-border"><div className="flex items-center justify-between"><CardTitle className="text-xs font-bold">{type}</CardTitle><FormField control={form.control} name={`${fn}.active` as any} render={({ field }) => <Checkbox checked={field.value} onCheckedChange={field.onChange} />} /></div></CardHeader>
                     {form.watch(`${fn}.active` as any) && (
-                      <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-3 gap-4 animate-in zoom-in-95">
+                      <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-4 gap-4 animate-in zoom-in-95">
+                         {type === "Autres" && (
+                           <FormField control={form.control} name={`${fn}.nom` as any} render={({ field }) => <FormItem><FormLabel className="text-xs">Nom du traitement</FormLabel><FormControl><Input {...field} value={field.value || ""} className="h-8" placeholder="Préciser..." /></FormControl></FormItem>} />
+                         )}
                          <FormField control={form.control} name={`${fn}.posologie` as any} render={({ field }) => <FormItem><FormLabel className="text-xs">Posologie</FormLabel><FormControl><Input {...field} value={field.value || ""} className="h-8" /></FormControl></FormItem>} />
                          <FormField control={form.control} name={`${fn}.regularite` as any} render={({ field }) => <FormItem><FormLabel className="text-xs">Régularité</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value || undefined}><FormControl><SelectTrigger className="h-8"><SelectValue placeholder="Choisir" /></SelectTrigger></FormControl><SelectContent>{REGULARITE_TRAITEMENT_OPTIONS.map(opt => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}</SelectContent></Select></FormItem>} />
                          <FormField control={form.control} name={`${fn}.conclusion` as any} render={({ field }) => <FormItem><FormLabel className="text-xs">Conclusion</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value || undefined}><FormControl><SelectTrigger className="h-8"><SelectValue placeholder="Choisir" /></SelectTrigger></FormControl><SelectContent>{CONCLUSION_TRAITEMENT_OPTIONS.map(opt => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}</SelectContent></Select></FormItem>} />
