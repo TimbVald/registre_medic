@@ -382,7 +382,7 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
         <TabsContent value="antecedents" className="space-y-6">
             <AntecedentHistory 
               patientId={patient.id} 
-              antecedents={patient.antecedents?.[0] || null} 
+              antecedents={(patient.antecedents || []).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} 
             />
         </TabsContent>
 

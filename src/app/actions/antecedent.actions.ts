@@ -45,26 +45,16 @@ export async function upsertAntecedents(patientId: string, data: AntecedentFormV
       });
     }
 
-    if (existing) {
-      // Mise à jour
-      await db.update(antecedents)
-        .set({
-          ...formattedData,
-          updatedAt: new Date(),
-        })
-        .where(eq(antecedents.patientId, patientId));
-    } else {
-      // Création
-      await db.insert(antecedents).values({
-        ...formattedData,
-        patientId,
-      });
-    }
+    // Insertion de la nouvelle évaluation (historique)
+    await db.insert(antecedents).values({
+      ...formattedData,
+      patientId,
+    });
 
     revalidatePath(`/dashboard/patients/${patientId}`);
-    return { success: true, message: "Antécédents enregistrés avec succès" };
+    return { success: true, message: "Évaluation d'antécédents enregistrée avec succès" };
   } catch (error) {
     console.error("Erreur lors de l'enregistrement des antécédents:", error);
-    return { success: false, message: "Une erreur est survenue lors de l'enregistrement" };
+    return { success: false, error: "Erreur lors de l'enregistrement" };
   }
 }
