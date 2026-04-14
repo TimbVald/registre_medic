@@ -50,6 +50,28 @@ export const COMPLICATIONS_CHRONIQUES_OPTIONS = [
   "Autres",
 ] as const;
 
+export const CAUSE_NON_A_JOUR_OPTIONS = [
+  "Difficultés financières",
+  "Distance /Accès au centre de santé",
+  "Manque d'informations",
+  "Oubli/Absence de rappel",
+  "Croyances culturelles",
+  "Croyances religieuses",
+  "Déplacement",
+  "Rupture de stock",
+] as const;
+
+const vaccinSchema = z.object({
+  aJour: z.boolean().default(false),
+  causes: z.array(z.string()).default([]),
+});
+
+const complicationAigueDetailSchema = z.object({
+  nom: z.string(),
+  nombreParAn: z.string().optional().nullable(),
+  dernierEpisode: z.date().optional().nullable(),
+});
+
 // --- Antecedent Schema ---
 
 export const antecedentSchema = z.object({
@@ -68,8 +90,13 @@ export const antecedentSchema = z.object({
   decesFamilleDrepanocytose: z.boolean().default(false),
   nbDecesFamille: NB_CAS_ENUM.optional().nullable(),
 
+  // Prévention
+  statutVaccinal: z.record(z.string(), vaccinSchema).optional(),
+  milda: z.boolean().default(false),
+  dernierDeparasitage: z.date().optional().nullable(),
+
   // Complications
-  complicationsAigues: z.array(z.string()).default([]),
+  complicationsAigues: z.array(complicationAigueDetailSchema).default([]),
   complicationsChroniques: z.array(z.string()).default([]),
 });
 

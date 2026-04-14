@@ -47,6 +47,14 @@ export const examenParacliniqueSchema = z.object({
     tauxBase: z.string().optional().nullable(),
     interpretation: z.enum(INTERPRETATION_ASAT_ALAT_OPTIONS).optional().nullable(),
   }),
+  // ELHB
+  elhb: z.object({
+    realise: z.boolean().default(false),
+    cause: z.string().optional().nullable(),
+    tauxA: z.string().optional().nullable(),
+    tauxS: z.string().optional().nullable(),
+    tauxF: z.string().optional().nullable(),
+  }).optional(),
 });
 
 export type ExamenParacliniqueFormValues = z.infer<typeof examenParacliniqueSchema>;

@@ -31,18 +31,32 @@ export async function upsertAntecedents(patientId: string, data: AntecedentFormV
     // Vérifier si des antécédents existent déjà pour ce patient
     const existing = await getAntecedentsByPatientId(patientId);
 
+    // Format dates to string
+    const formattedData: any = { ...validatedData };
+    if (formattedData.dernierDeparasitage instanceof Date) {
+      formattedData.dernierDeparasitage = formattedData.dernierDeparasitage.toISOString().split('T')[0];
+    }
+    if (formattedData.complicationsAigues) {
+      formattedData.complicationsAigues = formattedData.complicationsAigues.map((comp: any) => {
+        if (comp.dernierEpisode instanceof Date) {
+          return { ...comp, dernierEpisode: comp.dernierEpisode.toISOString().split('T')[0] };
+        }
+        return comp;
+      });
+    }
+
     if (existing) {
       // Mise à jour
       await db.update(antecedents)
         .set({
-          ...validatedData,
+          ...formattedData,
           updatedAt: new Date(),
         })
         .where(eq(antecedents.patientId, patientId));
     } else {
       // Création
       await db.insert(antecedents).values({
-        ...validatedData,
+        ...formattedData,
         patientId,
       });
     }

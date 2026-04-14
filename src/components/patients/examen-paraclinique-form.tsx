@@ -257,6 +257,112 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
                     </TableCell>
                   </TableRow>
                 ))}
+                
+                {/* Ligne personnalisée pour ELHB */}
+                <TableRow className="bg-card">
+                  <TableCell className="font-bold align-top pt-6 bg-muted/10 border-r border-border">
+                    <div className="flex items-center gap-2">
+                      <div className="h-6 w-1 rounded-full bg-primary" />
+                      Electrophorèse Hémoglobine (ELHB)
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1 ml-3 font-normal opacity-70">Profil A, S, F (%)</div>
+                  </TableCell>
+
+                  <TableCell className="align-top pt-6">
+                    <FormField
+                      control={form.control}
+                      name="elhb.realise"
+                      render={({ field }) => (
+                        <FormItem className="space-y-3">
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={(val) => field.onChange(val === "true")}
+                              value={field.value ? "true" : "false"}
+                              className="flex flex-col space-y-2"
+                            >
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="true" id="elhb-realise" />
+                                <FormLabel htmlFor="elhb-realise" className="font-normal cursor-pointer">Réalisé</FormLabel>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="false" id="elhb-non-realise" />
+                                <FormLabel htmlFor="elhb-non-realise" className="font-normal cursor-pointer">Pas réalisé</FormLabel>
+                              </div>
+                            </RadioGroup>
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+
+                  <TableCell className="align-top pt-6">
+                    {form.watch("elhb.realise") === false && (
+                      <FormField
+                        control={form.control}
+                        name="elhb.cause"
+                        render={({ field }) => (
+                          <FormItem>
+                            <Select onValueChange={field.onChange} value={field.value || undefined}>
+                              <FormControl>
+                                <SelectTrigger className="bg-background rounded-xl border-border">
+                                  <SelectValue placeholder="Choisir une cause" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {CAUSE_NON_REALISATION_OPTIONS.map((cause) => (
+                                  <SelectItem key={cause} value={cause}>{cause}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                  </TableCell>
+
+                  <TableCell className="align-top pt-6 space-y-4">
+                    {form.watch("elhb.realise") === true && (
+                      <div className="grid grid-cols-3 gap-2">
+                        <FormField
+                          control={form.control}
+                          name="elhb.tauxA"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-[10px] uppercase font-bold text-foreground/70">A (%)</FormLabel>
+                              <FormControl>
+                                <Input {...field} value={field.value || ""} className="h-8 rounded-lg" placeholder="ex: 0" />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="elhb.tauxS"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-[10px] uppercase font-bold text-foreground/70">S (%)</FormLabel>
+                              <FormControl>
+                                <Input {...field} value={field.value || ""} className="h-8 rounded-lg" placeholder="ex: 90" />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="elhb.tauxF"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-[10px] uppercase font-bold text-foreground/70">F (%)</FormLabel>
+                              <FormControl>
+                                <Input {...field} value={field.value || ""} className="h-8 rounded-lg" placeholder="ex: 10" />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
+                  </TableCell>
+                </TableRow>
               </TableBody>
             </Table>
             </div>

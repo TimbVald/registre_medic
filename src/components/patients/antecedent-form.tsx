@@ -7,7 +7,8 @@ import {
   antecedentSchema, 
   CIRCONSTANCES_OPTIONS, 
   COMPLICATIONS_AIGUES_OPTIONS, 
-  COMPLICATIONS_CHRONIQUES_OPTIONS 
+  COMPLICATIONS_CHRONIQUES_OPTIONS,
+  CAUSE_NON_A_JOUR_OPTIONS
 } from "@/lib/schemas/antecedent.schema";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,7 +34,11 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTransition } from "react";
 import { upsertAntecedents } from "@/app/actions/antecedent.actions";
-import { Stethoscope, Users, Activity, History, ChevronRight, Save, Loader2 } from "lucide-react";
+import { Stethoscope, Users, Activity, History, ChevronRight, Save, Loader2, Calendar as CalendarIcon, ShieldCheck } from "lucide-react";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface AntecedentFormProps {
   patientId: string;
@@ -56,6 +61,9 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
       nbFreresSoeursDrepanocytaires: null,
       decesFamilleDrepanocytose: false,
       nbDecesFamille: null,
+      statutVaccinal: {},
+      milda: false,
+      dernierDeparasitage: null,
       complicationsAigues: [],
       complicationsChroniques: [],
     },
@@ -296,6 +304,116 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
           </CardContent>
         </Card>
 
+        {/* SECTION PRÉVENTION */}
+        <Card className="border-none shadow-sm ring-1 ring-border overflow-hidden">
+          <CardHeader className="bg-emerald-500/10 border-b border-emerald-500/20">
+            <CardTitle className="flex items-center gap-2 text-emerald-500">
+              <ShieldCheck className="h-5 w-5" /> Prévention & Suivi
+            </CardTitle>
+            <CardDescription>Vaccins, MILDA et déparasitage.</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+              <div className="bg-card p-4 rounded-xl border border-border space-y-6">
+                <div>
+                  <FormLabel className="text-sm font-bold text-foreground">Statut Vaccinal</FormLabel>
+                  <div className="mt-3 space-y-4">
+                    {["PEV", "Typhim VI", "Méningo", "Pneumo 23", "Vaxigrip"].map((vaccin) => (
+                      <div key={vaccin} className="flex flex-col md:flex-row md:items-center gap-4 p-3 bg-muted/10 border border-border rounded-lg">
+                        <div className="w-32 font-medium text-sm">{vaccin}</div>
+                        <FormField
+                          control={form.control}
+                          name={`statutVaccinal.${vaccin}.aJour` as any}
+                          render={({ field }) => (
+                            <FormItem className="flex items-center space-x-2 space-y-0">
+                              <FormControl>
+                                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                              </FormControl>
+                              <FormLabel className="text-sm font-normal">À jour</FormLabel>
+                            </FormItem>
+                          )}
+                        />
+                        {!form.watch(`statutVaccinal.${vaccin}.aJour` as any) && (
+                          <FormField
+                            control={form.control}
+                            name={`statutVaccinal.${vaccin}.causes` as any}
+                            render={({ field }) => (
+                              <FormItem className="flex-1">
+                                <Select 
+                                  onValueChange={(val) => field.onChange([...(field.value || []), val])}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger className="h-8">
+                                      <SelectValue placeholder="Cause si non à jour..." />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {CAUSE_NON_A_JOUR_OPTIONS.map(c => (
+                                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                {field.value && field.value.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mt-2">
+                                    {field.value.map((cause: string, i: number) => (
+                                      <span key={i} className="text-[10px] bg-destructive/10 text-destructive px-2 py-0.5 rounded flex items-center gap-1">
+                                        {cause}
+                                        <button type="button" onClick={() => field.onChange(field.value.filter((_: any, idx: number) => idx !== i))} className="hover:text-destructive/80 font-bold">×</button>
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                              </FormItem>
+                            )}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-border">
+                  <FormField
+                    control={form.control}
+                    name="milda"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border border-border p-3 bg-muted/10">
+                        <div className="space-y-0.5">
+                          <FormLabel>Dort sous MILDA ?</FormLabel>
+                        </div>
+                        <FormControl>
+                          <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="dernierDeparasitage"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>Dernier déparasitage</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button variant="outline" className={cn("pl-3 text-left font-normal rounded-xl h-10 w-full", !field.value && "text-muted-foreground")}>
+                                {field.value ? format(field.value, "PPP") : "Sélectionner une date"}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar mode="single" selected={field.value || undefined} onSelect={field.onChange} disabled={(date) => date > new Date()} />
+                          </PopoverContent>
+                        </Popover>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+          </CardContent>
+        </Card>
+
         {/* SECTION 3: COMPLICATIONS AIGUËS */}
         <Card className="border-none shadow-sm ring-1 ring-border overflow-hidden">
           <CardHeader className="bg-rose-500/10 border-b border-rose-500/20">
@@ -306,31 +424,79 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
             <CardDescription>Cochez toutes les complications aiguës rencontrées par le patient.</CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {COMPLICATIONS_AIGUES_OPTIONS.map((option) => (
-                <FormField
-                  key={option}
-                  control={form.control}
-                  name="complicationsAigues"
-                  render={({ field }) => (
-                    <FormItem key={option} className="flex flex-row items-center space-x-3 space-y-0 p-3 border border-border rounded-xl hover:bg-rose-500/10 transition-colors">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value?.includes(option)}
-                          onCheckedChange={(checked) => {
-                            return checked
-                              ? field.onChange([...field.value, option])
-                              : field.onChange(field.value?.filter((v) => v !== option));
-                          }}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {COMPLICATIONS_AIGUES_OPTIONS.map((option) => {
+                const currentArr = form.watch("complicationsAigues") || [];
+                const isSelected = currentArr.some((c: any) => c.nom === option);
+                const currentIndex = currentArr.findIndex((c: any) => c.nom === option);
+
+                return (
+                  <div key={option} className={cn("border border-border rounded-xl p-3 transition-colors", isSelected ? "bg-rose-500/5 border-rose-500/20" : "hover:bg-muted/20")}>
+                    <FormField
+                      control={form.control}
+                      name="complicationsAigues"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={isSelected}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  field.onChange([...(field.value || []), { nom: option }]);
+                                } else {
+                                  field.onChange((field.value || []).filter((v: any) => v.nom !== option));
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="text-sm font-bold cursor-pointer text-foreground/80">
+                            {option}
+                          </FormLabel>
+                        </FormItem>
+                      )}
+                    />
+                    
+                    {isSelected && currentIndex !== -1 && (
+                      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 pl-7 animate-in fade-in zoom-in-95">
+                         <FormField
+                          control={form.control}
+                          name={`complicationsAigues.${currentIndex}.nombreParAn`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-[10px] text-muted-foreground uppercase">Nombre/an</FormLabel>
+                              <FormControl>
+                                <Input {...field} value={field.value || ""} placeholder="Ex: 2" className="h-8 text-sm" />
+                              </FormControl>
+                            </FormItem>
+                          )}
                         />
-                      </FormControl>
-                        <FormLabel className="text-xs font-bold leading-none cursor-pointer text-foreground/80">
-                          {option}
-                        </FormLabel>
-                    </FormItem>
-                  )}
-                />
-              ))}
+                        <FormField
+                          control={form.control}
+                          name={`complicationsAigues.${currentIndex}.dernierEpisode`}
+                          render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                              <FormLabel className="text-[10px] text-muted-foreground uppercase">Dernier épisode</FormLabel>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <FormControl>
+                                    <Button variant="outline" className={cn("pl-2 text-left font-normal h-8 text-xs", !field.value && "text-muted-foreground")}>
+                                      {field.value ? format(field.value, "dd/MM/yy") : "Sélect. date"}
+                                      <CalendarIcon className="ml-auto h-3 w-3 opacity-50" />
+                                    </Button>
+                                  </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                  <Calendar mode="single" selected={field.value || undefined} onSelect={field.onChange} disabled={(date) => date > new Date()} />
+                                </PopoverContent>
+                              </Popover>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>

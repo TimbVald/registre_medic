@@ -148,8 +148,13 @@ export const antecedents = pgTable("antecedents", {
   nbDecesFamille: nbCasEnum("nb_deces_famille"),
   
   // Complications
-  complicationsAigues: text("complications_aigues").array(), // Multi-select (Anémie, Crise, etc.)
+  complicationsAigues: jsonb("complications_aigues"), // Array of objects
   complicationsChroniques: text("complications_chroniques").array(), // Multi-select
+  
+  // Prévention
+  statutVaccinal: jsonb("statut_vaccinal"),
+  milda: boolean("milda").default(false),
+  dernierDeparasitage: date("dernier_deparasitage"),
   
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -210,6 +215,9 @@ export const examensParacliniques = pgTable("examens_paracliniques", {
   asatAlatCause: causeNonRealisationEnum("asat_alat_cause"),
   asatAlatTauxBase: varchar("asat_alat_taux_base", { length: 100 }),
   asatAlatInterpretation: interpretationAsatAlatEnum("asat_alat_interpretation"),
+
+  // ELHB
+  elhb: jsonb("elhb"),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

@@ -64,6 +64,13 @@
       "when": 1776092853086,
       "tag": "0008_organic_living_lightning",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1776169255853,
+      "tag": "0009_dapper_thor",
+      "breakpoints": true
     }
   ]
 }
