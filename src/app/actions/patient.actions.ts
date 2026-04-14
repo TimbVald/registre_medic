@@ -31,13 +31,28 @@ export async function saveConsultation(data: any) {
   try {
     const { id, ...rest } = data;
 
+    // Formatage des dates pour PostgreSQL (type date attend YYYY-MM-DD)
+    const formattedData = {
+      ...rest,
+    };
+
+    if (formattedData.dateConsultation instanceof Date) {
+      formattedData.dateConsultation = formattedData.dateConsultation.toISOString().split('T')[0];
+    }
+    if (formattedData.dateRdvPrevue instanceof Date) {
+      formattedData.dateRdvPrevue = formattedData.dateRdvPrevue.toISOString().split('T')[0];
+    }
+    if (formattedData.dateProchainRdv instanceof Date) {
+      formattedData.dateProchainRdv = formattedData.dateProchainRdv.toISOString().split('T')[0];
+    }
+
     if (id) {
       await db.update(consultationsExternes)
-        .set({ ...rest, updatedAt: new Date() })
+        .set({ ...formattedData, updatedAt: new Date() })
         .where(eq(consultationsExternes.id, id));
     } else {
       await db.insert(consultationsExternes)
-        .values({ ...rest });
+        .values({ ...formattedData });
     }
 
     revalidatePath(`/dashboard/patients/${data.patientId}`);

@@ -13,14 +13,23 @@ export async function saveHospitalisation(data: any) {
   try {
     const { id, patientId, ...rest } = data;
 
+    // Formatage des dates pour PostgreSQL
+    const formattedData = { ...rest };
+    if (formattedData.dateHospitalisation instanceof Date) {
+      formattedData.dateHospitalisation = formattedData.dateHospitalisation.toISOString().split('T')[0];
+    }
+    if (formattedData.dateProchainRdv instanceof Date) {
+      formattedData.dateProchainRdv = formattedData.dateProchainRdv.toISOString().split('T')[0];
+    }
+
     if (id) {
       await db.update(hospitalisations)
-        .set({ ...rest, updatedAt: new Date() })
+        .set({ ...formattedData, updatedAt: new Date() })
         .where(eq(hospitalisations.id, id));
     } else {
       await db.insert(hospitalisations)
         .values({ 
-          ...rest, 
+          ...formattedData, 
           patientId 
         });
     }
