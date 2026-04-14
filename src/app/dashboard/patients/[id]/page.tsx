@@ -389,7 +389,7 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
         <TabsContent value="exams" className="space-y-6">
             <ExamenParacliniqueView 
               patientId={patient.id} 
-              examens={patient.examensParacliniques?.[0] || null} 
+              examens={(patient.examensParacliniques || []).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} 
             />
         </TabsContent>
 

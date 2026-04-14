@@ -22,15 +22,17 @@ export async function getExamenParacliniqueByPatientId(patientId: string) {
 }
 
 /**
- * Enregistre ou met à jour un bilan paraclinique
+ * Enregistre un nouveau bilan paraclinique (historique)
  */
 export async function upsertExamenParaclinique(patientId: string, data: ExamenParacliniqueFormValues) {
   try {
-    // Validation
-    const validatedData = examenParacliniqueSchema.parse(data);
-
-    // Recherche de l'existant
-    const existing = await getExamenParacliniqueByPatientId(patientId);
+    // Validation avec log détaillé
+    const parsed = examenParacliniqueSchema.safeParse(data);
+    if (!parsed.success) {
+      console.error("Erreurs Zod examens:", JSON.stringify(parsed.error.flatten(), null, 2));
+      return { success: false, message: `Données invalides: ${parsed.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join(" | ")}` };
+    }
+    const validatedData = parsed.data;
 
     const values = {
       patientId,
@@ -67,24 +69,18 @@ export async function upsertExamenParaclinique(patientId: string, data: ExamenPa
       asatAlatCause: (validatedData.asatAlat.realise ? null : validatedData.asatAlat.cause) as any,
       asatAlatTauxBase: validatedData.asatAlat.tauxBase,
       asatAlatInterpretation: validatedData.asatAlat.interpretation as any,
-      
-      updatedAt: new Date(),
+
+      // ELHB
+      elhb: validatedData.elhb || null,
     };
 
-    if (existing) {
-      await db.update(examensParacliniques)
-        .set(values)
-        .where(eq(examensParacliniques.id, existing.id));
-    } else {
-      await db.insert(examensParacliniques).values({
-        ...values,
-      });
-    }
+    // Toujours créer une nouvelle entrée (historique)
+    await db.insert(examensParacliniques).values(values);
 
     revalidatePath(`/dashboard/patients/${patientId}`);
     return { success: true, message: "Bilan paraclinique enregistré avec succès" };
   } catch (error) {
     console.error("Erreur lors de l'enregistrement des examens paracliniques:", error);
-    return { success: false, message: "Une erreur est survenue lors de l'enregistrement" };
+    return { success: false, message: "Erreur lors de l'enregistrement. Vérifiez les données.", error: String(error) };
   }
 }

@@ -17,44 +17,44 @@ export const INTERPRETATION_PLAQ_OPTIONS = ["Normal", "Diminué (Thrombopénie)"
 export const INTERPRETATION_ASAT_ALAT_OPTIONS = ["Normal", "Augmenté (Cytolyse hépatite)"] as const;
 
 const examBasics = z.object({
-  realise: z.boolean().default(false),
-  cause: z.string().optional().nullable(),
-  tauxBase: z.string().optional().nullable(),
-  tauxRecent: z.string().optional().nullable(),
+  realise: z.boolean().default(false).catch(false),
+  cause: z.string().optional().nullable().catch(null),
+  tauxBase: z.string().optional().nullable().catch(null),
+  tauxRecent: z.string().optional().nullable().catch(null),
 });
 
 export const examenParacliniqueSchema = z.object({
   // Hémoglobine
   hemo: examBasics.extend({
-    interpretation: z.enum(INTERPRETATION_HEMO_OPTIONS).optional().nullable(),
+    interpretation: z.string().optional().nullable().catch(null),
   }),
   // Réticulocytes
   retic: examBasics.extend({
-    interpretation: z.enum(INTERPRETATION_RETIC_OPTIONS).optional().nullable(),
+    interpretation: z.string().optional().nullable().catch(null),
   }),
   // Globules Blancs
   gb: examBasics.extend({
-    interpretation: z.enum(INTERPRETATION_GB_OPTIONS).optional().nullable(),
+    interpretation: z.string().optional().nullable().catch(null),
   }),
   // Plaquettes
   plaq: examBasics.extend({
-    interpretation: z.enum(INTERPRETATION_PLAQ_OPTIONS).optional().nullable(),
+    interpretation: z.string().optional().nullable().catch(null),
   }),
-  // ASAT/ALAT (pas de taux récent dans l'image pour celui-là)
+  // ASAT/ALAT
   asatAlat: z.object({
-    realise: z.boolean().default(false),
-    cause: z.string().optional().nullable(),
-    tauxBase: z.string().optional().nullable(),
-    interpretation: z.enum(INTERPRETATION_ASAT_ALAT_OPTIONS).optional().nullable(),
+    realise: z.boolean().default(false).catch(false),
+    cause: z.string().optional().nullable().catch(null),
+    tauxBase: z.string().optional().nullable().catch(null),
+    interpretation: z.string().optional().nullable().catch(null),
   }),
   // ELHB
   elhb: z.object({
-    realise: z.boolean().default(false),
-    cause: z.string().optional().nullable(),
-    tauxA: z.string().optional().nullable(),
-    tauxS: z.string().optional().nullable(),
-    tauxF: z.string().optional().nullable(),
-  }).optional(),
+    realise: z.boolean().default(false).catch(false),
+    cause: z.string().optional().nullable().catch(null),
+    tauxA: z.string().optional().nullable().catch(null),
+    tauxS: z.string().optional().nullable().catch(null),
+    tauxF: z.string().optional().nullable().catch(null),
+  }).optional().default({ realise: false, cause: null, tauxA: null, tauxS: null, tauxF: null }).catch({ realise: false, cause: null, tauxA: null, tauxS: null, tauxF: null }),
 });
 
 export type ExamenParacliniqueFormValues = z.infer<typeof examenParacliniqueSchema>;

@@ -84,12 +84,14 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
         tauxBase: initialData.asatAlatTauxBase,
         interpretation: initialData.asatAlatInterpretation,
       },
+      elhb: initialData.elhb || { realise: false, cause: null, tauxA: "", tauxS: "", tauxF: "" },
     } : {
       hemo: { realise: false, cause: null, tauxBase: "", tauxRecent: "", interpretation: null },
       retic: { realise: false, cause: null, tauxBase: "", tauxRecent: "", interpretation: null },
       gb: { realise: false, cause: null, tauxBase: "", tauxRecent: "", interpretation: null },
       plaq: { realise: false, cause: null, tauxBase: "", tauxRecent: "", interpretation: null },
       asatAlat: { realise: false, cause: null, tauxBase: "", interpretation: null },
+      elhb: { realise: false, cause: null, tauxA: "", tauxS: "", tauxF: "" },
     },
   });
 
@@ -101,9 +103,15 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
         router.refresh();
         router.push(`/dashboard/patients/${patientId}`);
       } else {
-        toast.error(result.message);
+        toast.error(result.message || "Erreur lors de l'enregistrement.");
       }
     });
+  }
+
+  function onError(errors: any) {
+    console.error("Erreurs de validation examens:", JSON.stringify(errors, null, 2));
+    const fields = Object.keys(errors).join(", ");
+    toast.error(`Champs invalides : ${fields}`);
   }
 
   const exams = [
@@ -116,7 +124,7 @@ export function ExamenParacliniqueForm({ patientId, initialData }: Props) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-12">
+      <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-8 pb-12">
         <Card className="border-none shadow-sm ring-1 ring-border overflow-hidden bg-card">
           <CardHeader className="bg-muted/30 border-b border-border">
             <CardTitle className="flex items-center gap-2 text-primary">
