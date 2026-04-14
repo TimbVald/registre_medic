@@ -28,9 +28,6 @@ export async function upsertAntecedents(patientId: string, data: AntecedentFormV
     // Validation des données
     const validatedData = antecedentSchema.parse(data);
 
-    // Vérifier si des antécédents existent déjà pour ce patient
-    const existing = await getAntecedentsByPatientId(patientId);
-
     // Format dates to string
     const formattedData: any = { ...validatedData };
     if (formattedData.dernierDeparasitage instanceof Date) {
@@ -55,6 +52,6 @@ export async function upsertAntecedents(patientId: string, data: AntecedentFormV
     return { success: true, message: "Évaluation d'antécédents enregistrée avec succès" };
   } catch (error) {
     console.error("Erreur lors de l'enregistrement des antécédents:", error);
-    return { success: false, error: "Erreur lors de l'enregistrement" };
+    return { success: false, message: "Erreur lors de l'enregistrement. Vérifiez les données.", error: String(error) };
   }
 }

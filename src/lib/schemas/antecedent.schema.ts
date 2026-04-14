@@ -76,8 +76,8 @@ const complicationAigueDetailSchema = z.object({
 
 export const antecedentSchema = z.object({
   // Âge de découverte
-  ageDecouverteAnnees: z.number().min(0).max(100).optional().nullable(),
-  ageDecouverteMois: z.number().min(0).max(11).optional().nullable(),
+  ageDecouverteAnnees: z.coerce.number().min(0).max(100).optional().nullable(),
+  ageDecouverteMois: z.coerce.number().min(0).max(11).optional().nullable(),
 
   // Circonstances
   circonstancesDecouverte: z.array(z.string()).default([]),
@@ -85,13 +85,13 @@ export const antecedentSchema = z.object({
 
   // Histoire Familiale
   notionFamilleDrepanocytose: z.boolean().default(false),
-  liensFamille: z.array(FAMILLE_LIEN_ENUM).default([]),
+  liensFamille: z.array(z.string()).default([]),
   nbFreresSoeursDrepanocytaires: NB_CAS_ENUM.optional().nullable(),
   decesFamilleDrepanocytose: z.boolean().default(false),
   nbDecesFamille: NB_CAS_ENUM.optional().nullable(),
 
   // Prévention
-  statutVaccinal: z.record(z.string(), vaccinSchema).optional(),
+  statutVaccinal: z.record(z.string(), vaccinSchema).optional().default({}),
   milda: z.boolean().default(false),
   dernierDeparasitage: z.date().optional().nullable(),
 

@@ -77,14 +77,19 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
         router.refresh();
         router.push(`/dashboard/patients/${patientId}`);
       } else {
-        toast.error(result.message);
+        toast.error(result.message || "Erreur lors de l'enregistrement des antécédents.");
       }
     });
   }
 
+  function onError(errors: any) {
+    console.error("Erreurs de validation:", errors);
+    toast.error("Certains champs sont invalides. Vérifiez le formulaire.");
+  }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-12">
+      <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-8 pb-12">
         
         {/* SECTION 1: DÉCOUVERTE */}
         <Card className="border-none shadow-sm ring-1 ring-border overflow-hidden">
