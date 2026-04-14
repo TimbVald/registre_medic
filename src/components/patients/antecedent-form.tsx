@@ -83,8 +83,9 @@ export function AntecedentForm({ patientId, initialData }: AntecedentFormProps) 
   }
 
   function onError(errors: any) {
-    console.error("Erreurs de validation:", errors);
-    toast.error("Certains champs sont invalides. Vérifiez le formulaire.");
+    console.error("Erreurs de validation complètes:", JSON.stringify(errors, null, 2));
+    const fields = Object.keys(errors).join(", ");
+    toast.error(`Champs invalides : ${fields}`);
   }
 
   return (

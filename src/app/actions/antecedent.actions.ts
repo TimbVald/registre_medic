@@ -25,8 +25,13 @@ export async function getAntecedentsByPatientId(patientId: string) {
  */
 export async function upsertAntecedents(patientId: string, data: AntecedentFormValues) {
   try {
-    // Validation des données
-    const validatedData = antecedentSchema.parse(data);
+    // Validation des données avec log détaillé des erreurs
+    const parsed = antecedentSchema.safeParse(data);
+    if (!parsed.success) {
+      console.error("Erreurs Zod détaillées:", JSON.stringify(parsed.error.flatten(), null, 2));
+      return { success: false, message: `Données invalides: ${parsed.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join(" | ")}` };
+    }
+    const validatedData = parsed.data;
 
     // Format dates to string
     const formattedData: any = { ...validatedData };
