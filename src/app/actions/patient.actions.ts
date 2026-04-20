@@ -72,12 +72,10 @@ export async function createPatient(data: z.infer<typeof patientSchema>) {
     const validatedData = patientSchema.parse(data);
 
     // Génération automatique du numéro de fiche : P-[Année]-[NombreAléatoire]
-    // Exemple : P-2026-12345
     const annee = new Date().getFullYear();
     const numeroAleatoire = Math.floor(10000 + Math.random() * 90000); 
     const numeroFiche = `P-${annee}-${numeroAleatoire}`;
 
-    // Insertion dans la base de données via Drizzle
     const [newPatient] = await db.insert(patients).values({
       ...validatedData,
       numeroFiche,
@@ -86,7 +84,6 @@ export async function createPatient(data: z.infer<typeof patientSchema>) {
       mereReligion: validatedData.mereReligion as any
     } as any).returning();
 
-    // Revalider le cache pour mettre à jour la liste des patients
     revalidatePath("/dashboard/patients");
 
     return { 
@@ -101,6 +98,36 @@ export async function createPatient(data: z.infer<typeof patientSchema>) {
       return { success: false, error: "Erreur de validation des données", details: error.errors };
     }
     return { success: false, error: "Erreur interne lors de l'enregistrement du patient" };
+  }
+}
+
+/**
+ * Met à jour les informations d'un patient existant
+ */
+export async function updatePatient(id: string, data: z.infer<typeof patientSchema>) {
+  try {
+    const validatedData = patientSchema.parse(data);
+
+    await db.update(patients)
+      .set({
+        ...validatedData,
+        dateNaissance: validatedData.dateNaissance.toISOString().split('T')[0],
+        pereReligion: validatedData.pereReligion as any,
+        mereReligion: validatedData.mereReligion as any,
+        updatedAt: new Date(),
+      } as any)
+      .where(eq(patients.id, id));
+
+    revalidatePath("/dashboard/patients");
+    revalidatePath(`/dashboard/patients/${id}`);
+
+    return { success: true, message: "Informations mises à jour avec succès" };
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du patient :", error);
+    if (error instanceof z.ZodError) {
+      return { success: false, error: "Erreur de validation", details: error.errors };
+    }
+    return { success: false, error: "Erreur lors de la mise à jour" };
   }
 }
 
