@@ -236,12 +236,14 @@ export const typeConsultationEnum = pgEnum("type_consultation", ["Systématique"
 export const consultationsExternes = pgTable("consultations_externes", {
   id: uuid("id").primaryKey().defaultRandom(),
   patientId: uuid("patient_id").references(() => patients.id, { onDelete: "cascade" }).notNull(),
+  medecinId: varchar("medecin_id", { length: 100 }).references(() => medecins.numeroSerie, { onDelete: "set null" }), // Médecin ayant fait la consultation
   dateConsultation: date("date_consultation").defaultNow().notNull(),
   typeConsultation: typeConsultationEnum("type_consultation").notNull(),
   
   // Paramètres
   etatGeneral: etatGeneralEnum("etat_general"),
   temperature: varchar("temperature", { length: 10 }),
+  poids: varchar("poids", { length: 10 }),
   fc: varchar("fc", { length: 10 }),
   fr: varchar("fr", { length: 10 }),
   pa: varchar("pa", { length: 20 }),
@@ -268,6 +270,22 @@ export const consultationsExternes = pgTable("consultations_externes", {
   traitementAntibioProphylaxie: jsonb("traitement_antibio_prophylaxie"),
   traitementHydratation: jsonb("traitement_hydratation"),
   traitementAutres: jsonb("traitement_autres"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// --- Table Prescriptions ---
+export const prescriptionStatusEnum = pgEnum("prescription_status", ["ACTIVE", "COMPLETED", "CANCELLED"]);
+
+export const prescriptions = pgTable("prescriptions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  patientId: uuid("patient_id").references(() => patients.id, { onDelete: "cascade" }).notNull(),
+  medecinId: varchar("medecin_id", { length: 100 }).references(() => medecins.numeroSerie, { onDelete: "set null" }), // Jointure avec Numero Serie du medecin
+  date: date("date").defaultNow().notNull(),
+  status: prescriptionStatusEnum("status").default("ACTIVE").notNull(),
+  medications: jsonb("medications").notNull(), // Array de PrescriptionItem
+  notes: text("notes"),
   
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -325,6 +343,7 @@ export const patientsRelations = relations(patients, ({ many }) => ({
   examensParacliniques: many(examensParacliniques),
   consultationsExternes: many(consultationsExternes),
   hospitalisations: many(hospitalisations),
+  prescriptions: many(prescriptions),
 }));
 
 export const antecedentsRelations = relations(antecedents, ({ one }) => ({
@@ -346,6 +365,10 @@ export const consultationsExternesRelations = relations(consultationsExternes, (
     fields: [consultationsExternes.patientId],
     references: [patients.id],
   }),
+  medecin: one(medecins, {
+    fields: [consultationsExternes.medecinId],
+    references: [medecins.numeroSerie],
+  }),
 }));
 
 export const notificationsLogsRelations = relations(notificationsLogs, ({ one }) => ({
@@ -363,5 +386,16 @@ export const hospitalisationsRelations = relations(hospitalisations, ({ one }) =
   patient: one(patients, {
     fields: [hospitalisations.patientId],
     references: [patients.id],
+  }),
+}));
+
+export const prescriptionsRelations = relations(prescriptions, ({ one }) => ({
+  patient: one(patients, {
+    fields: [prescriptions.patientId],
+    references: [patients.id],
+  }),
+  medecin: one(medecins, {
+    fields: [prescriptions.medecinId],
+    references: [medecins.numeroSerie],
   }),
 }));

@@ -51,10 +51,12 @@ const autreTreatmentSchema = treatmentSchema.extend({
 
 export const consultationSchema = z.object({
   dateConsultation: z.date().default(() => new Date()),
+  medecinId: z.string().min(1, "Le médecin est requis"),
   
   // Paramètres
   etatGeneral: z.enum(ETAT_GENERAL_OPTIONS).optional().nullable(),
   temperature: z.string().optional().nullable(),
+  poids: z.string().optional().nullable(),
   fc: z.string().optional().nullable(),
   fr: z.string().optional().nullable(),
   pa: z.string().optional().nullable(),

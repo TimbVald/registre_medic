@@ -98,3 +98,17 @@ export async function logout() {
   const { logout: authLogout } = await import("@/lib/auth");
   await authLogout();
 }
+
+/**
+ * Récupère la liste de tous les médecins pour les sélecteurs
+ */
+export async function getMedecins() {
+  try {
+    return await db.query.medecins.findMany({
+      orderBy: (medecins, { asc }) => [asc(medecins.nom)],
+    });
+  } catch (error) {
+    console.error("Erreur lors de la récupération des médecins:", error);
+    return [];
+  }
+}

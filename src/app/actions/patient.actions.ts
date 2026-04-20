@@ -176,10 +176,15 @@ export async function getPatientById(id: string) {
         return or(...conditions);
       },
       with: {
-        consultationsExternes: true,
+        consultationsExternes: {
+          with: { medecin: true }
+        },
         antecedents: true,
         examensParacliniques: true,
         hospitalisations: true,
+        prescriptions: {
+          with: { medecin: true }
+        },
       }
     });
 
@@ -192,9 +197,14 @@ export async function getPatientById(id: string) {
         ilike(patients.prenoms, `%${cleanId}%`)
       ),
       with: {
-        consultationsExternes: true,
+        consultationsExternes: {
+          with: { medecin: true }
+        },
         antecedents: true,
         examensParacliniques: true,
+        prescriptions: {
+          with: { medecin: true }
+        },
       }
     });
 
@@ -271,6 +281,26 @@ export async function getConsultations(search?: string) {
     });
   } catch (error) {
     console.error("Erreur lors de la récupération des consultations :", error);
+    return [];
+  }
+}
+
+/**
+ * Récupère une liste simplifiée de tous les patients pour les sélecteurs
+ */
+export async function getPatientsList() {
+  try {
+    return await db.query.patients.findMany({
+      columns: {
+        id: true,
+        noms: true,
+        prenoms: true,
+        numeroFiche: true,
+      },
+      orderBy: [desc(patients.createdAt)],
+    });
+  } catch (error) {
+    console.error("Erreur lors de la récupération de la liste des patients :", error);
     return [];
   }
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "consultations_externes" ADD COLUMN "poids" varchar(10);

@@ -1,7 +1,14 @@
 import { PrescriptionForm } from "../../../../components/prescriptions/prescription-form";
 import { Separator } from "@/components/ui/separator";
+import { getPatientsList } from "@/app/actions/patient.actions";
+import { getMedecins } from "@/app/actions/auth.actions";
 
-export default function NewPrescriptionPage() {
+export default async function NewPrescriptionPage() {
+  const [patients, medecins] = await Promise.all([
+    getPatientsList(),
+    getMedecins()
+  ]);
+
   return (
     <div className="space-y-6">
       <div>
@@ -11,7 +18,7 @@ export default function NewPrescriptionPage() {
         </p>
       </div>
       <Separator />
-      <PrescriptionForm />
+      <PrescriptionForm patients={patients} medecins={medecins} />
     </div>
   );
 }

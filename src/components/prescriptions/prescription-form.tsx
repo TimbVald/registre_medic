@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { CalendarIcon, Plus, Trash2, Loader2, Pill } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -36,36 +35,25 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { mockPatients, mockDoctors } from "@/lib/mock-data";
+import { prescriptionSchema, PrescriptionFormValues } from "@/lib/schemas/prescription.schema";
+import { createPrescription } from "@/app/actions/prescription.actions";
 
-const prescriptionFormSchema = z.object({
-  patientId: z.string().min(1, "Veuillez sélectionner un patient."),
-  doctorId: z.string().min(1, "Veuillez sélectionner un médecin."),
-  date: z.date({
-    required_error: "La date est requise.",
-  }),
-  medications: z.array(z.object({
-    medication: z.string().min(2, "Nom du médicament requis"),
-    dosage: z.string().min(1, "Dosage requis"),
-    frequency: z.string().min(1, "Fréquence requise"),
-    duration: z.string().min(1, "Durée requise"),
-    instructions: z.string().optional(),
-  })).min(1, "Au moins un médicament doit être prescrit."),
-  notes: z.string().optional(),
-});
+interface PrescriptionFormProps {
+  patients: { id: string; noms: string; prenoms: string | null; numeroFiche: string }[];
+  medecins: { numeroSerie: string; nom: string; prenom: string | null }[];
+}
 
-type PrescriptionFormValues = z.infer<typeof prescriptionFormSchema>;
-
-export function PrescriptionForm() {
+export function PrescriptionForm({ patients, medecins }: PrescriptionFormProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   const form = useForm<PrescriptionFormValues>({
-    resolver: zodResolver(prescriptionFormSchema),
+    resolver: zodResolver(prescriptionSchema),
     defaultValues: {
       date: new Date(),
       medications: [{ medication: "", dosage: "", frequency: "", duration: "", instructions: "" }],
       notes: "",
+      status: "ACTIVE",
     },
   });
 
@@ -75,14 +63,21 @@ export function PrescriptionForm() {
   });
 
   async function onSubmit(data: PrescriptionFormValues) {
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log(data);
-    toast.success("Prescription créée avec succès");
-    setIsLoading(false);
-    router.push("/dashboard/prescriptions");
-    router.refresh();
+    setDisabled(true);
+    try {
+      const result = await createPrescription(data);
+      if (result.success) {
+        toast.success("Prescription créée avec succès");
+        router.push("/dashboard/prescriptions");
+        router.refresh();
+      } else {
+        toast.error(result.error || "Une erreur est survenue");
+      }
+    } catch (error) {
+      toast.error("Erreur de connexion au serveur");
+    } finally {
+      setDisabled(false);
+    }
   }
 
   return (
@@ -97,14 +92,14 @@ export function PrescriptionForm() {
                 <FormLabel>Patient</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="rounded-xl">
                       <SelectValue placeholder="Sélectionner un patient" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {mockPatients.map((patient) => (
+                    {patients.map((patient) => (
                       <SelectItem key={patient.id} value={patient.id}>
-                        {patient.firstName} {patient.lastName}
+                        {patient.noms} {patient.prenoms} ({patient.numeroFiche})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -116,20 +111,20 @@ export function PrescriptionForm() {
 
           <FormField
             control={form.control}
-            name="doctorId"
+            name="medecinId"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Médecin Prescripteur</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="rounded-xl">
                       <SelectValue placeholder="Sélectionner un médecin" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {mockDoctors.map((doctor) => (
-                      <SelectItem key={doctor.id} value={doctor.id}>
-                        {doctor.name}
+                    {medecins.map((medecin) => (
+                      <SelectItem key={medecin.numeroSerie} value={medecin.numeroSerie}>
+                        Dr. {medecin.nom} {medecin.prenom}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -151,7 +146,7 @@ export function PrescriptionForm() {
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-full pl-3 text-left font-normal",
+                          "w-full pl-3 text-left font-normal rounded-xl",
                           !field.value && "text-muted-foreground"
                         )}
                       >
@@ -192,6 +187,7 @@ export function PrescriptionForm() {
               type="button"
               variant="outline"
               size="sm"
+              className="rounded-xl"
               onClick={() => append({ medication: "", dosage: "", frequency: "", duration: "", instructions: "" })}
             >
               <Plus className="mr-2 h-4 w-4" />
@@ -209,7 +205,7 @@ export function PrescriptionForm() {
                     <FormItem>
                       <FormLabel className="text-xs">Médicament</FormLabel>
                       <FormControl>
-                        <Input placeholder="Ex: Doliprane" {...field} />
+                        <Input placeholder="Ex: Doliprane" {...field} className="rounded-lg" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -222,7 +218,7 @@ export function PrescriptionForm() {
                     <FormItem>
                       <FormLabel className="text-xs">Dosage</FormLabel>
                       <FormControl>
-                        <Input placeholder="Ex: 1000mg" {...field} />
+                        <Input placeholder="Ex: 1000mg" {...field} className="rounded-lg" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -235,7 +231,7 @@ export function PrescriptionForm() {
                     <FormItem>
                       <FormLabel className="text-xs">Fréquence</FormLabel>
                       <FormControl>
-                        <Input placeholder="Ex: 3x/jour" {...field} />
+                        <Input placeholder="Ex: 3x/jour" {...field} className="rounded-lg" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -248,7 +244,7 @@ export function PrescriptionForm() {
                     <FormItem>
                       <FormLabel className="text-xs">Durée</FormLabel>
                       <FormControl>
-                        <Input placeholder="Ex: 5 jours" {...field} />
+                        <Input placeholder="Ex: 5 jours" {...field} className="rounded-lg" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -263,7 +259,12 @@ export function PrescriptionForm() {
                     <FormItem className="flex-1">
                       <FormLabel className="text-xs">Instructions (Optionnel)</FormLabel>
                       <FormControl>
-                        <Input placeholder="Ex: A prendre pendant les repas" {...field} />
+                        <Input 
+                          placeholder="Ex: A prendre pendant les repas" 
+                          {...field}
+                          value={field.value ?? ""} 
+                          className="rounded-lg" 
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -294,8 +295,9 @@ export function PrescriptionForm() {
               <FormControl>
                 <Textarea
                   placeholder="Notes pour le patient ou le pharmacien..."
-                  className="resize-none"
+                  className="resize-none rounded-xl"
                   {...field}
+                  value={field.value ?? ""}
                 />
               </FormControl>
               <FormMessage />
@@ -307,8 +309,8 @@ export function PrescriptionForm() {
           <Button type="button" variant="outline" onClick={() => router.back()} className="rounded-xl">
             Annuler
           </Button>
-          <Button type="submit" disabled={isLoading} className="rounded-xl px-8 shadow-md shadow-primary/20">
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <Button type="submit" disabled={disabled} className="rounded-xl px-8 shadow-md shadow-primary/20">
+            {disabled && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Créer la prescription
           </Button>
         </div>

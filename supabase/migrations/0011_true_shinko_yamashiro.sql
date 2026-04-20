@@ -1,0 +1,2 @@
+ALTER TABLE "consultations_externes" ADD COLUMN "medecin_id" varchar(100);--> statement-breakpoint
+ALTER TABLE "consultations_externes" ADD CONSTRAINT "consultations_externes_medecin_id_medecins_numero_serie_fk" FOREIGN KEY ("medecin_id") REFERENCES "public"."medecins"("numero_serie") ON DELETE set null ON UPDATE no action;

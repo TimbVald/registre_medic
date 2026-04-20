@@ -22,7 +22,6 @@ import {
   FlaskConical,
   Bell,
   CheckCircle2,
-  XCircle,
   Clock3,
   Printer,
   BedDouble,
@@ -31,21 +30,20 @@ import {
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getPatientById } from "@/app/actions/patient.actions";
-import { mockAppointments, mockPrescriptions } from "@/lib/mock-data";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { PrescriptionList } from "@/components/prescriptions/prescription-list";
-import { AppointmentsList } from "@/components/appointments/appointments-list";
 import { notFound, redirect } from "next/navigation";
 import { HospitalisationList } from "@/components/hospitalisations/hospitalisation-list";
 import { cn } from "@/lib/utils";
 import { getSession } from "@/lib/auth";
 import { AntecedentHistory } from "@/components/patients/antecedent-history";
 import { ExamenParacliniqueView } from "@/components/patients/examen-paraclinique-view";
-import { NotebookTabs, FlaskConical as FlaskIcon } from "lucide-react";
+import { HealthTimeline } from "@/components/patients/health-timeline";
+import { EvolutionCharts } from "@/components/patients/evolution-charts";
+import { FlaskConical as FlaskIcon } from "lucide-react";
 
 export default async function PatientDetailsPage({ params }: { params: any }) {
-  // Gestion robuste des params (Promise ou non)
   const resolvedParams = params instanceof Promise ? await params : await Promise.resolve(params);
   const { id } = resolvedParams;
   
@@ -62,14 +60,21 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
 
   const isPatient = session?.user?.role === "PATIENT";
 
-  // Sécurité supplémentaire : un patient ne peut voir que son PROPRE dossier
   if (isPatient && session?.user?.id !== id) {
     redirect(`/dashboard/patients/${session.user.id}`);
   }
 
-  // Mocks for now as agreed
-  const appointments = mockAppointments.filter((a) => a.patientId === id);
-  const prescriptions = mockPrescriptions.filter((p) => p.patientId === id);
+  // Relations réelles
+  const consultations = (patient as any).consultationsExternes || [];
+  const prescriptions = (patient as any).prescriptions || [];
+  const examens = (patient as any).examensParacliniques || [];
+  const antecedents = (patient as any).antecedents || [];
+  const hospitalisations = (patient as any).hospitalisations || [];
+
+  // Calcul des RDV futurs à partir des consultations
+  const upcomingAppointments = consultations
+    .filter((c: any) => c.dateProchainRdv && new Date(c.dateProchainRdv) >= new Date())
+    .sort((a: any, b: any) => new Date(a.dateProchainRdv).getTime() - new Date(b.dateProchainRdv).getTime());
 
   return (
     <div className="flex flex-col gap-8 pb-10 animate-in fade-in duration-700">
@@ -85,13 +90,13 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
 
         <div className="flex flex-wrap items-center gap-3">
           {!isPatient && (
-            <Button variant="outline" asChild className="rounded-xl border-border flex-1 sm:flex-none">
+            <Button variant="outline" asChild className="rounded-2xl border-zinc-200 flex-1 sm:flex-none shadow-sm">
               <Link href={`/dashboard/patients/${patient.id}/edit`}>
                 <Edit className="mr-2 h-4 w-4" /> Modifier le profil
               </Link>
             </Button>
           )}
-          <Button variant="outline" asChild className="rounded-xl shadow-sm border-zinc-200 bg-white hover:bg-zinc-50 flex-1 sm:flex-none">
+          <Button variant="outline" asChild className="rounded-2xl shadow-sm border-zinc-200 bg-white hover:bg-zinc-50 flex-1 sm:flex-none">
             <Link href={`/dashboard/patients/${patient.id}/dossier`} target="_blank">
                <Printer className="mr-2 h-4 w-4" /> Rapport Médical
             </Link>
@@ -100,71 +105,70 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
       </div>
 
       {/* Profile Header Card */}
-      <Card className="border-none shadow-sm ring-1 ring-border overflow-hidden bg-gradient-to-br from-card to-muted/30 rounded-2xl md:rounded-3xl">
+      <Card className="border-none shadow-xl shadow-zinc-200/50 ring-1 ring-zinc-100 overflow-hidden bg-white rounded-[2.5rem]">
         <CardContent className="p-0">
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-8 p-6 md:p-10">
-            <Avatar className="h-24 w-24 md:h-28 md:w-28 ring-4 ring-background shadow-xl shadow-foreground/5">
-              <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${patient.noms}`} />
-              <AvatarFallback className="bg-muted text-muted-foreground text-2xl font-bold">
-                {patient.noms[0]}
-              </AvatarFallback>
-            </Avatar>
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-8 p-8 md:p-12">
+            <div className="relative">
+                <Avatar className="h-28 w-28 md:h-32 md:w-32 ring-8 ring-zinc-50 shadow-inner">
+                <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${patient.noms}`} />
+                <AvatarFallback className="bg-gradient-to-br from-zinc-100 to-zinc-200 text-zinc-600 text-3xl font-black">
+                    {patient.noms[0]}
+                </AvatarFallback>
+                </Avatar>
+                <div className="absolute -bottom-2 -right-2 bg-emerald-500 h-8 w-8 rounded-2xl border-4 border-white flex items-center justify-center shadow-lg">
+                    <div className="h-2 w-2 rounded-full bg-white animate-pulse" />
+                </div>
+            </div>
             
-            <div className="flex-1 text-center md:text-left space-y-4">
+            <div className="flex-1 text-center md:text-left space-y-6">
               <div>
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
-                    <h1 className="text-3xl font-bold text-foreground">{patient.noms} {patient.prenoms}</h1>
-                    <Badge variant="secondary" className="bg-primary/10 text-primary border-none font-bold px-3 py-1 text-xs">
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-3">
+                    <h1 className="text-4xl font-black text-zinc-900 tracking-tight">{patient.noms} {patient.prenoms}</h1>
+                    <Badge className="bg-indigo-50 text-indigo-700 border-indigo-100 font-black px-4 py-1.5 text-[10px] uppercase tracking-widest rounded-full">
                         {patient.numeroFiche}
                     </Badge>
                 </div>
-                <p className="text-muted-foreground font-medium">Patient enregistré le {format(new Date(patient.createdAt), "d MMMM yyyy", { locale: fr })}</p>
+                <p className="text-zinc-400 font-bold flex items-center justify-center md:justify-start gap-2 text-sm uppercase tracking-tighter">
+                   <Clock3 className="h-4 w-4" />
+                   Suivi depuis le {format(new Date(patient.createdAt), "d MMMM yyyy", { locale: fr })}
+                </p>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
-                 <div className="flex items-center gap-3 bg-card p-3 rounded-2xl border border-border shadow-sm">
-                    <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+                 <div className="flex items-center gap-3 bg-zinc-50/50 p-4 rounded-3xl border border-zinc-100/50 transition-all hover:bg-white hover:shadow-md">
+                    <div className="h-10 w-10 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500">
                         <Users className="h-5 w-5" />
                     </div>
                     <div>
-                        <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Sexe</p>
-                        <p className="text-sm font-semibold">{patient.sexe || "-"}</p>
+                        <p className="text-[10px] uppercase font-black text-zinc-400 tracking-wider">Sexe</p>
+                        <p className="text-sm font-black text-zinc-800">{patient.sexe || "-"}</p>
                     </div>
                  </div>
-                 <div className="flex items-center gap-3 bg-card p-3 rounded-2xl border border-border shadow-sm">
-                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                 <div className="flex items-center gap-3 bg-zinc-50/50 p-4 rounded-3xl border border-zinc-100/50 transition-all hover:bg-white hover:shadow-md">
+                    <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
                         <Calendar className="h-5 w-5" />
                     </div>
                     <div>
-                        <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Âge</p>
-                        <p className="text-sm font-semibold">{patient.ageAnnees || 0} ans</p>
+                        <p className="text-[10px] uppercase font-black text-zinc-400 tracking-wider">Âge</p>
+                        <p className="text-sm font-black text-zinc-800">{patient.ageAnnees || 0} ans</p>
                     </div>
                  </div>
-                  <div className="flex items-center gap-3 bg-card p-3 rounded-2xl border border-border shadow-sm">
-                    <div className="h-10 w-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500">
+                  <div className="flex items-center gap-3 bg-zinc-50/50 p-4 rounded-3xl border border-zinc-100/50 transition-all hover:bg-white hover:shadow-md">
+                    <div className="h-10 w-10 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500">
                         <Droplets className="h-5 w-5" />
                     </div>
                     <div>
-                        <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Gr. Sanguin</p>
-                        <p className="text-sm font-semibold">{patient.groupeSanguin || "Inconnu"}</p>
+                        <p className="text-[10px] uppercase font-black text-zinc-400 tracking-wider">Gr. Sanguin</p>
+                        <p className="text-sm font-black text-zinc-800">{patient.groupeSanguin || "Inconnu"}</p>
                     </div>
                   </div>
-                 <div className="flex items-center gap-3 bg-card p-3 rounded-2xl border border-border shadow-sm">
-                    <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                 <div className="flex items-center gap-3 bg-zinc-50/50 p-4 rounded-3xl border border-zinc-100/50 transition-all hover:bg-white hover:shadow-md">
+                    <div className="h-10 w-10 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500">
                         <Phone className="h-5 w-5" />
                     </div>
                     <div>
-                        <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Contact</p>
-                        <p className="text-sm font-semibold">{patient.telephone || "N/A"}</p>
-                    </div>
-                 </div>
-                 <div className="flex items-center gap-3 bg-card p-3 rounded-2xl border border-border shadow-sm">
-                    <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500">
-                        <MapPin className="h-5 w-5" />
-                    </div>
-                    <div>
-                        <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Résidence</p>
-                        <p className="text-sm font-semibold truncate max-w-[80px] sm:max-w-[120px]">{patient.lieuResidence || "-"}</p>
+                        <p className="text-[10px] uppercase font-black text-zinc-400 tracking-wider">Contact</p>
+                        <p className="text-sm font-black text-zinc-800">{patient.telephone || "N/A"}</p>
                     </div>
                  </div>
               </div>
@@ -174,305 +178,297 @@ export default async function PatientDetailsPage({ params }: { params: any }) {
       </Card>
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="overview" className="space-y-6">
+      <Tabs defaultValue="overview" className="space-y-8">
         <div className="overflow-x-auto pb-1 no-scrollbar">
-          <TabsList className="bg-muted/50 p-1.5 rounded-2xl border border-border w-fit min-w-full sm:min-w-0">
-            <TabsTrigger value="overview" className="rounded-xl px-4 sm:px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm">
+          <TabsList className="bg-zinc-100/50 p-2 rounded-3xl border border-zinc-200/50 w-fit min-w-full sm:min-w-0 shadow-sm">
+            <TabsTrigger value="overview" className="rounded-2xl px-8 py-3 data-[state=active]:bg-white data-[state=active]:shadow-xl data-[state=active]:text-primary font-black uppercase text-[10px] tracking-widest transition-all">
               Vue d'ensemble
             </TabsTrigger>
-            <TabsTrigger value="record" className="rounded-xl px-4 sm:px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm">
+            <TabsTrigger value="record" className="rounded-2xl px-8 py-3 data-[state=active]:bg-white data-[state=active]:shadow-xl data-[state=active]:text-primary font-black uppercase text-[10px] tracking-widest transition-all">
               Dossier Externe
             </TabsTrigger>
-            <TabsTrigger value="antecedents" className="rounded-xl px-4 sm:px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm flex items-center gap-2">
-              <History className="h-4 w-4" /> Antécédents
+            <TabsTrigger value="antecedents" className="rounded-2xl px-8 py-3 data-[state=active]:bg-white data-[state=active]:shadow-xl data-[state=active]:text-primary font-black uppercase text-[10px] tracking-widest transition-all">
+              Antécédents
             </TabsTrigger>
-            <TabsTrigger value="exams" className="rounded-xl px-4 sm:px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm flex items-center gap-2">
-              <FlaskIcon className="h-4 w-4 text-indigo-500" /> Bilan
+            <TabsTrigger value="exams" className="rounded-2xl px-8 py-3 data-[state=active]:bg-white data-[state=active]:shadow-xl data-[state=active]:text-primary font-black uppercase text-[10px] tracking-widest transition-all">
+              Bilan
             </TabsTrigger>
-            <TabsTrigger value="consultations" className="rounded-xl px-4 sm:px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm">
-              Historique des RDV
+            <TabsTrigger value="prescriptions" className="rounded-2xl px-8 py-3 data-[state=active]:bg-white data-[state=active]:shadow-xl data-[state=active]:text-primary font-black uppercase text-[10px] tracking-widest transition-all">
+              Ordonnances
+            </TabsTrigger>
+            <TabsTrigger value="appointments" className="rounded-2xl px-8 py-3 data-[state=active]:bg-white data-[state=active]:shadow-xl data-[state=active]:text-primary font-black uppercase text-[10px] tracking-widest transition-all">
+              RDV
+            </TabsTrigger>
+            <TabsTrigger value="evolution" className="rounded-2xl px-8 py-3 data-[state=active]:bg-white data-[state=active]:shadow-xl data-[state=active]:text-primary font-black uppercase text-[10px] tracking-widest transition-all">
+              Évolution
             </TabsTrigger>
           </TabsList>
         </div>
 
-        <TabsContent value="overview" className="space-y-6">
-           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Left Column: Parental Info */}
-              <div className="lg:col-span-1 space-y-6">
-                <Card className="border-none shadow-sm ring-1 ring-border bg-card rounded-2xl overflow-hidden">
-                    <CardHeader className="bg-muted/30 border-b border-border p-4 md:p-6">
-                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+        {/* ÉVOLUTION CLINIQUE */}
+        <TabsContent value="evolution" className="space-y-6">
+             <div className="px-2 mb-4">
+                <h3 className="text-xs font-black uppercase tracking-widest text-zinc-400 flex items-center gap-2">
+                    <History className="h-5 w-5 text-indigo-500" /> Profil d'Évolution Médicale
+                </h3>
+             </div>
+             <EvolutionCharts 
+                consultations={consultations} 
+                examens={examens} 
+             />
+        </TabsContent>
+
+        {/* VUE D'ENSEMBLE */}
+        <TabsContent value="overview" className="space-y-8">
+           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Left Column: Quick Info */}
+              <div className="lg:col-span-1 space-y-8">
+                <Card className="border-none shadow-sm ring-1 ring-zinc-100 bg-white rounded-[2rem] overflow-hidden">
+                    <CardHeader className="bg-zinc-50/50 border-b border-zinc-100 p-6">
+                        <CardTitle className="text-[10px] font-black uppercase tracking-widest text-zinc-400 flex items-center gap-2">
                            <Baby className="h-4 w-4 text-blue-500" /> Parenté & Tuteurs
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-4 md:p-6 space-y-6">
+                    <CardContent className="p-8 space-y-8">
                         {patient.pereNom && (
                             <div className="space-y-1">
-                                <p className="text-[10px] uppercase font-bold text-muted-foreground">Père / Tuteur</p>
-                                <p className="text-sm font-semibold text-foreground">{patient.pereNom}</p>
-                                <p className="text-xs text-muted-foreground">{patient.pereTelClassique}</p>
+                                <p className="text-[10px] uppercase font-black text-zinc-300 tracking-widest">Père / Tuteur</p>
+                                <p className="text-base font-bold text-zinc-800">{patient.pereNom}</p>
+                                <p className="text-xs font-medium text-zinc-400">{patient.pereTelClassique}</p>
                             </div>
                         )}
                         {patient.mereNom && (
                             <div className="space-y-1">
-                                <p className="text-[10px] uppercase font-bold text-muted-foreground">Mère / Tutrice</p>
-                                <p className="text-sm font-semibold text-foreground">{patient.mereNom}</p>
-                                <p className="text-xs text-muted-foreground">{patient.mereTelClassique}</p>
+                                <p className="text-[10px] uppercase font-black text-zinc-300 tracking-widest">Mère / Tutrice</p>
+                                <p className="text-base font-bold text-zinc-800">{patient.mereNom}</p>
+                                <p className="text-xs font-medium text-zinc-400">{patient.mereTelClassique}</p>
                             </div>
                         )}
                         {!patient.pereNom && !patient.mereNom && (
-                            <p className="text-sm text-muted-foreground italic text-center py-4">Aucune information parentale.</p>
+                            <p className="text-sm text-zinc-400 italic text-center py-4">Aucune information parentale.</p>
                         )}
                     </CardContent>
                 </Card>
 
-                <Card className="border-none shadow-sm ring-1 ring-border bg-card rounded-2xl overflow-hidden">
-                    <CardHeader className="bg-muted/30 border-b border-border">
-                        <CardTitle className="text-sm font-bold flex items-center gap-2">
-                           <Heart className="h-4 w-4 text-red-500" /> Alertes & Allergies
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-6">
-                        <div className="flex items-center gap-3 p-4 bg-amber-50 rounded-2xl border border-amber-100/50 text-amber-700">
-                            <AlertCircle className="h-5 w-5 shrink-0" />
-                            <p className="text-xs font-medium">Aucune allergie majeure signalée pour ce patient.</p>
-                        </div>
-                    </CardContent>
-                </Card>
+                <div className="grid grid-cols-1 gap-4">
+                  <Card className="border-none shadow-sm ring-1 ring-zinc-100 rounded-[2rem] bg-white p-6">
+                      <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 rounded-2xl bg-indigo-50 flex items-center justify-center">
+                              <Pill className="h-6 w-6 text-indigo-500" />
+                          </div>
+                          <div>
+                            <p className="text-2xl font-black text-zinc-900">{prescriptions.length}</p>
+                            <p className="text-[10px] font-black text-zinc-300 uppercase tracking-widest">Ordonnances Actives</p>
+                          </div>
+                      </div>
+                  </Card>
+                   <Card className="border-none shadow-sm ring-1 ring-zinc-100 rounded-[2rem] bg-white p-6">
+                      <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 rounded-2xl bg-rose-50 flex items-center justify-center">
+                              <Heart className="h-6 w-6 text-rose-500" />
+                          </div>
+                          <div>
+                            <p className="text-2xl font-black text-zinc-900">{consultations.length}</p>
+                            <p className="text-[10px] font-black text-zinc-300 uppercase tracking-widest">Suivis Cliniques</p>
+                          </div>
+                      </div>
+                  </Card>
+                </div>
               </div>
 
-              {/* Right Column: Timeline/Activity */}
+              {/* Center/Right Column: Health Timeline */}
               <div className="lg:col-span-2 space-y-6">
-                 <Card className="border-none shadow-sm ring-1 ring-border rounded-2xl bg-card overflow-hidden">
-                    <CardHeader className="flex flex-row items-center justify-between border-b border-border bg-muted/30">
-                        <CardTitle className="text-sm font-bold flex items-center gap-2">
-                            <Activity className="h-5 w-5 text-emerald-500" /> Historique de Santé
-                        </CardTitle>
-                        <Button variant="ghost" size="sm" className="text-xs">Voir tout</Button>
-                    </CardHeader>
-                    <CardContent className="pt-10 pb-8 px-10">
-                        {/* Fake medical timeline for premium look */}
-                        <div className="relative border-l-2 border-border pl-8 space-y-10">
-                            <div className="relative">
-                                <span className="absolute -left-[41px] top-0 h-5 w-5 rounded-full bg-background border-4 border-primary flex items-center justify-center ring-4 ring-primary/10 shadow-sm transition-all hover:scale-110"></span>
-                                <div className="space-y-1">
-                                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Aujourd'hui</p>
-                                    <h4 className="text-sm font-bold text-foreground">Enregistrement initial du patient</h4>
-                                    <p className="text-xs text-muted-foreground leading-relaxed">Dossier créé numériquement avec succès par le personnel de la clinique.</p>
-                                </div>
-                            </div>
-                            <div className="relative opacity-50 grayscale select-none cursor-not-allowed">
-                                <span className="absolute -left-[41px] top-0 h-5 w-5 rounded-full bg-muted border-4 border-border"></span>
-                                <div className="space-y-1">
-                                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Étape Suivante</p>
-                                    <h4 className="text-sm font-bold text-muted-foreground">Première Consultation & Bilan Sanguin</h4>
-                                    <p className="text-xs text-muted-foreground">En attente de la première visite médicale.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </CardContent>
-                 </Card>
-
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Card className="border-none shadow-sm ring-1 ring-border rounded-2xl bg-card">
-                        <CardHeader className="pb-3">
-                            <CardTitle className="text-xs font-bold text-muted-foreground flex items-center gap-2">
-                                <Dna className="h-4 w-4" /> Groupe Sanguin
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-2xl font-bold text-foreground">{patient.pereGroupeSanguin || "Pas d'infos"}</p>
-                            <p className="text-[10px] text-muted-foreground mt-1 tracking-tighter">Basé sur les données familiales</p>
-                        </CardContent>
-                    </Card>
-                    <Card className="border-none shadow-sm ring-1 ring-border rounded-2xl bg-card">
-                        <CardHeader className="pb-3">
-                            <CardTitle className="text-xs font-bold text-muted-foreground flex items-center gap-2 active:animate-pulse">
-                                <Pill className="h-4 w-4" /> Traitements
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-2xl font-bold text-foreground">0</p>
-                            <p className="text-[10px] text-muted-foreground mt-1 tracking-tighter">Aucune prescription active</p>
-                        </CardContent>
-                    </Card>
-                 </div>
+                 <h3 className="text-xs font-black uppercase tracking-widest text-zinc-400 flex items-center gap-2 mb-4 px-2">
+                    <Activity className="h-4 w-4 text-emerald-500" />
+                    Ligne du temps - Activités Réelles
+                 </h3>
+                 <HealthTimeline 
+                    patientId={patient.id} 
+                    consultations={consultations} 
+                    prescriptions={prescriptions} 
+                    examens={examens} 
+                 />
               </div>
            </div>
         </TabsContent>
 
-        <TabsContent value="record" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="border-none shadow-sm ring-1 ring-border rounded-3xl bg-card p-8 text-center flex flex-col items-center justify-center gap-6 group hover:ring-emerald-500/30 transition-all">
+        {/* DOSSIER EXTERNE */}
+        <TabsContent value="record" className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Card className="border-none shadow-sm ring-1 ring-zinc-100 rounded-[2.5rem] bg-white p-8 text-center flex flex-col items-center justify-center gap-6 group hover:ring-emerald-500/30 transition-all">
                     <div className="h-16 w-16 bg-emerald-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                         <Stethoscope className="h-8 w-8 text-emerald-500" />
                     </div>
                     <div>
-                       <h3 className="text-lg font-bold text-foreground">Consultation Systématique</h3>
-                       <p className="text-xs text-muted-foreground mt-2">Suivi médical périodique de l'enfant.</p>
+                       <h3 className="text-lg font-black text-zinc-800">Consultation</h3>
+                       <p className="text-[10px] font-bold text-zinc-400 uppercase mt-2">Suivi périodique</p>
                     </div>
-                    <Button className="rounded-xl w-full shadow-lg shadow-emerald-500/10 bg-emerald-600 hover:bg-emerald-700" asChild>
+                    <Button className="rounded-2xl w-full h-12 shadow-lg shadow-emerald-500/10 bg-emerald-600 hover:bg-emerald-700 font-bold" asChild>
                         <Link href={`/dashboard/patients/${patient.id}/consultations/new?type=Systématique`}>
-                            <Plus className="h-4 w-4 mr-2" /> Nouveau Dossier
+                            <Plus className="h-4 w-4 mr-2" /> Nouveau
                         </Link>
                     </Button>
                 </Card>
 
-                <Card className="border-none shadow-sm ring-1 ring-border rounded-3xl bg-card p-8 text-center flex flex-col items-center justify-center gap-6 group hover:ring-blue-500/30 transition-all">
+                <Card className="border-none shadow-sm ring-1 ring-zinc-100 rounded-[2.5rem] bg-white p-8 text-center flex flex-col items-center justify-center gap-6 group hover:ring-blue-500/30 transition-all">
                     <div className="h-16 w-16 bg-blue-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <BedDouble className="h-8 w-8 text-blue-500" />
+                        <Pill className="h-8 w-8 text-blue-500" />
                     </div>
                     <div>
-                       <h3 className="text-lg font-bold text-foreground">Hospitalisation</h3>
-                       <p className="text-xs text-muted-foreground mt-2">Saisie des paramètres et soins hospitaliers.</p>
+                       <h3 className="text-lg font-black text-zinc-800">Ordonnance</h3>
+                       <p className="text-[10px] font-bold text-zinc-400 uppercase mt-2">Nouveau traitement</p>
                     </div>
-                    <Button className="rounded-xl w-full shadow-lg shadow-blue-500/10 bg-blue-600 hover:bg-blue-700" asChild>
-                        <Link href={`/dashboard/patients/${patient.id}/hospitalisations/new`}>
-                            <Plus className="h-4 w-4 mr-2" /> Nouveau Dossier
+                    <Button className="rounded-2xl w-full h-12 shadow-lg shadow-blue-500/10 bg-blue-600 hover:bg-blue-700 font-bold" asChild>
+                        <Link href={`/dashboard/prescriptions/new?patientId=${patient.id}`}>
+                            <Plus className="h-4 w-4 mr-2" /> Prescrire
                         </Link>
                     </Button>
                 </Card>
 
-                <Card className="border-none shadow-sm ring-1 ring-border rounded-3xl bg-card p-8 text-center flex flex-col items-center justify-center gap-6 group hover:ring-amber-500/30 transition-all">
+                <Card className="border-none shadow-sm ring-1 ring-zinc-100 rounded-[2.5rem] bg-white p-8 text-center flex flex-col items-center justify-center gap-6 group hover:ring-amber-500/30 transition-all">
                     <div className="h-16 w-16 bg-amber-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                         <History className="h-8 w-8 text-amber-500" />
                     </div>
                     <div>
-                       <h3 className="text-lg font-bold text-foreground">Antécédents</h3>
-                       <p className="text-xs text-muted-foreground mt-2">Historique médical et familial.</p>
+                       <h3 className="text-lg font-black text-zinc-800">Antécédents</h3>
+                       <p className="text-[10px] font-bold text-zinc-400 uppercase mt-2">Mise à jour</p>
                     </div>
-                    <Button variant="outline" className="rounded-xl w-full border-amber-200 text-amber-700 hover:bg-amber-50" asChild>
+                    <Button variant="outline" className="rounded-2xl w-full h-12 border-amber-200 text-amber-700 hover:bg-amber-50 font-bold" asChild>
                         <Link href={`/dashboard/patients/${patient.id}/antecedents/new`}>
-                            <Plus className="h-4 w-4 mr-2" /> Mettre à jour
+                            <Plus className="h-4 w-4 mr-2" /> Éditer
                         </Link>
                     </Button>
                 </Card>
 
-                <Card className="border-none shadow-sm ring-1 ring-border rounded-3xl bg-card p-8 text-center flex flex-col items-center justify-center gap-6 group hover:ring-indigo-500/30 transition-all">
+                <Card className="border-none shadow-sm ring-1 ring-zinc-100 rounded-[2.5rem] bg-white p-8 text-center flex flex-col items-center justify-center gap-6 group hover:ring-indigo-500/30 transition-all">
                     <div className="h-16 w-16 bg-indigo-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <FlaskConical className="h-8 w-8 text-indigo-500" />
+                        <FlaskIcon className="h-8 w-8 text-indigo-500" />
                     </div>
                     <div>
-                       <h3 className="text-lg font-bold text-foreground">Bilan (Examens)</h3>
-                       <p className="text-xs text-muted-foreground mt-2">Examens paracliniques et résultats.</p>
+                       <h3 className="text-lg font-black text-zinc-800">Bilan (Exams)</h3>
+                       <p className="text-[10px] font-bold text-zinc-400 uppercase mt-2">Dossier paraclinique</p>
                     </div>
-                    <Button variant="outline" className="rounded-xl w-full border-indigo-200 text-indigo-700 hover:bg-indigo-50" asChild>
+                    <Button variant="outline" className="rounded-2xl w-full h-12 border-indigo-200 text-indigo-700 hover:bg-indigo-50 font-bold" asChild>
                         <Link href={`/dashboard/patients/${patient.id}/examens`}>
-                            <FlaskConical className="h-4 w-4 mr-2" /> Voir le bilan
+                            <FlaskIcon className="h-4 w-4 mr-2" /> Voir bilan
                         </Link>
                     </Button>
                 </Card>
             </div>
 
-            <Card className="border-none shadow-sm ring-1 ring-border rounded-2xl overflow-hidden bg-card">
-                <CardHeader className="border-b border-border bg-muted/30">
-                    <CardTitle className="text-sm font-bold flex items-center gap-2">
-                        <History className="h-5 w-5 text-muted-foreground" /> Historique des Hospitalisations
+            <Card className="border-none shadow-md ring-1 ring-zinc-100 rounded-[2.5rem] overflow-hidden bg-white">
+                <CardHeader className="border-b border-zinc-100 bg-zinc-50/50 p-6">
+                    <CardTitle className="text-xs font-black uppercase tracking-widest text-zinc-400 flex items-center gap-2">
+                        <BedDouble className="h-5 w-5 text-indigo-500" /> Hospitalisations (Historique)
                     </CardTitle>
                 </CardHeader>
-                <CardContent className="p-6">
+                <CardContent className="p-8">
                     <HospitalisationList 
-                      hospitalisations={(patient as any).hospitalisations || []} 
+                      hospitalisations={hospitalisations} 
                       patientId={patient.id} 
                     />
                 </CardContent>
             </Card>
         </TabsContent>
 
-        <TabsContent value="antecedents" className="space-y-6">
+        {/* ANTÉCÉDENTS */}
+        <TabsContent value="antecedents">
             <AntecedentHistory 
               patientId={patient.id} 
-              antecedents={(patient.antecedents || []).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} 
+              antecedents={antecedents.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} 
             />
         </TabsContent>
 
-        <TabsContent value="exams" className="space-y-6">
+        {/* BILAN EXAMENS */}
+        <TabsContent value="exams">
             <ExamenParacliniqueView 
               patientId={patient.id} 
-              examens={(patient.examensParacliniques || []).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} 
+              examens={examens.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} 
             />
         </TabsContent>
 
-        <TabsContent value="consultations">
-             <Card className="border-none shadow-sm ring-1 ring-border rounded-2xl overflow-hidden bg-card">
-                <CardHeader className="border-b border-border bg-muted/30">
+        {/* ORDONNANCES RÉELLES */}
+        <TabsContent value="prescriptions">
+             <div className="space-y-6">
+                <div className="flex items-center justify-between px-2">
+                    <h3 className="text-xs font-black uppercase tracking-widest text-zinc-400 flex items-center gap-2">
+                        <Pill className="h-5 w-5 text-blue-500" /> Ordonnances du patient
+                    </h3>
+                    <Button variant="link" className="text-primary font-bold" asChild>
+                        <Link href={`/dashboard/prescriptions/new?patientId=${patient.id}`}>Nouvelle ordonnance</Link>
+                    </Button>
+                </div>
+                <PrescriptionList prescriptions={prescriptions} />
+             </div>
+        </TabsContent>
+
+        {/* RDV RÉELS (Calculés) */}
+        <TabsContent value="appointments">
+             <Card className="border-none shadow-xl shadow-zinc-200/50 ring-1 ring-zinc-100 rounded-[2.5rem] overflow-hidden bg-white">
+                <CardHeader className="border-b border-zinc-100 bg-zinc-50/50 p-8">
                     <div className="flex items-center justify-between">
                          <div>
-                            <CardTitle className="text-sm font-bold">Historique des Rendez-vous</CardTitle>
-                            <CardDescription className="text-[10px]">Suivi des rendez-vous passés et futurs pour ce patient.</CardDescription>
+                            <CardTitle className="text-lg font-black text-zinc-800 flex items-center gap-2">
+                                <Calendar className="h-6 w-6 text-primary" />
+                                Prochaines Échéances
+                            </CardTitle>
+                            <CardDescription className="text-xs font-medium text-zinc-400 mt-1">Planifiées lors des précédentes consultations.</CardDescription>
                          </div>
                     </div>
                 </CardHeader>
                 <CardContent className="p-0">
-                    {patient.consultationsExternes && patient.consultationsExternes.length > 0 ? (
-                        <div className="divide-y divide-border">
-                            {patient.consultationsExternes
-                                .filter(c => c.dateRdvPrevue) // Uniquement ceux avec un RDV prévu
-                                .sort((a, b) => new Date(b.dateRdvPrevue!).getTime() - new Date(a.dateRdvPrevue!).getTime())
-                                .map((consultation) => (
-                                <div key={consultation.id} className="p-6 hover:bg-muted/10 transition-colors">
-                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                        <div className="flex items-start gap-4">
-                                            <div className={cn(
-                                                "h-12 w-12 rounded-2xl flex items-center justify-center shadow-sm",
-                                                consultation.rdvHonore === "Oui" ? "bg-emerald-500/10 text-emerald-500" : "bg-muted text-muted-foreground"
-                                            )}>
-                                                {consultation.rdvHonore === "Oui" ? <CheckCircle2 className="h-6 w-6" /> : <Clock3 className="h-6 w-6" />}
+                    {upcomingAppointments.length > 0 ? (
+                        <div className="divide-y divide-zinc-100">
+                            {upcomingAppointments.map((consultation: any) => (
+                                <div key={consultation.id} className="p-8 hover:bg-zinc-50 transition-all group">
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+                                        <div className="flex items-start gap-6">
+                                            <div className="h-16 w-16 rounded-[2rem] bg-primary/5 text-primary flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+                                                <div className="flex flex-col items-center">
+                                                    <span className="text-[10px] font-black uppercase tracking-tighter opacity-50">{format(new Date(consultation.dateProchainRdv!), "MMM", { locale: fr })}</span>
+                                                    <span className="text-2xl font-black">{format(new Date(consultation.dateProchainRdv!), "dd")}</span>
+                                                </div>
                                             </div>
-                                            <div className="space-y-1">
-                                                <div className="flex items-center gap-2">
-                                                    <h4 className="text-sm font-bold text-foreground">
-                                                        {format(new Date(consultation.dateRdvPrevue!), "d MMMM yyyy", { locale: fr })}
+                                            <div className="space-y-2">
+                                                <div className="flex items-center gap-3">
+                                                    <h4 className="text-xl font-black text-zinc-900 group-hover:text-primary transition-colors">
+                                                        Rendez-vous de suivi
                                                     </h4>
-                                                    <Badge variant="outline" className={cn(
-                                                        "text-[10px] font-bold uppercase tracking-widest px-2 py-0",
-                                                        consultation.rdvHonore === "Oui" ? "text-emerald-600 border-emerald-100 bg-emerald-50" : "text-amber-600 border-amber-100 bg-amber-50"
-                                                    )}>
-                                                        {consultation.rdvHonore === "Oui" ? "Honoré" : "En attente / Non honoré"}
+                                                    <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 font-black text-[10px] uppercase tracking-widest px-3 py-1 rounded-full">
+                                                        PLANIFIÉ
                                                     </Badge>
                                                 </div>
-                                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                                                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                                        <Bell className="h-3.5 w-3.5" />
-                                                        <span>Rappel: {consultation.rappelMode || "Non défini"} ({consultation.rappelFrequence || "N/A"})</span>
+                                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                                                    <div className="flex items-center gap-2 text-sm font-bold text-zinc-400">
+                                                        <Clock3 className="h-4 w-4" />
+                                                        <span>{format(new Date(consultation.dateProchainRdv!), "EEEE d MMMM yyyy", { locale: fr })}</span>
                                                     </div>
-                                                    {consultation.rappelReception && (
-                                                        <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
-                                                            <CheckCircle2 className="h-3.5 w-3.5" />
-                                                            <span>Rappel reçu</span>
-                                                        </div>
-                                                    )}
+                                                    <div className="flex items-center gap-2 text-sm font-bold text-zinc-400">
+                                                        <Bell className="h-4 w-4" />
+                                                        <span>Rappel: {consultation.rappelMode || "SMS"}</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                         
-                                        {consultation.causeNonHonore && (
-                                            <div className="md:max-w-xs p-3 rounded-xl bg-red-50/50 border border-red-100 text-[11px] text-red-700">
-                                                <div className="flex items-center gap-2 mb-1 font-bold uppercase tracking-wider">
-                                                    <XCircle className="h-3.5 w-3.5" />
-                                                    Cause du manquement
-                                                </div>
-                                                {consultation.causeNonHonore}
-                                            </div>
-                                        )}
+                                        <Button variant="outline" className="rounded-2xl h-12 px-6 border-zinc-200 font-bold" asChild>
+                                            <Link href={`/dashboard/patients/${patient.id}/consultations/new?type=${consultation.typeConsultation}`}>
+                                                Modifier la session
+                                            </Link>
+                                        </Button>
                                     </div>
                                 </div>
                             ))}
-                            {patient.consultationsExternes.filter(c => c.dateRdvPrevue).length === 0 && (
-                                <div className="py-20 text-center space-y-3">
-                                    <div className="h-16 w-16 bg-muted/30 rounded-full flex items-center justify-center mx-auto">
-                                        <Calendar className="h-8 w-8 text-muted-foreground" />
-                                    </div>
-                                    <p className="text-sm text-muted-foreground italic">Aucun rendez-vous prévu pour ce patient.</p>
-                                </div>
-                            )}
                         </div>
                     ) : (
-                        <div className="py-20 text-center space-y-3">
-                            <div className="h-16 w-16 bg-zinc-50 rounded-full flex items-center justify-center mx-auto">
-                                <Calendar className="h-8 w-8 text-zinc-200" />
+                        <div className="py-24 text-center space-y-6">
+                            <div className="h-20 w-20 bg-zinc-50 rounded-[2rem] flex items-center justify-center mx-auto ring-1 ring-zinc-100">
+                                <Calendar className="h-10 w-10 text-zinc-200" />
                             </div>
-                            <p className="text-sm text-muted-foreground italic">Aucune consultation ni rendez-vous enregistré.</p>
+                            <div className="space-y-1">
+                                <p className="text-xl font-black text-zinc-400 italic">Aucun rendez-vous futur planifié.</p>
+                                <p className="text-sm text-zinc-300 font-bold uppercase tracking-widest">Planifiez-en un lors de la prochaine consultation.</p>
+                            </div>
                         </div>
                     )}
                 </CardContent>

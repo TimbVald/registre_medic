@@ -1,7 +1,8 @@
 import { ConsultationForm } from "@/components/consultations/consultation-form";
 import { getPatientById, getSystematicConsultation } from "@/app/actions/patient.actions";
+import { getMedecins } from "@/app/actions/auth.actions";
 import { notFound } from "next/navigation";
-import { ChevronLeft, Stethoscope, History, PlusCircle } from "lucide-react";
+import { ChevronLeft, History, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -14,22 +15,22 @@ export default async function NewConsultationPage({
 }) {
   const { id } = await params;
   const { type = "Systématique" } = await searchParams;
-  const patient = await getPatientById(id);
+  
+  const [patient, medecins, initialDataRaw] = await Promise.all([
+    getPatientById(id),
+    getMedecins(),
+    type === "Systématique" ? getSystematicConsultation(id) : null,
+  ]);
 
   if (!patient) {
     notFound();
   }
 
-  // Si c'est une consultation systématique, on vérifie si elle existe déjà
-  let initialData = null;
-  if (type === "Systématique") {
-    initialData = await getSystematicConsultation(id);
-  }
-
+  const initialData = initialDataRaw;
   const isEdit = !!initialData;
 
   return (
-    <div className="flex-1 space-y-8 p-8 pt-6 max-w-5xl mx-auto">
+    <div className="flex-1 space-y-8 p-8 pt-6 max-w-5xl mx-auto animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-2 mb-2">
@@ -51,7 +52,12 @@ export default async function NewConsultationPage({
         </div>
       </div>
 
-      <ConsultationForm patientId={id} initialData={initialData} type={type as any} />
+      <ConsultationForm 
+        patientId={id} 
+        medecins={medecins} 
+        initialData={initialData} 
+        type={type as any} 
+      />
     </div>
   );
 }
