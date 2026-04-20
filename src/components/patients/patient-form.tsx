@@ -166,8 +166,8 @@ export default function PatientForm({ initialData }: PatientFormProps) {
                       name="noms"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-bold text-zinc-600">Noms *</FormLabel>
-                          <FormControl><Input placeholder="EX: NDONGO" {...field} className="rounded-xl border-zinc-200 h-12 uppercase font-bold" /></FormControl>
+                          <FormLabel className="font-bold text-zinc-600">Noms <span className="text-rose-500">*</span></FormLabel>
+                          <FormControl><Input placeholder="EX: NDONGO" {...field} value={field.value ?? ""} className="rounded-xl border-zinc-200 h-12 uppercase font-bold" /></FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -191,7 +191,7 @@ export default function PatientForm({ initialData }: PatientFormProps) {
                       name="dateNaissance"
                       render={({ field }) => (
                         <FormItem className="flex flex-col">
-                          <FormLabel className="font-bold text-zinc-600">Date de naissance *</FormLabel>
+                          <FormLabel className="font-bold text-zinc-600">Date de naissance <span className="text-rose-500">*</span></FormLabel>
                           <Popover>
                             <PopoverTrigger asChild>
                               <FormControl>
@@ -215,7 +215,7 @@ export default function PatientForm({ initialData }: PatientFormProps) {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="font-bold text-zinc-600">Âge (Années)</FormLabel>
-                          <FormControl><Input type="number" readOnly className="rounded-xl border-zinc-200 h-12 bg-zinc-50/50 font-black text-primary" {...field} /></FormControl>
+                          <FormControl><Input type="number" readOnly className="rounded-xl border-zinc-200 h-12 bg-zinc-50/50 font-black text-primary" {...field} value={field.value ?? undefined} /></FormControl>
                         </FormItem>
                       )}
                     />
@@ -224,8 +224,8 @@ export default function PatientForm({ initialData }: PatientFormProps) {
                       name="sexe"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-bold text-zinc-600">Sexe *</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormLabel className="font-bold text-zinc-600">Sexe <span className="text-rose-500">*</span></FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value || undefined}>
                             <FormControl><SelectTrigger className="rounded-xl border-zinc-200 h-12"><SelectValue placeholder="Sélectionnez" /></SelectTrigger></FormControl>
                             <SelectContent className="rounded-xl">
                               <SelectItem value="Masculin">Masculin</SelectItem>
@@ -390,7 +390,7 @@ export default function PatientForm({ initialData }: PatientFormProps) {
                         name="scolarise"
                         render={({ field }) => (
                           <FormItem className="flex flex-row items-center space-x-4 space-y-0">
-                            <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} className="h-6 w-6 rounded-lg" /></FormControl>
+                            <FormControl><Checkbox checked={field.value ?? false} onCheckedChange={field.onChange} className="h-6 w-6 rounded-lg" /></FormControl>
                             <div className="space-y-1">
                                 <FormLabel className="text-base font-black text-zinc-800 cursor-pointer">Enfant Scolarisé ?</FormLabel>
                                 <p className="text-xs text-zinc-400 font-medium italic">Cochez si l'enfant fréquente actuellement</p>
